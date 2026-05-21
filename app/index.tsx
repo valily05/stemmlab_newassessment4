@@ -35,7 +35,7 @@ export default function LoadingScreen() {
     }, 130);
 
     const navTimer = setTimeout(() => {
-      router.replace('/signup');
+router.replace('/(tabs)/homescreen');
     }, 6800);
 
     return () => {
