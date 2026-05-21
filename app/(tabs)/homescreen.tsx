@@ -47,16 +47,16 @@ export default function HomeScreen() {
 
           </View>
 
-          {/* BLEND GRADIENT */}
-          <LinearGradient
-            colors={[
-              'transparent',
-              'rgba(4,6,27,0.6)',
-              '#04061B',
-            ]}
-            style={styles.gradient}
-          />
-
+       {/* BLEND GRADIENT */}
+<LinearGradient
+  colors={[
+    'rgba(0,0,0,0)',
+    'rgba(0,0,0,0.35)',
+    'rgba(4,6,27,0.85)',
+    '#04061B',
+  ]}
+  style={styles.gradient}
+/>
         </ImageBackground>
 
         {/* MAIN CONTENT */}
@@ -111,16 +111,12 @@ const styles = StyleSheet.create({
 
   },
 
-  /* BLUR/FADING LAYER */
-  gradient: {
-    position: 'absolute',
-
-    bottom: 0,
-
-    width: '100%',
-
-    height: 70,
-  },
+gradient: {
+  position: 'absolute',
+  bottom: 0,
+  width: '100%',
+  height: 100,
+},
 
   /* MAIN CONTENT */
   content: {

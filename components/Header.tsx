@@ -1,10 +1,33 @@
 import {
+    Dimensions,
     Image,
+    PixelRatio,
     StyleSheet,
     Text,
     TouchableOpacity,
     View,
 } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
+// RESPONSIVE HELPERS
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+};
+
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+};
+
+const fp = (size: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width / 430) * size
+  );
+};
 
 export default function Header() {
 
@@ -14,13 +37,15 @@ export default function Header() {
 
       {/* MENU BUTTON */}
       <TouchableOpacity style={styles.circleBtn}>
+
         <Text style={styles.menu}>
           ☰
         </Text>
+
       </TouchableOpacity>
 
-      {/* LOGO + SUBTITLE */}
-      <View>
+      {/* CENTER */}
+      <View style={styles.center}>
 
         <Text style={styles.logo}>
           STEMM LAB
@@ -60,39 +85,60 @@ export default function Header() {
 const styles = StyleSheet.create({
 
   header: {
-    marginTop: 60,
+    marginTop: hp(7),
+
     flexDirection: 'row',
+
     justifyContent: 'space-between',
+
+    alignItems: 'center',
+  },
+
+  center: {
     alignItems: 'center',
   },
 
   circleBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(91,33,182,0.35)',
+    width: wp(12),
+    height: wp(12),
+
+    borderRadius: wp(6),
+
+    backgroundColor: '#130C36',
+
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+
+    borderWidth: 2,
+    borderColor: '#301E6A',
   },
 
   menu: {
     color: '#fff',
-    fontSize: 28,
+
+    fontSize: fp(22),
   },
 
   logo: {
     color: '#fff',
-    fontSize: 24,
+
+    fontSize: fp(14),
+
     fontFamily: 'Pixel',
+
+    letterSpacing: 1,
   },
 
   subtitle: {
     color: '#ddd6fe',
-    fontSize: 16,
-    marginTop: 8,
+
+    fontSize: fp(11),
+
+    marginTop: hp(0.6),
+
     fontFamily: 'PixelOperator',
+
+    textAlign: 'center',
   },
 
   star: {
@@ -100,8 +146,9 @@ const styles = StyleSheet.create({
   },
 
   avatar: {
-    width: 54,
-    height: 54,
+    width: wp(13),
+    height: wp(13),
+
     resizeMode: 'contain',
   },
 

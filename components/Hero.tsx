@@ -1,25 +1,69 @@
 import {
+    Dimensions,
+    PixelRatio,
     StyleSheet,
     Text,
     View,
 } from 'react-native';
 
+import MaskedView from '@react-native-masked-view/masked-view';
+import { LinearGradient } from 'expo-linear-gradient';
+
+const { width, height } = Dimensions.get('window');
+
+// RESPONSIVE FONT
+const rf = (size: number) => {
+  const scale = width / 390;
+  return Math.round(
+    PixelRatio.roundToNearestPixel(size * scale)
+  );
+};
+
 export default function Hero() {
 
   return (
+
     <View style={styles.hero}>
 
-      <Text style={styles.small}>
-        WELCOME BACK
-      </Text>
+      {/* TEXT WRAPPER */}
+      <View style={styles.textWrap}>
 
-      <Text style={styles.title}>
-        EXPLORER
-      </Text>
+        <Text style={styles.small}>
+          WELCOME BACK
+        </Text>
 
-      <Text style={styles.desc}>
-        Let's explore the universe together!
-      </Text>
+        {/* GRADIENT TITLE */}
+        <MaskedView
+          maskElement={
+            <Text style={styles.title}>
+              EXPLORER ✦
+            </Text>
+          }
+        >
+
+          <LinearGradient
+            colors={[
+              '#F0ABFC',
+              '#C084FC',
+              '#8B5CF6',
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
+
+            <Text style={[styles.title, { opacity: 0 }]}>
+              EXPLORER ✦
+            </Text>
+
+          </LinearGradient>
+
+        </MaskedView>
+
+        <Text style={styles.desc}>
+          Let's explore the universe together!
+        </Text>
+
+      </View>
 
     </View>
   );
@@ -28,29 +72,42 @@ export default function Hero() {
 const styles = StyleSheet.create({
 
   hero: {
-    marginTop: 50,
+    marginTop: height * 0.06,
+    paddingHorizontal: width * 0.06,
+  },
+
+  /* WRAPPER */
+  textWrap: {
+    marginTop: height * 0.04,
+    right: height * 0.02,
   },
 
   small: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: rf(15),
     fontFamily: 'Pixel',
   },
 
- title: {
-  color: '#C084FC',
-  fontSize: 42,
-  lineHeight: 42,
-  fontFamily: 'Pixel',
-  marginTop: 8,
+  title: {
+    fontSize: rf(24),
+    lineHeight: rf(40),
+    fontFamily: 'Pixel',
+    marginTop: height * 0.01,
+    /* GLOW */
+    textShadowColor: '#C084FC',
+    textShadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    textShadowRadius: 20,
+  },
 
-  textShadowColor: '#A855F7',
-  textShadowRadius: 18,
-},
   desc: {
-    color: '#e9d5ff',
-    marginTop: 10,
-    fontSize: 15,
+    color: '#ffffff',
+    fontSize: rf(17),
+    width: '90%',
+    lineHeight: rf(20),
+    fontFamily: 'PixelOperator',
   },
 
 });
