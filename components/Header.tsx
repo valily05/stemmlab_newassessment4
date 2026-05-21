@@ -8,6 +8,8 @@ import {
     View,
 } from 'react-native';
 
+import { Ionicons } from '@expo/vector-icons';
+
 const { width, height } = Dimensions.get('window');
 
 // RESPONSIVE HELPERS
@@ -30,6 +32,9 @@ const fp = (size: number) => {
 };
 
 export default function Header() {
+
+  // CHANGE THIS
+  const hasNotification = false;
 
   return (
 
@@ -71,11 +76,32 @@ export default function Header() {
 
       </View>
 
-      {/* PROFILE */}
-      <Image
-        source={require('../assets/images/miffy.png')}
-        style={styles.avatar}
-      />
+      {/* RIGHT SIDE */}
+      <View style={styles.rightSection}>
+
+        {/* NOTIFICATION */}
+        <TouchableOpacity style={styles.notifBtn}>
+
+          <Ionicons
+            name="notifications"
+            size={fp(24)}
+            color="#C084FC"
+          />
+
+          {/* ONLY SHOW IF THERE'S A NOTIFICATION */}
+          {hasNotification && (
+            <View style={styles.dot} />
+          )}
+
+        </TouchableOpacity>
+
+        {/* PROFILE */}
+        <Image
+          source={require('../assets/images/miffy.png')}
+          style={styles.avatar}
+        />
+
+      </View>
 
     </View>
 
@@ -114,30 +140,28 @@ const styles = StyleSheet.create({
   },
 
   menu: {
-    color: '#fff',
-
-    fontSize: fp(22),
+    color: '#8C4CD8',
+    fontSize: fp(29),
   },
 
   logo: {
     color: '#fff',
-
-    fontSize: fp(14),
-
+    fontSize: fp(18),
     fontFamily: 'Pixel',
-
     letterSpacing: 1,
+
+    right: fp(20),
   },
 
   subtitle: {
     color: '#ddd6fe',
+    fontSize: fp(16),
 
-    fontSize: fp(11),
+    right: fp(5),
 
     marginTop: hp(0.6),
 
     fontFamily: 'PixelOperator',
-
     textAlign: 'center',
   },
 
@@ -145,9 +169,48 @@ const styles = StyleSheet.create({
     color: '#EC588C',
   },
 
+  /* RIGHT SIDE */
+  rightSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    gap: wp(2.5),
+  },
+
+  /* NOTIFICATION BUTTON */
+  notifBtn: {
+    width: wp(11),
+    height: wp(11),
+
+    borderRadius: wp(5.5),
+
+    backgroundColor: '#130C36',
+
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    borderWidth: 2,
+    borderColor: '#301E6A',
+  },
+
+  /* RED NOTIFICATION DOT */
+  dot: {
+    position: 'absolute',
+
+    top: wp(2.6),
+    right: wp(2.8),
+
+    width: wp(1.9),
+    height: wp(1.9),
+
+    borderRadius: wp(1.25),
+
+    backgroundColor: '#FF4D6D',
+  },
+
   avatar: {
-    width: wp(13),
-    height: wp(13),
+    width: wp(12.5),
+    height: wp(12.5),
 
     resizeMode: 'contain',
   },

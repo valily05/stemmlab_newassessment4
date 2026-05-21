@@ -1,5 +1,7 @@
-
 import {
+    Dimensions,
+    Image,
+    PixelRatio,
     ScrollView,
     StyleSheet,
     Text,
@@ -10,6 +12,27 @@ import ActivityCard from './ActivityCard';
 
 import { activities } from '../data/activities';
 
+const { width, height } = Dimensions.get('window');
+
+/* RESPONSIVE HELPERS */
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+};
+
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+};
+
+const fp = (size: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width / 430) * size
+  );
+};
+
 export default function ActivitiesSection() {
 
   return (
@@ -18,9 +41,20 @@ export default function ActivitiesSection() {
       {/* HEADER */}
       <View style={styles.header}>
 
-        <Text style={styles.title}>
-          AVAILABLE ACTIVITIES 🧪
-        </Text>
+        {/* LEFT SIDE */}
+        <View style={styles.titleWrapper}>
+
+          <Text style={styles.title}>
+            Available Activities
+          </Text>
+
+          {/* POTION ICON */}
+          <Image
+            source={require('../assets/images/Group 163 (1).png')}
+            style={styles.icon}
+          />
+
+        </View>
 
         <Text style={styles.viewAll}>
           View all ›
@@ -52,7 +86,7 @@ export default function ActivitiesSection() {
 const styles = StyleSheet.create({
 
   container: {
-    marginTop: 28,
+    marginTop: hp(3),
   },
 
   header: {
@@ -60,18 +94,40 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    marginBottom: 18,
+    marginBottom: hp(2),
+  },
+
+  /* TITLE + ICON */
+  titleWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    gap: wp(4),
   },
 
   title: {
     color: '#fff',
-    fontSize: 16,
-    fontFamily: 'Pixel',
+
+    fontSize: fp(20),
+
+    fontFamily: 'PixelOperator',
+    left:fp(5),
+
+},
+
+  /* POTION ICON */
+  icon: {
+    width: wp(4),
+    height: wp(4),
+
+    resizeMode: 'contain',
   },
 
   viewAll: {
-    color: '#A855F7',
-    fontSize: 12,
+    color: '#894FD9',
+
+    fontSize: fp(16),
+
     fontFamily: 'PixelOperator',
   },
 

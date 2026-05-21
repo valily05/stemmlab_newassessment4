@@ -11,9 +11,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
-// RESPONSIVE FONT
+/* RESPONSIVE HELPERS */
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+};
+
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+};
+
 const rf = (size: number) => {
   const scale = width / 390;
+
   return Math.round(
     PixelRatio.roundToNearestPixel(size * scale)
   );
@@ -29,30 +42,41 @@ export default function Hero() {
       <View style={styles.textWrap}>
 
         <Text style={styles.small}>
-          WELCOME BACK
+          WELCOME BACK,
         </Text>
 
         {/* GRADIENT TITLE */}
         <MaskedView
           maskElement={
             <Text style={styles.title}>
-              EXPLORER ✦
+              EXPLORER
+              <Text style={styles.star}>
+                ✦
+              </Text>
             </Text>
           }
         >
 
           <LinearGradient
             colors={[
-              '#F0ABFC',
-              '#C084FC',
-              '#8B5CF6',
+              '#A061F5',
+              '#E879C6',
+              '#C95A9E',
             ]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
 
-            <Text style={[styles.title, { opacity: 0 }]}>
-              EXPLORER ✦
+            <Text
+              style={[
+                styles.title,
+                { opacity: 0 },
+              ]}
+            >
+              EXPLORER
+              <Text style={styles.star}>
+                ✦
+              </Text>
             </Text>
 
           </LinearGradient>
@@ -71,42 +95,72 @@ export default function Hero() {
 
 const styles = StyleSheet.create({
 
+  /* MAIN CONTAINER */
   hero: {
-    marginTop: height * 0.06,
-    paddingHorizontal: width * 0.06,
+    marginTop: hp(6),
+    paddingHorizontal: wp(6),
+    width: '100%',
   },
 
-  /* WRAPPER */
+  /* TEXT WRAPPER */
   textWrap: {
-    marginTop: height * 0.04,
-    right: height * 0.02,
+    marginTop: hp(2),
+    right: wp(4),
+top:wp(7),
+    width: '100%',
+    elevation:10,
   },
 
+  /* SMALL TEXT */
   small: {
     color: '#fff',
-    fontSize: rf(15),
+    fontSize: rf(20),
     fontFamily: 'Pixel',
+
+    marginBottom: hp(1),
   },
 
+  /* MAIN TITLE */
   title: {
-    fontSize: rf(24),
-    lineHeight: rf(40),
+    fontSize: rf(28),
+    lineHeight: rf(36),
+
     fontFamily: 'Pixel',
-    marginTop: height * 0.01,
+
+    marginTop: hp(0.3),
+
     /* GLOW */
-    textShadowColor: '#C084FC',
+    textShadowColor: '#9C4077',
     textShadowOffset: {
       width: 0,
       height: 0,
     },
-    textShadowRadius: 20,
+    textShadowRadius: wp(4),
   },
 
+  /* STAR */
+  star: {
+    marginLeft: wp(0.9),
+
+    textShadowColor: '#FF8BD6',
+    textShadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    textShadowRadius: wp(4),
+  },
+
+  /* DESCRIPTION */
   desc: {
     color: '#ffffff',
-    fontSize: rf(17),
-    width: '90%',
-    lineHeight: rf(20),
+
+    fontSize: rf(18),
+
+    width: '88%',
+
+    lineHeight: rf(23),
+
+
     fontFamily: 'PixelOperator',
   },
 

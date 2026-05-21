@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: '#04061B',
+    backgroundColor: '#07021B',
   },
 
   /* TOP HERO SECTION */
@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
   /* DARK OVERLAY */
   overlay: {
     paddingHorizontal: 16,
+  zIndex:2,
 
     paddingTop: 10,
 
@@ -115,7 +116,8 @@ gradient: {
   position: 'absolute',
   bottom: 0,
   width: '100%',
-  height: 100,
+  height: 106,
+  zIndex:1,
 },
 
   /* MAIN CONTENT */

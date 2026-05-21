@@ -1,7 +1,10 @@
 import React from 'react';
+
 import {
+    Dimensions,
+    Image,
+    PixelRatio,
     StyleSheet,
-    Text,
     TextInput,
     View,
 } from 'react-native';
@@ -11,56 +14,97 @@ type Props = {
   setSearch: React.Dispatch<React.SetStateAction<string>>;
 };
 
+const { width, height } = Dimensions.get('window');
+
+/* RESPONSIVE HELPERS */
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+};
+
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+};
+
+const fp = (size: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width / 430) * size
+  );
+};
+
 export default function SearchBar({
   search,
   setSearch,
 }: Props) {
 
   return (
+
     <View style={styles.container}>
 
-      <Text style={styles.icon}>
-        🔍
-      </Text>
+      {/* SEARCH ICON */}
+      <Image
+        source={require('../assets/images/Group 72.png')}
+        style={styles.searchIcon}
+      />
 
+      {/* INPUT */}
       <TextInput
         value={search}
         onChangeText={setSearch}
-        placeholder="Search activities..."
-        placeholderTextColor="#A78BFA"
+
+        placeholder="Search Activities , Achievements , Teams ..."
+        placeholderTextColor="#ffffff"
+
         style={styles.input}
       />
 
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
- container: {
-  marginTop: 28,
 
-  height: 54,
+  container: {
+    marginTop: hp(3.2),
 
-  borderRadius: 18,
+    height: hp(6.4),
 
-  backgroundColor: 'rgba(10,10,25,0.82)',
+    borderRadius: wp(4),
 
-  borderWidth: 1,
-  borderColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: '#0D0824',
 
-  flexDirection: 'row',
-  alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#2B1B59',
 
-  paddingHorizontal: 18,
-},
+    flexDirection: 'row',
+    alignItems: 'center',
 
-  icon: {
-    fontSize: 16,
+    paddingHorizontal: wp(4),
   },
 
+  /* SEARCH ICON */
+  searchIcon: {
+    width: wp(4.3),
+    height: wp(4.3),
+
+    resizeMode: 'contain',
+  },
+
+  /* INPUT */
   input: {
     flex: 1,
-    marginLeft: 10,
+
+    marginLeft: wp(3),
+
     color: '#fff',
+
+    fontFamily: 'PixelOperator',
+
+    fontSize: fp(16),
   },
+
 });
