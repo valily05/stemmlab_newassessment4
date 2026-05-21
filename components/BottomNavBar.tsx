@@ -1,5 +1,7 @@
-
 import {
+    Dimensions,
+    Image,
+    PixelRatio,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -8,32 +10,80 @@ import {
 
 import { router, usePathname } from 'expo-router';
 
+const { width, height } = Dimensions.get('window');
+
+/* RESPONSIVE HELPERS */
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+};
+
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+};
+
+const fp = (size: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width / 430) * size
+  );
+};
+
 export default function BottomNavbar() {
 
   const pathname = usePathname();
 
+  /* ACTIVE STATES */
+  const isHome =
+    pathname === '/' ||
+    pathname === '/(tabs)' ||
+    pathname.includes('/homescreen');
+
+  const isActivities =
+    pathname.includes('/activities');
+
+  const isLeaderboard =
+    pathname.includes('/leaderboard');
+
+  const isTeam =
+    pathname.includes('/team');
+
   return (
+
     <View style={styles.container}>
 
       {/* HOME */}
       <TouchableOpacity
         style={styles.item}
-        onPress={() => router.push('/')}
+        onPress={() => router.push('/homescreen')}
       >
 
-        <Text style={[
-          styles.icon,
-          pathname === '/' && styles.activeIcon
-        ]}>
-          🌍
-        </Text>
+        <Image
+          source={require('../assets/images/Group 74.png')}
+          style={[
+            styles.homeIcon,
+            isHome && styles.activeIconImage,
+          ]}
+        />
 
-        <Text style={[
-          styles.label,
-          pathname === '/' && styles.activeLabel
-        ]}>
-          HOME
-        </Text>
+        <View style={styles.labelWrapper}>
+
+          <Text
+            style={[
+              styles.label,
+              isHome && styles.activeLabel,
+            ]}
+          >
+            HOME
+          </Text>
+
+          {isHome && (
+            <View style={styles.underline} />
+          )}
+
+        </View>
 
       </TouchableOpacity>
 
@@ -43,19 +93,30 @@ export default function BottomNavbar() {
         onPress={() => router.push('/activities')}
       >
 
-        <Text style={[
-          styles.icon,
-          pathname.includes('/activities') && styles.activeIcon
-        ]}>
-          🚀
-        </Text>
+        <Image
+          source={require('../assets/images/Group 75.png')}
+          style={[
+            styles.activitiesIcon,
+            isActivities && styles.activeIconImage,
+          ]}
+        />
 
-        <Text style={[
-          styles.label,
-          pathname.includes('/activities') && styles.activeLabel
-        ]}>
-          ACTIVITIES
-        </Text>
+        <View style={styles.labelWrapper}>
+
+          <Text
+            style={[
+              styles.label,
+              isActivities && styles.activeLabel,
+            ]}
+          >
+            ACTIVITIES
+          </Text>
+
+          {isActivities && (
+            <View style={styles.underline} />
+          )}
+
+        </View>
 
       </TouchableOpacity>
 
@@ -65,19 +126,30 @@ export default function BottomNavbar() {
         onPress={() => router.push('/leaderboard')}
       >
 
-        <Text style={[
-          styles.icon,
-          pathname.includes('/leaderboard') && styles.activeIcon
-        ]}>
-          🏆
-        </Text>
+        <Image
+          source={require('../assets/images/Group 76.png')}
+          style={[
+            styles.leaderboardIcon,
+            isLeaderboard && styles.activeIconImage,
+          ]}
+        />
 
-        <Text style={[
-          styles.label,
-          pathname.includes('/leaderboard') && styles.activeLabel
-        ]}>
-          LEADERBOARD
-        </Text>
+        <View style={styles.labelWrapper}>
+
+          <Text
+            style={[
+              styles.label,
+              isLeaderboard && styles.activeLabel,
+            ]}
+          >
+            LEADERBOARD
+          </Text>
+
+          {isLeaderboard && (
+            <View style={styles.underline} />
+          )}
+
+        </View>
 
       </TouchableOpacity>
 
@@ -87,81 +159,173 @@ export default function BottomNavbar() {
         onPress={() => router.push('/team')}
       >
 
-        <Text style={[
-          styles.icon,
-          pathname.includes('/team') && styles.activeIcon
-        ]}>
-          👥
-        </Text>
+        <Image
+          source={require('../assets/images/Group 160.png')}
+          style={[
+            styles.teamIcon,
+            isTeam && styles.activeIconImage,
+          ]}
+        />
 
-        <Text style={[
-          styles.label,
-          pathname.includes('/team') && styles.activeLabel
-        ]}>
-          TEAM
-        </Text>
+        <View style={styles.labelWrapper}>
+
+          <Text
+            style={[
+              styles.label,
+              isTeam && styles.activeLabel,
+            ]}
+          >
+            TEAM
+          </Text>
+
+          {isTeam && (
+            <View style={styles.underline} />
+          )}
+
+        </View>
 
       </TouchableOpacity>
 
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
 
- container: {
-  position: 'absolute',
+  /* NAVBAR CONTAINER */
+  container: {
+    position: 'absolute',
 
-  bottom: 24,
-  left: 20,
-  right: 20,
+    bottom: hp(2.2),
 
-  height: 74,
+    alignSelf: 'center',
 
-  borderRadius: 28,
+    width: '93%',
 
-  backgroundColor: 'rgba(5,10,25,0.92)',
+    height: hp(9),
 
-  flexDirection: 'row',
-  justifyContent: 'space-around',
-  alignItems: 'center',
+    paddingVertical: hp(1),
+    paddingHorizontal: wp(2),
 
-  borderWidth: 1,
-  borderColor: 'rgba(255,255,255,0.05)',
+    borderRadius: wp(4.5),
 
-  shadowColor: '#000',
-  shadowOpacity: 0.3,
-  shadowRadius: 10,
-},
+    backgroundColor: 'rgba(58, 33, 102, 0.89)',
 
+    borderWidth: 1.2,
+    borderColor: 'rgba(185, 160, 255, 0.18)',
+
+    flexDirection: 'row',
+
+    justifyContent: 'space-around',
+
+    alignItems: 'center',
+
+    shadowColor: '#A855F7',
+    shadowOpacity: 0.28,
+    shadowRadius: 22,
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+
+    elevation: 15,
+  },
+
+  /* EACH ITEM */
   item: {
     alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  icon: {
-    fontSize: 24,
-    opacity: 0.5,
+  /* HOME ICON */
+  homeIcon: {
+    width: wp(8.3),
+    height: wp(8.3),
+
+    resizeMode: 'contain',
+
+    opacity: 0.72,
   },
 
-  activeIcon: {
+  /* ACTIVITIES ICON */
+  activitiesIcon: {
+    width: wp(8.4),
+    height: wp(8.4),
+
+    resizeMode: 'contain',
+
+    opacity: 0.72,
+  },
+
+  /* LEADERBOARD ICON */
+  leaderboardIcon: {
+    width: wp(8.7),
+    height: wp(8.7),
+
+    resizeMode: 'contain',
+
+    opacity: 0.72,
+  },
+
+  /* TEAM ICON */
+  teamIcon: {
+    width: wp(7.2),
+    height: wp(7.2),
+
+    resizeMode: 'contain',
+
+    opacity: 0.72,
+  },
+
+  /* ACTIVE ICON */
+  activeIconImage: {
     opacity: 1,
   },
 
+  /* LABEL WRAPPER */
+  labelWrapper: {
+    alignItems: 'center',
+
+    marginTop: hp(0.5),
+
+    paddingHorizontal: wp(1),
+  },
+
+  /* LABEL */
   label: {
-    color: '#64748B',
+    color: '#B2B0C7',
 
-    fontSize: 9,
-
-    marginTop: 6,
+    fontSize: fp(9),
 
     fontFamily: 'Pixel',
   },
 
+  /* ACTIVE LABEL */
   activeLabel: {
-    color: '#FACC15',
+    color: '#FFE66D',
 
-    textShadowColor: '#FACC15',
+    textShadowColor: '#FFE66D',
     textShadowRadius: 10,
+  },
+
+  /* UNDERLINE */
+  underline: {
+    marginTop: hp(0.5),
+
+    height: hp(0.25),
+
+    alignSelf: 'stretch',
+
+    borderRadius: wp(2),
+
+    backgroundColor: '#FACC15',
+
+    shadowColor: '#FACC15',
+
+    shadowOpacity: 1,
+
+    shadowRadius: 6,
   },
 
 });

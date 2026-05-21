@@ -1,6 +1,6 @@
-
 import {
     Image,
+    ImageBackground,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -15,30 +15,34 @@ export default function Banner() {
       style={styles.container}
     >
 
-      {/* LEFT */}
-      <View style={styles.left}>
+      {/* BACKGROUND */}
+      <ImageBackground
+        source={require('../assets/images/image 112.png')}
+        style={styles.bg}
+        imageStyle={styles.bgImage}
+      >
 
-        <Text style={styles.title}>
-          KEEP EXPLORING ✨
-        </Text>
+        {/* LEFT */}
+        <View style={styles.left}>
 
-        <Text style={styles.desc}>
-          Complete activities, earn badges and level up your team!
-        </Text>
-
-        <View style={styles.button}>
-          <Text style={styles.buttonText}>
-            START NOW
+          <Text style={styles.title}>
+            KEEP EXPLORING !
           </Text>
+
+          <Text style={styles.desc}>
+            Complete activities, earn points and level up your team!
+          </Text>
+
+
         </View>
 
-      </View>
+        {/* RIGHT */}
+        <Image
+          source={require('../assets/images/trophy.png')}
+          style={styles.image}
+        />
 
-      {/* RIGHT */}
-      <Image
-        source={require('../assets/images/trophy.png')}
-        style={styles.image}
-      />
+      </ImageBackground>
 
     </TouchableOpacity>
   );
@@ -46,75 +50,65 @@ export default function Banner() {
 
 const styles = StyleSheet.create({
 
-  container: {
-    marginTop: 28,
+container: {
+  marginTop: 20,
 
-    backgroundColor: 'rgba(76,29,149,0.55)',
+  borderRadius: 22,
 
-    borderRadius: 26,
+  overflow: 'hidden',
+},
 
-    padding: 20,
+bg: {
+  width: '100%',
 
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  height: 92,
 
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-  },
+  paddingHorizontal: 18,
 
-  left: {
-    flex: 1,
-  },
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+},
 
-  title: {
-    color: '#FACC15',
+bgImage: {
+  borderRadius: 22,
 
-    fontSize: 18,
+  resizeMode: 'stretch',
+},
 
-    fontFamily: 'Pixel',
+left: {
+  flex: 1,
 
-    marginBottom: 10,
-  },
+  justifyContent: 'center',
+},
 
-  desc: {
-    color: '#E9D5FF',
+title: {
+  color: '#FACC15',
 
-    fontSize: 12,
+  fontSize: 15,
 
-    lineHeight: 20,
+  fontFamily: 'Pixel',
 
-    fontFamily: 'PixelOperator',
+  marginBottom: 4,
+},
 
-    width: 190,
-  },
+desc: {
+  color: '#E9D5FF',
 
-  button: {
-    marginTop: 16,
+  fontSize: 10,
 
-    backgroundColor: '#FACC15',
+  lineHeight: 15,
 
-    alignSelf: 'flex-start',
+  fontFamily: 'PixelOperator',
 
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+  width: 160,
+},
 
-    borderRadius: 999,
-  },
+image: {
+  width: 72,
+  height: 72,
 
-  buttonText: {
-    color: '#000',
-
-    fontSize: 10,
-
-    fontFamily: 'Pixel',
-  },
-
-  image: {
-    width: 95,
-    height: 95,
-
-    resizeMode: 'contain',
-  },
+  resizeMode: 'contain',
+},
 
 });
