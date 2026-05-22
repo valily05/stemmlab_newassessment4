@@ -1,29 +1,42 @@
 import {
-    Image,
-    ImageBackground,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  ImageBackground,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
-export default function Banner() {
+const { width } = Dimensions.get('window');
 
+// responsive scale
+const scale = (size: number) => {
+  const baseWidth = 390;
+  return PixelRatio.roundToNearestPixel((width / baseWidth) * size);
+};
+
+export default function Banner() {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       style={styles.container}
     >
-
-      {/* BACKGROUND */}
       <ImageBackground
         source={require('../assets/images/image 112.png')}
         style={styles.bg}
         imageStyle={styles.bgImage}
       >
 
-        {/* LEFT */}
-        <View style={styles.left}>
+        {/* TROPHY LEFT */}
+        <Image
+          source={require('../assets/images/trophy.png')}
+          style={styles.image}
+        />
+
+        {/* TEXT RIGHT */}
+        <View style={styles.right}>
 
           <Text style={styles.title}>
             KEEP EXPLORING !
@@ -33,82 +46,79 @@ export default function Banner() {
             Complete activities, earn points and level up your team!
           </Text>
 
-
         </View>
 
-        {/* RIGHT */}
-        <Image
-          source={require('../assets/images/trophy.png')}
-          style={styles.image}
-        />
-
       </ImageBackground>
-
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
 
-container: {
-  marginTop: 20,
+  container: {
+    marginTop: scale(20),
 
-  borderRadius: 22,
+    borderRadius: scale(14),
 
-  overflow: 'hidden',
-},
+    overflow: 'hidden',
+    width:'110%',
+  },
 
-bg: {
-  width: '100%',
+  bg: {
+    width: '100%',
 
-  height: 92,
+    height: scale(105),
 
-  paddingHorizontal: 18,
+    paddingHorizontal: scale(20),
 
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-},
+    flexDirection: 'row',
+    alignItems: 'center',
 
-bgImage: {
-  borderRadius: 22,
+    gap: scale(14),
+  },
 
-  resizeMode: 'stretch',
-},
+  bgImage: {
+    borderRadius: scale(14),
 
-left: {
-  flex: 1,
+    resizeMode: 'stretch',
+    
+    borderWidth:scale(2.5),
+    borderColor:'#2B1B59',
+  },
 
-  justifyContent: 'center',
-},
+  right: {
+    flex: 1,
 
-title: {
-  color: '#FACC15',
+    justifyContent: 'center',
+  },
 
-  fontSize: 15,
+  title: {
+    color: '#FACC15',
 
-  fontFamily: 'Pixel',
+    fontSize: scale(14),
 
-  marginBottom: 4,
-},
+    fontFamily: 'Pixel',
 
-desc: {
-  color: '#E9D5FF',
+    marginBottom: scale(5),
+  },
 
-  fontSize: 10,
+  desc: {
+    color: '#E9D5FF',
 
-  lineHeight: 15,
+    fontSize: scale(13),
 
-  fontFamily: 'PixelOperator',
+    lineHeight: scale(15),
 
-  width: 160,
-},
+    fontFamily: 'PixelOperator',
+    width:scale(220),
+  },
 
-image: {
-  width: 72,
-  height: 72,
+  image: {
+    width: scale(77),
+    height: scale(77),
+    right:scale(4),
+    resizeMode: 'contain',
 
-  resizeMode: 'contain',
-},
+  },
 
 });
