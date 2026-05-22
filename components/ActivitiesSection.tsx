@@ -1,11 +1,11 @@
 import {
-    Dimensions,
-    Image,
-    PixelRatio,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  Image,
+  PixelRatio,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 import ActivityCard from './ActivityCard';
@@ -13,6 +13,11 @@ import ActivityCard from './ActivityCard';
 import { activities } from '../data/activities';
 
 const { width, height } = Dimensions.get('window');
+
+/* TYPES */
+type Props = {
+  userPoints: number;
+};
 
 /* RESPONSIVE HELPERS */
 const wp = (percentage: number) => {
@@ -33,7 +38,15 @@ const fp = (size: number) => {
   );
 };
 
-export default function ActivitiesSection() {
+export default function ActivitiesSection({
+  userPoints,
+}: Props) {
+
+  // ADD LOCK STATE DYNAMICALLY
+  const activitiesWithLock = activities.map(activity => ({
+    ...activity,
+    locked: userPoints < activity.pointsRequired,
+  }));
 
   return (
     <View style={styles.container}>
@@ -68,7 +81,7 @@ export default function ActivitiesSection() {
         showsHorizontalScrollIndicator={false}
       >
 
-        {activities.map((item) => (
+        {activitiesWithLock.map((item) => (
 
           <ActivityCard
             key={item.id}
@@ -111,9 +124,9 @@ const styles = StyleSheet.create({
     fontSize: fp(20),
 
     fontFamily: 'PixelOperator',
-    left:fp(5),
 
-},
+    left: fp(5),
+  },
 
   /* POTION ICON */
   icon: {
