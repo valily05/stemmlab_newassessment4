@@ -7,11 +7,13 @@ import ActivityChallengeCard from './ActivityChallengeCard';
 
 type Props = {
   search: string;
+  selectedCategory: string;
 };
 
 export default function ActivitiesResults({
   search,
-}: Props) {
+  selectedCategory,
+}: Props){
 
   /* ACTIVITIES DATA */
   const activities = [
@@ -79,35 +81,44 @@ export default function ActivitiesResults({
 
   ];
 
-  /* FILTERED RESULTS */
-  const filteredActivities = activities.filter(
-    (activity) => {
+const filteredActivities = activities.filter(
+  (activity) => {
 
-      const query = search.trim().toLowerCase();
+    const query = search.trim().toLowerCase();
 
-      if (!query) return true;
+    const matchesSearch =
 
-      return (
+      !query
 
-        activity.title
-          .toLowerCase()
-          .includes(query)
+      ||
 
-        ||
+      activity.title
+        .toLowerCase()
+        .includes(query)
 
-        activity.category
-          .toLowerCase()
-          .includes(query)
+      ||
 
-        ||
+      activity.category
+        .toLowerCase()
+        .includes(query)
 
-        activity.description
-          .toLowerCase()
-          .includes(query)
+      ||
 
-      );
-    }
-  );
+      activity.description
+        .toLowerCase()
+        .includes(query);
+
+    const matchesCategory =
+
+      selectedCategory === 'ALL'
+
+      ||
+
+      activity.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  }
+);
 
   return (
 
