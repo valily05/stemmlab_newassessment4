@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 
 import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { router } from 'expo-router';
@@ -13,10 +13,22 @@ import { router } from 'expo-router';
 import { activities } from '../data/activities';
 import { teams } from '../data/team';
 
+type Props = {
+  search: string;
+
+  showActivities?: boolean;
+  showTeams?: boolean;
+};
+
 export default function SearchResults({
   search,
-}: any) {
 
+  showActivities = true,
+  showTeams = true,
+
+}: Props) {
+
+  /* ACTIVITY RESULTS */
   const activityResults = useMemo(() => {
 
     if (!search.trim()) return [];
@@ -35,6 +47,7 @@ export default function SearchResults({
 
   }, [search]);
 
+  /* TEAM RESULTS */
   const teamResults = useMemo(() => {
 
     if (!search.trim()) return [];
@@ -50,11 +63,13 @@ export default function SearchResults({
   if (!search.length) return null;
 
   return (
+
     <View style={styles.container}>
 
       {/* ACTIVITIES */}
-      {activityResults.length > 0 && (
+      {showActivities && activityResults.length > 0 && (
         <>
+
           <Text style={styles.title}>
             ACTIVITIES
           </Text>
@@ -87,9 +102,11 @@ export default function SearchResults({
                       key={index}
                       style={styles.tag}
                     >
+
                       <Text style={styles.tagText}>
                         {tag}
                       </Text>
+
                     </View>
 
                   ))}
@@ -101,12 +118,14 @@ export default function SearchResults({
             </TouchableOpacity>
 
           ))}
+
         </>
       )}
 
       {/* TEAMS */}
-      {teamResults.length > 0 && (
+      {showTeams && teamResults.length > 0 && (
         <>
+
           <Text style={styles.title}>
             TEAMS
           </Text>
@@ -126,10 +145,12 @@ export default function SearchResults({
             </TouchableOpacity>
 
           ))}
+
         </>
       )}
 
     </View>
+
   );
 }
 

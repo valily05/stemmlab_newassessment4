@@ -5,7 +5,6 @@ import {
   ImageBackground,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 
@@ -39,7 +38,7 @@ export default function HomeScreen() {
 
         {/* HERO IMAGE SECTION */}
         <ImageBackground
-          source={require('../../assets/images/spacebg.png')}
+          source={require('../../assets/images/spacebg1.png')}
           style={styles.topSection}
           resizeMode="cover"
         >
@@ -51,57 +50,32 @@ export default function HomeScreen() {
 
             <Hero />
 
-            {/* POINTS CARD */}
-            <View style={styles.pointsCard}>
-
-              <View>
-
-                <Text style={styles.pointsLabel}>
-                  TEAM POINTS
-                </Text>
-
-                <Text style={styles.pointsText}>
-                  ⭐ {userPoints}
-                </Text>
-
-              </View>
-
-              <View style={styles.levelBox}>
-
-                <Text style={styles.levelLabel}>
-                  LEVEL
-                </Text>
-
-                <Text style={styles.levelText}>
-                  {userLevel}
-                </Text>
-
-              </View>
-
-            </View>
+            {/* POINTS CARD HIDDEN */}
 
           </View>
 
-          {/* BLEND GRADIENT */}
-          <LinearGradient
-            colors={[
-              'rgba(0,0,0,0)',
-              'rgba(0,0,0,0.35)',
-              'rgba(4,6,27,0.85)',
-              '#04061B',
-            ]}
-            style={styles.gradient}
-          />
+        <LinearGradient
+  colors={[
+    'rgba(4,6,27,0)',
+    'rgba(4,6,27,0.35)',
+    'rgba(4,6,27,0.75)',
+    'rgba(4,6,27,0.96)',
+    '#04061B',
+  ]}
+  locations={[0, 0.35, 0.6, 0.82, 1]}
+  style={styles.gradient}
+/>
 
         </ImageBackground>
 
         {/* MAIN CONTENT */}
         <View style={styles.content}>
 
-          <SearchBar
-            search={search}
-            setSearch={setSearch}
-          />
+        <SearchBar
+  search={search}
+  setSearch={setSearch}
+  placeholder="Search Activities , Achievements , Teams ..."
+/>
 
           <SearchResults search={search} />
 
@@ -144,75 +118,8 @@ const styles = StyleSheet.create({
 
     zIndex: 2,
 
-    paddingTop: 10,
+    paddingTop: 12,
 
-    paddingBottom: 60,
-  },
-
-  /* POINTS CARD */
-  pointsCard: {
-    marginTop: 18,
-
-    backgroundColor: 'rgba(255,255,255,0.08)',
-
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.12)',
-
-    borderRadius: 22,
-
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-
-  pointsLabel: {
-    color: '#C4B5FD',
-
-    fontSize: 11,
-
-    fontFamily: 'PixelOperator',
-  },
-
-  pointsText: {
-    color: '#FACC15',
-
-    fontSize: 28,
-
-    marginTop: 4,
-
-    fontFamily: 'Pixel',
-  },
-
-  levelBox: {
-    alignItems: 'center',
-
-    backgroundColor: '#9C4077',
-
-    borderRadius: 16,
-
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-  },
-
-  levelLabel: {
-    color: '#FBCFE8',
-
-    fontSize: 10,
-
-    marginBottom: 2,
-
-    fontFamily: 'PixelOperator',
-  },
-
-  levelText: {
-    color: '#FFFFFF',
-
-    fontSize: 24,
-
-    fontFamily: 'Pixel',
   },
 
   gradient: {
@@ -220,7 +127,7 @@ const styles = StyleSheet.create({
     bottom: 0,
 
     width: '100%',
-    height: 106,
+    height: 180,
 
     zIndex: 1,
   },
@@ -229,7 +136,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
 
-    marginTop: -40,
+    marginTop: -110,
   },
 
 });

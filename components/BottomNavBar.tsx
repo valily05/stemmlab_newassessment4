@@ -1,11 +1,11 @@
 import {
-    Dimensions,
-    Image,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { router, usePathname } from 'expo-router';
@@ -37,8 +37,6 @@ export default function BottomNavbar() {
 
   /* ACTIVE STATES */
   const isHome =
-    pathname === '/' ||
-    pathname === '/(tabs)' ||
     pathname.includes('/homescreen');
 
   const isActivities =
@@ -57,7 +55,9 @@ export default function BottomNavbar() {
       {/* HOME */}
       <TouchableOpacity
         style={styles.item}
-        onPress={() => router.push('/homescreen')}
+        onPress={() =>
+          router.push('/(tabs)/homescreen')
+        }
       >
 
         <Image
@@ -90,7 +90,9 @@ export default function BottomNavbar() {
       {/* ACTIVITIES */}
       <TouchableOpacity
         style={styles.item}
-        onPress={() => router.push('/activities')}
+        onPress={() =>
+          router.push('/(tabs)/activities')
+        }
       >
 
         <Image
@@ -123,7 +125,9 @@ export default function BottomNavbar() {
       {/* LEADERBOARD */}
       <TouchableOpacity
         style={styles.item}
-        onPress={() => router.push('/leaderboard')}
+        onPress={() =>
+          router.push('/(tabs)/leaderboard')
+        }
       >
 
         <Image
@@ -156,7 +160,9 @@ export default function BottomNavbar() {
       {/* TEAM */}
       <TouchableOpacity
         style={styles.item}
-        onPress={() => router.push('/team')}
+        onPress={() =>
+          router.push('/(tabs)/team')
+        }
       >
 
         <Image

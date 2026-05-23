@@ -1,5 +1,5 @@
+
 import {
-    Image,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -8,114 +8,55 @@ import {
 
 export default function CategoryTabs() {
   return (
-
     <View style={styles.tabs}>
-
-      {/* ALL */}
       <TouchableOpacity style={styles.activeTab}>
-
-        <Text style={styles.activeText}>
-          All
-        </Text>
-
+        <Text style={styles.activeText}>All</Text>
       </TouchableOpacity>
 
-      {/* ENGINEERING */}
       <TouchableOpacity style={styles.tab}>
-
-        <Text style={styles.tabText}>
-          Engineering
-        </Text>
-
-        <Image
-          source={require('../assets/images/engineering.png')}
-          style={styles.icon}
-        />
-
+        <Text style={styles.tabText}>Engineering ⚒️</Text>
       </TouchableOpacity>
 
-      {/* HEALTH */}
       <TouchableOpacity style={styles.tab}>
-
-        <Text style={styles.tabText}>
-          Health
-        </Text>
-
-        <Image
-          source={require('../assets/images/health.png')}
-          style={styles.icon}
-        />
-
+        <Text style={styles.tabText}>Health ⚕️</Text>
       </TouchableOpacity>
-
     </View>
-
   );
 }
 
 const styles = StyleSheet.create({
-
   tabs: {
     flexDirection: 'row',
-
     gap: 10,
-
     marginTop: 30,
   },
 
-  /* ACTIVE TAB */
   activeTab: {
     backgroundColor: '#6D28D9',
-
     paddingHorizontal: 22,
     paddingVertical: 12,
-
     borderRadius: 12,
-
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 
   activeText: {
     color: '#fff',
+    fontFamily:'PixelOperator',
 
-    fontWeight: '700',
 
-    fontFamily: 'Pixel',
   },
 
-  /* NORMAL TAB */
   tab: {
     borderWidth: 1,
-
     borderColor: '#6D28D9',
-
     paddingHorizontal: 18,
     paddingVertical: 12,
-
     borderRadius: 12,
-
-    flexDirection: 'row',
-
-    alignItems: 'center',
-
-    gap: 8,
   },
 
   tabText: {
     color: '#fff',
-
     opacity: 0.85,
+    fontFamily:'PixelOperator',
 
-    fontFamily: 'PixelOperator',
   },
-
-  /* ICON */
-  icon: {
-    width: 18,
-    height: 18,
-
-    resizeMode: 'contain',
-  },
-
 });

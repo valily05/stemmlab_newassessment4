@@ -1,10 +1,10 @@
 
 import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { router } from 'expo-router';
@@ -20,14 +20,7 @@ export default function ActivityCard({
       onPress={() => router.push(item.route)}
     >
 
-      {/* LOCKED */}
-      {item.locked && (
-        <View style={styles.lockedBadge}>
-          <Text style={styles.lockedText}>
-            🔒 LOCKED
-          </Text>
-        </View>
-      )}
+    
 
       {/* IMAGE */}
       <Image
@@ -65,45 +58,19 @@ export default function ActivityCard({
 const styles = StyleSheet.create({
 
 card: {
-  width: 155,
-
+  width: 150,
   backgroundColor: '#120C2E',
-
   borderRadius: 24,
-
-  padding: 16,
-
+  padding: 10,
   marginRight: 14,
-
   borderWidth: 1,
   borderColor: '#2B1B59',
-
   overflow: 'hidden',
 },
 
-  lockedBadge: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-
-    backgroundColor: 'rgba(239,68,68,0.2)',
-
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-
-    borderRadius: 999,
-
-    zIndex: 10,
-  },
-
-  lockedText: {
-    color: '#FCA5A5',
-    fontSize: 9,
-    fontFamily: 'PixelOperator',
-  },
 image: {
-  width: 62,
-  height: 62,
+  width: 120,
+  height: 120,
 
   resizeMode: 'contain',
 
@@ -121,14 +88,14 @@ title: {
 
   lineHeight: 16,
 
-  marginTop: 18,
+  marginTop: 10,
 },
 
   tagsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
 
-    marginTop: 10,
+    marginTop: 0,
   },
 
 tag: {

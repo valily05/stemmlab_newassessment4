@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 
     resizeMode: 'stretch',
     
-    borderWidth:scale(2.5),
+    borderWidth:scale(2),
     borderColor:'#2B1B59',
   },
 
