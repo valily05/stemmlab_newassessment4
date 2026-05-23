@@ -64,8 +64,20 @@ export default function ActivityChallengeCard({
       ]}
     >
 
+      {/* OUTER PIXEL BLOCKS */}
+      <View style={styles.topBlock} />
+      <View style={styles.bottomBlock} />
+
+      <View style={styles.leftBlock} />
+      <View style={styles.rightBlock} />
+
+      {/* INNER CUT BLOCKS */}
+      <View style={styles.topInnerBlock} />
+      <View style={styles.bottomInnerBlock} />
+
       {/* NEW BADGE */}
       {isNew && (
+
         <View style={styles.newBadge}>
 
           <Text style={styles.newText}>
@@ -73,6 +85,7 @@ export default function ActivityChallengeCard({
           </Text>
 
         </View>
+
       )}
 
       {/* IMAGE */}
@@ -146,25 +159,109 @@ const styles = StyleSheet.create({
 
   /* CARD */
   card: {
-    marginTop: hp(2.2),
+    marginTop: hp(2),
 
-    padding: wp(3.5),
-
-    borderRadius: wp(5),
+    backgroundColor: '#12052F',
 
     borderWidth: 2,
-    borderColor: '#6A3CBC',
+    borderColor: '#7B4DFF',
 
-    backgroundColor: 'rgba(20, 10, 45, 0.95)',
+    padding: wp(4),
 
     flexDirection: 'row',
 
     position: 'relative',
+
+    overflow: 'visible',
   },
 
-  /* LOCKED CARD */
+  /* LOCKED */
   lockedCard: {
     opacity: 0.55,
+  },
+
+  /* OUTER PIXEL BLOCKS */
+  topBlock: {
+    position: 'absolute',
+
+    top: -2,
+
+    left: '12%',
+
+    width: 18,
+    height: 6,
+
+    backgroundColor: '#7B4DFF',
+  },
+
+  bottomBlock: {
+    position: 'absolute',
+
+    bottom: -2,
+
+    right: '12%',
+
+    width: 18,
+    height: 6,
+
+    backgroundColor: '#7B4DFF',
+  },
+
+  leftBlock: {
+    position: 'absolute',
+
+    left: -2,
+
+    top: '22%',
+
+    width: 6,
+    height: 18,
+
+    backgroundColor: '#7B4DFF',
+  },
+
+  rightBlock: {
+    position: 'absolute',
+
+    right: -2,
+
+    bottom: '22%',
+
+    width: 6,
+    height: 18,
+
+    backgroundColor: '#7B4DFF',
+  },
+
+  /* INNER CUT BLOCKS */
+  topInnerBlock: {
+    position: 'absolute',
+
+    top: 90,
+
+    left: '13.5%',
+
+    width: 140,
+    height: 400,
+
+    backgroundColor: '#ffffff',
+
+    zIndex: 5,
+  },
+
+  bottomInnerBlock: {
+    position: 'absolute',
+
+    bottom: 0,
+
+    right: '12.5%',
+
+    width: 14,
+    height: 4,
+
+    backgroundColor: '#12052F',
+
+    zIndex: 5,
   },
 
   /* NEW BADGE */
@@ -179,8 +276,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(3),
     paddingVertical: hp(0.5),
 
-    borderRadius: wp(2),
-
     zIndex: 99,
   },
 
@@ -191,23 +286,23 @@ const styles = StyleSheet.create({
     fontSize: fp(10),
 
     fontFamily: 'Pixel',
-
-    letterSpacing: 1,
   },
 
   /* IMAGE */
   cardImage: {
-    width: wp(22),
-    height: wp(22),
+    width: wp(20),
+    height: wp(20),
 
     resizeMode: 'contain',
+
+    marginTop: hp(0.5),
   },
 
   /* CONTENT */
   cardContent: {
     flex: 1,
 
-    marginLeft: wp(3),
+    marginLeft: wp(4),
   },
 
   /* TITLE */
@@ -218,7 +313,9 @@ const styles = StyleSheet.create({
 
     fontFamily: 'Pixel',
 
-    lineHeight: hp(2.2),
+    lineHeight: hp(2.4),
+
+    maxWidth: '92%',
   },
 
   /* DESCRIPTION */
@@ -274,12 +371,13 @@ const styles = StyleSheet.create({
 
   /* BUTTON */
   startBtn: {
-    paddingHorizontal: wp(4),
-    paddingVertical: hp(0.8),
-
-    borderRadius: wp(2.5),
-
     backgroundColor: '#FF5CA8',
+
+    paddingHorizontal: wp(5),
+    paddingVertical: hp(0.9),
+
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   /* LOCKED BUTTON */
