@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   Dimensions,
   Image,
@@ -52,8 +54,10 @@ export default function ActivityChallengeCard({
   buttonText,
   image,
   isNew,
- locked,
+  locked,
 }: Props) {
+
+  const [saved, setSaved] = useState(false);
 
   return (
 
@@ -78,16 +82,33 @@ export default function ActivityChallengeCard({
       <View style={styles.topInnerBlockk} />
       <View style={styles.bottomInnerBlockk} />
 
-      {/* NEW BADGE */}
-      {isNew && (
+      {/* NEW BADGE OR BOOKMARK */}
+      {isNew && !locked ? (
 
-        <View style={styles.newBadge}>
+        <Image
+          source={require('../assets/images/new-badge.png')}
+          style={styles.newBadgeImage}
+        />
 
-          <Text style={styles.newText}>
-            NEW
-          </Text>
+      ) : (
 
-        </View>
+        !locked && (
+          <TouchableOpacity
+            style={styles.bookmarkBtn}
+            onPress={() => setSaved(!saved)}
+          >
+
+            <Image
+              source={
+                saved
+                  ? require('../assets/images/bookmark.png')
+                  : require('../assets/images/bookmark-outline.png')
+              }
+              style={styles.bookmarkImage}
+            />
+
+          </TouchableOpacity>
+        )
 
       )}
 
@@ -110,10 +131,44 @@ export default function ActivityChallengeCard({
           {description}
         </Text>
 
-        {/* CATEGORY */}
-        <Text style={styles.category}>
-          {category}
-        </Text>
+        {/* CATEGORY TAG */}
+        <View
+          style={[
+            styles.categoryTag,
+
+            category.toLowerCase() === 'engineering' &&
+              styles.engineeringTag,
+
+            category.toLowerCase() === 'environment' &&
+              styles.environmentTag,
+
+            category.toLowerCase() === 'science' &&
+              styles.scienceTag,
+
+            category.toLowerCase() === 'technology' &&
+              styles.technologyTag,
+          ]}
+        >
+          <Text
+            style={[
+              styles.categoryText,
+
+              category.toLowerCase() === 'engineering' &&
+                styles.engineeringText,
+
+              category.toLowerCase() === 'environment' &&
+                styles.environmentText,
+
+              category.toLowerCase() === 'science' &&
+                styles.scienceText,
+
+              category.toLowerCase() === 'technology' &&
+                styles.technologyText,
+            ]}
+          >
+            {category}
+          </Text>
+        </View>
 
         {/* BOTTOM */}
         <View style={styles.bottomRow}>
@@ -133,6 +188,9 @@ export default function ActivityChallengeCard({
               </Text>
             </View>
 
+            {/* DIVIDER */}
+            <View style={styles.statDivider} />
+
             {/* DURATION */}
             <View style={styles.statItem}>
               <Image
@@ -145,13 +203,14 @@ export default function ActivityChallengeCard({
               </Text>
             </View>
 
+            {/* DIVIDER */}
+            <View style={styles.statDivider} />
+
             {/* DIFFICULTY */}
             <View style={styles.statItem}>
 
               <Image
                 source={require('../assets/images/chart.png')}
-
-
                 style={[
                   styles.statIcon,
 
@@ -319,22 +378,39 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
 
-  /* NEW BADGE */
-  newBadge: {
+  /* NEW BADGE IMAGE */
+  newBadgeImage: {
     position: 'absolute',
-    top: -hp(1),
-    right: wp(4),
-    backgroundColor: '#48F5D2',
-    paddingHorizontal: wp(3),
-    paddingVertical: hp(0.5),
-    zIndex: 99,
+
+    top: -hp(1.3),
+    right: wp(2.8),
+
+    width: wp(14),
+    height: hp(3),
+
+    resizeMode: 'contain',
+
+    zIndex: 100,
   },
 
-  /* NEW TEXT */
-  newText: {
-    color: '#111',
-    fontSize: fp(10),
-    fontFamily: 'Pixel',
+  /* BOOKMARK */
+  bookmarkBtn: {
+    position: 'absolute',
+
+    top: hp(1.2),
+    right: wp(3),
+
+    zIndex: 99,
+
+    alignItems: 'center',
+  },
+
+  /* BOOKMARK IMAGE */
+  bookmarkImage: {
+    width: wp(5.5),
+    height: wp(5.5),
+
+    resizeMode: 'contain',
   },
 
   /* IMAGE */
@@ -349,6 +425,7 @@ const styles = StyleSheet.create({
   /* CONTENT */
   cardContent: {
     flex: 1,
+    right: 3,
   },
 
   /* TITLE */
@@ -369,15 +446,72 @@ const styles = StyleSheet.create({
     fontFamily: 'PixelOperator',
   },
 
-  /* CATEGORY */
-  category: {
+  /* CATEGORY TAG */
+  categoryTag: {
     marginTop: hp(1),
 
-    color: '#FFD54A',
+    alignSelf: 'flex-start',
+
+    paddingHorizontal: wp(1.2),
+    paddingVertical: hp(0.6),
+
+    borderWidth: 2,
+
+    backgroundColor: '#1A1035',
+  },
+
+  /* CATEGORY TEXT */
+  categoryText: {
+    color: '#fff',
 
     fontSize: fp(8),
 
     fontFamily: 'Pixel',
+  },
+
+  /* ENGINEERING */
+  engineeringTag: {
+    borderColor: '#F5730C',
+    backgroundColor: '#150F31',
+    borderRadius: 4,
+  },
+
+  engineeringText: {
+    color: '#F5730C',
+  },
+
+  /* ENVIRONMENT */
+  environmentTag: {
+    borderColor: '#60BB3F',
+    backgroundColor: '#150F31',
+    borderRadius: 4,
+  },
+
+  environmentText: {
+    color: '#60BB3F',
+  },
+
+  /* SCIENCE */
+  scienceTag: {
+    borderColor: '#59C8FF',
+    backgroundColor: '#150F31',
+    borderRadius: 4,
+  },
+
+  scienceText: {
+    color: '#59C8FF',
+  },
+
+  /* TECHNOLOGY */
+  technologyTag: {
+    borderColor: '#D176FF',
+    backgroundColor: '#150F31',
+    borderRadius: 4,
+  },
+
+  technologyText: {
+    color: '#D176FF',
+    padding: 2,
   },
 
   /* BOTTOM */
@@ -395,14 +529,31 @@ const styles = StyleSheet.create({
   stats: {
     flexDirection: 'row',
 
-    gap: wp(2),
+    alignItems: 'center',
+
+    gap: wp(1),
   },
 
   /* STAT ITEM */
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: wp(1),
+    gap: wp(2),
+  },
+
+  /* STAT DIVIDER */
+  statDivider: {
+    width: 1,
+
+    height: hp(1.6),
+
+    backgroundColor: '#FFFF',
+
+    marginHorizontal: wp(0.8),
+
+    alignSelf: 'center',
+
+    opacity: 1,
   },
 
   /* STAT ICON */
@@ -416,7 +567,7 @@ const styles = StyleSheet.create({
   stat: {
     color: '#F2E7FF',
 
-    fontSize: fp(15),
+    fontSize: fp(16),
 
     fontFamily: 'PixelOperator',
   },
@@ -455,10 +606,12 @@ const styles = StyleSheet.create({
   startBtn: {
     backgroundColor: '#FF5CA8',
 
-    paddingHorizontal: wp(5),
+    paddingHorizontal: wp(3),
     paddingVertical: hp(0.9),
 
     borderRadius: 5,
+
+    left: 7,
 
     alignItems: 'center',
     justifyContent: 'center',
@@ -473,7 +626,7 @@ const styles = StyleSheet.create({
   startText: {
     color: '#fff',
 
-    fontSize: fp(10),
+    fontSize: fp(9),
 
     fontFamily: 'Pixel',
   },
