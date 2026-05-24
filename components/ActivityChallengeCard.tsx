@@ -124,7 +124,7 @@ export default function ActivityChallengeCard({
             {/* RATING */}
             <View style={styles.statItem}>
               <Image
-                source={require('../../assets/images/star.png')}
+                source={require('../assets/images/star.png')}
                 style={styles.statIcon}
               />
 
@@ -136,7 +136,7 @@ export default function ActivityChallengeCard({
             {/* DURATION */}
             <View style={styles.statItem}>
               <Image
-                source={require('../../assets/images/time.png')}
+                source={require('../assets/images/time.png')}
                 style={styles.statIcon}
               />
 
@@ -149,7 +149,9 @@ export default function ActivityChallengeCard({
             <View style={styles.statItem}>
 
               <Image
-                source={require('../../assets/images/chart.png')}
+                source={require('../assets/images/chart.png')}
+
+
                 style={[
                   styles.statIcon,
 
