@@ -1,11 +1,11 @@
 import {
-    Dimensions,
-    Image,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 type Props = {
@@ -52,7 +52,7 @@ export default function ActivityChallengeCard({
   buttonText,
   image,
   isNew,
-  locked,
+ locked,
 }: Props) {
 
   return (
@@ -74,6 +74,9 @@ export default function ActivityChallengeCard({
       {/* INNER CUT BLOCKS */}
       <View style={styles.topInnerBlock} />
       <View style={styles.bottomInnerBlock} />
+
+      <View style={styles.topInnerBlockk} />
+      <View style={styles.bottomInnerBlockk} />
 
       {/* NEW BADGE */}
       {isNew && (
@@ -118,17 +121,57 @@ export default function ActivityChallengeCard({
           {/* STATS */}
           <View style={styles.stats}>
 
-            <Text style={styles.stat}>
-              ⭐ {rating}
-            </Text>
+            {/* RATING */}
+            <View style={styles.statItem}>
+              <Image
+                source={require('../../assets/images/star.png')}
+                style={styles.statIcon}
+              />
 
-            <Text style={styles.stat}>
-              ⏱ {duration}
-            </Text>
+              <Text style={styles.stat}>
+                {rating}
+              </Text>
+            </View>
 
-            <Text style={styles.stat}>
-              📊 {difficulty}
-            </Text>
+            {/* DURATION */}
+            <View style={styles.statItem}>
+              <Image
+                source={require('../../assets/images/time.png')}
+                style={styles.statIcon}
+              />
+
+              <Text style={styles.stat}>
+                {duration}
+              </Text>
+            </View>
+
+            {/* DIFFICULTY */}
+            <View style={styles.statItem}>
+
+              <Image
+                source={require('../../assets/images/chart.png')}
+                style={[
+                  styles.statIcon,
+
+                  difficulty === 'Easy' && styles.easyIcon,
+                  difficulty === 'Medium' && styles.mediumIcon,
+                  difficulty === 'Hard' && styles.hardIcon,
+                ]}
+              />
+
+              <Text
+                style={[
+                  styles.stat,
+
+                  difficulty === 'Easy' && styles.easyText,
+                  difficulty === 'Medium' && styles.mediumText,
+                  difficulty === 'Hard' && styles.hardText,
+                ]}
+              >
+                {difficulty}
+              </Text>
+
+            </View>
 
           </View>
 
@@ -163,7 +206,7 @@ const styles = StyleSheet.create({
 
     backgroundColor: '#12052F',
 
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: '#7B4DFF',
 
     padding: wp(4),
@@ -186,9 +229,9 @@ const styles = StyleSheet.create({
 
     top: -2,
 
-    left: '12%',
+    right: '0%',
 
-    width: 18,
+    width: 6,
     height: 6,
 
     backgroundColor: '#7B4DFF',
@@ -199,9 +242,9 @@ const styles = StyleSheet.create({
 
     bottom: -2,
 
-    right: '12%',
+    left: '0%',
 
-    width: 18,
+    width: 6,
     height: 6,
 
     backgroundColor: '#7B4DFF',
@@ -212,10 +255,10 @@ const styles = StyleSheet.create({
 
     left: -2,
 
-    top: '22%',
+    top: '0%',
 
     width: 6,
-    height: 18,
+    height: 6,
 
     backgroundColor: '#7B4DFF',
   },
@@ -225,10 +268,10 @@ const styles = StyleSheet.create({
 
     right: -2,
 
-    bottom: '22%',
+    bottom: '0%',
 
     width: 6,
-    height: 18,
+    height: 7,
 
     backgroundColor: '#7B4DFF',
   },
@@ -236,55 +279,59 @@ const styles = StyleSheet.create({
   /* INNER CUT BLOCKS */
   topInnerBlock: {
     position: 'absolute',
-
-    top: 90,
-
-    left: '13.5%',
-
-    width: 140,
-    height: 400,
-
-    backgroundColor: '#ffffff',
-
+    top: -4,
+    left: '-2%',
+    width: 7,
+    height: 7,
+    backgroundColor: '#12052F',
     zIndex: 5,
   },
 
   bottomInnerBlock: {
     position: 'absolute',
-
-    bottom: 0,
-
-    right: '12.5%',
-
-    width: 14,
-    height: 4,
-
+    bottom: -4,
+    right: '-2%',
+    width: 7,
+    height: 7,
     backgroundColor: '#12052F',
+    zIndex: 5,
+  },
 
+  topInnerBlockk: {
+    position: 'absolute',
+    top: -4,
+    right: '-2%',
+    width: 7,
+    height: 7,
+    backgroundColor: '#12052F',
+    zIndex: 5,
+  },
+
+  bottomInnerBlockk: {
+    position: 'absolute',
+    bottom: -4,
+    left: '-2%',
+    width: 7,
+    height: 7,
+    backgroundColor: '#12052F',
     zIndex: 5,
   },
 
   /* NEW BADGE */
   newBadge: {
     position: 'absolute',
-
     top: -hp(1),
     right: wp(4),
-
     backgroundColor: '#48F5D2',
-
     paddingHorizontal: wp(3),
     paddingVertical: hp(0.5),
-
     zIndex: 99,
   },
 
   /* NEW TEXT */
   newText: {
     color: '#111',
-
     fontSize: fp(10),
-
     fontFamily: 'Pixel',
   },
 
@@ -292,42 +339,31 @@ const styles = StyleSheet.create({
   cardImage: {
     width: wp(20),
     height: wp(20),
-
     resizeMode: 'contain',
-
     marginTop: hp(0.5),
+    right: 8,
   },
 
   /* CONTENT */
   cardContent: {
     flex: 1,
-
-    marginLeft: wp(4),
   },
 
   /* TITLE */
   cardTitle: {
     color: '#fff',
-
-    fontSize: fp(13),
-
+    fontSize: fp(10),
     fontFamily: 'Pixel',
-
     lineHeight: hp(2.4),
-
     maxWidth: '92%',
   },
 
   /* DESCRIPTION */
   cardDesc: {
     marginTop: hp(0.7),
-
     color: '#D7CCFF',
-
-    fontSize: fp(10),
-
+    fontSize: fp(14),
     lineHeight: hp(1.9),
-
     fontFamily: 'PixelOperator',
   },
 
@@ -337,7 +373,7 @@ const styles = StyleSheet.create({
 
     color: '#FFD54A',
 
-    fontSize: fp(9),
+    fontSize: fp(8),
 
     fontFamily: 'Pixel',
   },
@@ -360,13 +396,57 @@ const styles = StyleSheet.create({
     gap: wp(2),
   },
 
+  /* STAT ITEM */
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(1),
+  },
+
+  /* STAT ICON */
+  statIcon: {
+    width: wp(3.5),
+    height: wp(3.5),
+    resizeMode: 'contain',
+  },
+
   /* EACH STAT */
   stat: {
     color: '#F2E7FF',
 
-    fontSize: fp(8.5),
+    fontSize: fp(15),
 
     fontFamily: 'PixelOperator',
+  },
+
+  /* EASY TEXT */
+  easyText: {
+    color: '#6DFF7A',
+  },
+
+  /* MEDIUM TEXT */
+  mediumText: {
+    color: '#FFB84D',
+  },
+
+  /* HARD TEXT */
+  hardText: {
+    color: '#FF5F5F',
+  },
+
+  /* EASY ICON */
+  easyIcon: {
+    tintColor: '#6DFF7A',
+  },
+
+  /* MEDIUM ICON */
+  mediumIcon: {
+    tintColor: '#FFB84D',
+  },
+
+  /* HARD ICON */
+  hardIcon: {
+    tintColor: '#FF5F5F',
   },
 
   /* BUTTON */
@@ -375,6 +455,8 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: wp(5),
     paddingVertical: hp(0.9),
+
+    borderRadius: 5,
 
     alignItems: 'center',
     justifyContent: 'center',
