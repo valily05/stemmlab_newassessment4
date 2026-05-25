@@ -1,6 +1,8 @@
+import { useRouter } from 'expo-router';
+
 import {
-    StyleSheet,
-    View,
+  StyleSheet,
+  View,
 } from 'react-native';
 
 import ActivityChallengeCard from './ActivityChallengeCard';
@@ -13,7 +15,9 @@ type Props = {
 export default function ActivitiesResults({
   search,
   selectedCategory,
-}: Props){
+}: Props) {
+
+  const router = useRouter();
 
   /* ACTIVITIES DATA */
   const activities = [
@@ -35,6 +39,8 @@ export default function ActivitiesResults({
       buttonText: 'Start',
 
       image: require('../assets/images/bg2.png'),
+
+      route: '/activities/activity1' as const,
     },
 
     {
@@ -81,76 +87,94 @@ export default function ActivitiesResults({
 
   ];
 
-const filteredActivities = activities.filter(
-  (activity) => {
+  /* FILTER */
+  const filteredActivities = activities.filter(
+    (activity) => {
 
-    const query = search.trim().toLowerCase();
+      const query = search
+        .trim()
+        .toLowerCase();
 
-    const matchesSearch =
+      const matchesSearch =
 
-      !query
+        !query
 
-      ||
+        ||
 
-      activity.title
-        .toLowerCase()
-        .includes(query)
+        activity.title
+          .toLowerCase()
+          .includes(query)
 
-      ||
+        ||
 
-      activity.category
-        .toLowerCase()
-        .includes(query)
+        activity.category
+          .toLowerCase()
+          .includes(query)
 
-      ||
+        ||
 
-      activity.description
-        .toLowerCase()
-        .includes(query);
+        activity.description
+          .toLowerCase()
+          .includes(query);
 
-    const matchesCategory =
+      const matchesCategory =
 
-      selectedCategory === 'ALL'
+        selectedCategory === 'ALL'
 
-      ||
+        ||
 
-      activity.category === selectedCategory;
+        activity.category === selectedCategory;
 
-    return matchesSearch && matchesCategory;
-  }
-);
+      return matchesSearch && matchesCategory;
+    }
+  );
 
   return (
 
     <View style={styles.container}>
 
-      {filteredActivities.map((activity, index) => (
+      {filteredActivities.map(
+        (activity, index) => (
 
-        <ActivityChallengeCard
-          key={index}
+          <ActivityChallengeCard
+            key={index}
 
-          title={activity.title}
+            title={activity.title}
 
-          description={activity.description}
+            description={activity.description}
 
-          category={activity.category}
+            category={activity.category}
 
-          rating={activity.rating}
+            rating={activity.rating}
 
-          duration={activity.duration}
+            duration={activity.duration}
 
-          difficulty={activity.difficulty}
+            difficulty={activity.difficulty}
 
-          buttonText={activity.buttonText}
+            buttonText={activity.buttonText}
 
-          image={activity.image}
+            image={activity.image}
 
-          isNew={activity.isNew}
+            isNew={activity.isNew}
 
-          locked={activity.locked}
-        />
+            locked={activity.locked}
 
-      ))}
+            onPress={() => {
+
+              if (
+                activity.route &&
+                !activity.locked
+              ) {
+
+                router.push(activity.route);
+
+              }
+
+            }}
+          />
+
+        )
+      )}
 
     </View>
 

@@ -21,6 +21,7 @@ type Props = {
   image: any;
   isNew?: boolean;
   locked?: boolean;
+  onPress?: () => void;
 };
 
 const { width, height } = Dimensions.get('window');
@@ -55,6 +56,7 @@ export default function ActivityChallengeCard({
   image,
   isNew,
   locked,
+  onPress,
 }: Props) {
 
   const [saved, setSaved] = useState(false);
@@ -237,12 +239,14 @@ export default function ActivityChallengeCard({
           </View>
 
           {/* BUTTON */}
-          <TouchableOpacity
-            style={[
-              styles.startBtn,
-              locked && styles.lockedBtn,
-            ]}
-          >
+       <TouchableOpacity
+  style={[
+    styles.startBtn,
+    locked && styles.lockedBtn,
+  ]}
+  onPress={onPress}
+  disabled={locked}
+>
 
             <Text style={styles.startText}>
               {buttonText}
