@@ -166,7 +166,7 @@ export default function ActivitiesResults({
                 !activity.locked
               ) {
 
-                router.push(activity.route);
+                router.replace(activity.route);
 
               }
 

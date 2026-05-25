@@ -5,13 +5,13 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import {
-    Dimensions,
-    ImageBackground,
-    PixelRatio,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  ImageBackground,
+  PixelRatio,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 import ActivitiesResults from '../../components/ActivitiesResults';

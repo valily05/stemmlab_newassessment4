@@ -1,17 +1,54 @@
+// app/activities/activity1.tsx
 
-import { ScrollView, StyleSheet, View } from 'react-native';
+import {
+    Dimensions,
+    ImageBackground,
+    PixelRatio,
+    ScrollView,
+    StyleSheet,
+    View,
+} from 'react-native';
+
+import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
+import SafetyNotes from '@/components/activity/SafetyNotes';
+import StartButton from '@/components/activity/StartButton';
+import StepInstructions from '@/components/activity/StepInstructions';
 
 import ActivityHeader from '../../components/activity/ActivityHeader';
 import ActivityHero from '../../components/activity/ActivityHero';
 import ActivityStats from '../../components/activity/ActivityStats';
 import MaterialsChecklist from '../../components/activity/MaterialsChecklist';
-import ReferenceSetupCard from '../../components/activity/ReferenceSetupCard';
-import SafetyNotes from '../../components/activity/SafetyNotes';
 import SetupGuideCarousel from '../../components/activity/SetupGuideCarousel';
-import StartButton from '../../components/activity/StartButton';
-import StepInstructions from '../../components/activity/StepInstructions';
+
+const { width, height } = Dimensions.get('window');
+
+/* RESPONSIVE HELPERS */
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+};
+
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+};
+
+const rf = (size: number) => {
+
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+
+};
 
 const activityData = {
+
   title: 'PARACHUTE DROP\nCHALLENGE',
 
   overview:
@@ -25,6 +62,7 @@ const activityData = {
     'Make the toy land as slowly, safely and accurately as possible.',
 
   materials: [
+
     {
       name: 'STEMM APP ON MOBILE PHONE',
       quantity: 'x1',
@@ -59,15 +97,18 @@ const activityData = {
       name: 'SCISSORS',
       quantity: 'x1',
     },
+
   ],
 
   setupSteps: [
+
     {
       title: 'PREPARE THE PLASTIC BAG',
 
       image: require('../../assets/images/setup1.png'),
 
-      instruction: 'Cut the plastic bag into a circle',
+      instruction:
+        'Cut the plastic bag into a circle',
 
       bunnyTip:
         'Make a smooth circle for better air resistance!',
@@ -80,13 +121,12 @@ const activityData = {
 
       instruction:
         'Tape the strings evenly around the parachute',
-
-      bunnyTip:
-        'Equal string lengths help stabilize the drop!',
     },
+
   ],
 
   instructions: [
+
     'Drop the toy without a parachute and record the fall (baseline test)',
 
     'Build a parachute using provided materials',
@@ -98,61 +138,113 @@ const activityData = {
     'Redesign and test up to three prototypes within 20 minutes',
 
     'Upload videos, results, and team reflections',
+
   ],
+
 };
 
 export default function Activity1Screen() {
+
   return (
+
     <View style={styles.container}>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={
+          styles.scrollContent
+        }
       >
-        <ActivityHeader />
 
-        <ActivityHero
-          title={activityData.title}
-          overview={activityData.overview}
-          bunnyImage={require('../../assets/images/spacebunny.png')}
-        />
+        {/* HERO SECTION */}
+        <ImageBackground
+          source={require('../../assets/images/spacebg2.png')}
+          style={styles.heroBackground}
+          resizeMode="contain"
+        >
 
-        <ActivityStats
-          timeLimit={activityData.timeLimit}
-          difficulty={activityData.difficulty}
-          mission={activityData.mission}
-        />
+          <View style={styles.overlay}>
 
-        <MaterialsChecklist
-          materials={activityData.materials}
-        />
+            <ActivityHeader />
 
-        <SetupGuideCarousel
-          steps={activityData.setupSteps}
-        />
+            <ActivityHero
+              title={activityData.title}
+              overview={activityData.overview}
+            />
 
-        <StepInstructions
-          steps={activityData.instructions}
-        />
+            <ActivityStats
+              timeLimit={activityData.timeLimit}
+              difficulty={activityData.difficulty}
+              mission={activityData.mission}
+            />
 
-        <ReferenceSetupCard
-          image={require('../../assets/images/referenceSetup.png')}
-        />
+          </View>
 
-        <SafetyNotes />
+        </ImageBackground>
 
-        <StartButton />
+        {/* CONTENT */}
+        <View style={styles.content}>
+
+          <MaterialsChecklist
+            materials={activityData.materials}
+          />
+
+          <SetupGuideCarousel
+            steps={activityData.setupSteps}
+          />
+
+          <StepInstructions
+            steps={activityData.instructions}
+          />
+
+          <ReferenceSetupCard
+            image={require('../../assets/images/referenceSetup.png')}
+          />
+
+          <SafetyNotes />
+
+          <StartButton />
+
+        </View>
+
       </ScrollView>
+
     </View>
+
   );
+
 }
 
 const styles = StyleSheet.create({
+
+  /* SCREEN */
   container: {
     flex: 1,
     backgroundColor: '#050014',
   },
 
+  /* SCROLL */
   scrollContent: {
-    paddingBottom: 60,
+    paddingBottom: hp(8),
   },
+
+  /* HERO BG */
+  heroBackground: {
+    width: '100%',
+
+    minHeight: hp(57),
+
+    justifyContent: 'flex-end',
+  },
+
+  /* OVERLAY */
+  overlay: {
+    paddingBottom: hp(4),
+  },
+
+  /* CONTENT */
+  content: {
+    marginTop: -hp(2),
+  },
+
 });

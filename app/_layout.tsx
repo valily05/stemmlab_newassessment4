@@ -1,35 +1,67 @@
 import '../i18n';
 
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from '@react-navigation/native';
+
 import { Stack } from 'expo-router';
+
 import { StatusBar } from 'expo-status-bar';
+
 import 'react-native-reanimated';
 
 import { LanguageProvider } from '@/context/LanguageContext';
+
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function RootLayout() {
+
   const colorScheme = useColorScheme();
 
   return (
+
     <LanguageProvider>
 
-  
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="signup" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ title: 'Modal' }} />
-        <Stack.Screen name="language" options={{ headerShown: false }} />
+      <ThemeProvider
+        value={
+          colorScheme === 'dark'
+            ? DarkTheme
+            : DefaultTheme
+        }
+      >
 
+        <Stack
 
-      </Stack>
-      <StatusBar style="auto" />
+          screenOptions={{
+            headerShown: false,
+          }}
 
-     
-    </ThemeProvider>
-      </LanguageProvider>
+        >
+
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+            }}
+          />
+
+          <Stack.Screen
+            name="activities"
+            options={{
+              headerShown: false,
+            }}
+          />
+
+        </Stack>
+
+        <StatusBar style="auto" />
+
+      </ThemeProvider>
+
+    </LanguageProvider>
+
   );
+
 }
