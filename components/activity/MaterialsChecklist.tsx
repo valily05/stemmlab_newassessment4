@@ -138,19 +138,27 @@ export default function MaterialsChecklist({
               >
 
                 {checked && (
-
-                  <View
-                    style={styles.checkInner}
-                  />
-
+                  <Text style={styles.checkMark}>
+                    ✓
+                  </Text>
                 )}
 
               </Pressable>
 
               {/* MATERIAL */}
-              <Text style={styles.material}>
-                ▶ {item.name}
-              </Text>
+              <View
+                style={styles.materialContainer}
+              >
+
+                <Text style={styles.triangle}>
+                  ▶
+                </Text>
+
+                <Text style={styles.material}>
+                  {item.name}
+                </Text>
+
+              </View>
 
             </View>
 
@@ -302,12 +310,35 @@ const styles = StyleSheet.create({
     backgroundColor: '#60BB3F',
   },
 
-  checkInner: {
-    width: rf(8),
+  /* CHECK MARK */
+  checkMark: {
+    color: '#0B001B',
 
-    height: rf(8),
+    fontSize: rf(13),
 
-    backgroundColor: '#0B001B',
+    fontFamily: 'PressStart2P',
+
+    lineHeight: rf(14),
+  },
+
+  /* MATERIAL CONTAINER */
+  materialContainer: {
+    flexDirection: 'row',
+
+    alignItems: 'center',
+
+    flex: 1,
+  },
+
+  /* TRIANGLE */
+  triangle: {
+    color: '#ED359D',
+
+    fontFamily: 'PressStart2P',
+
+    fontSize: rf(14),
+
+    marginRight: wp(2),
   },
 
   /* MATERIAL */
@@ -316,7 +347,7 @@ const styles = StyleSheet.create({
 
     fontFamily: 'PixelOperator',
 
-    fontSize: rf(11),
+    fontSize: rf(17),
 
     flex: 1,
   },
