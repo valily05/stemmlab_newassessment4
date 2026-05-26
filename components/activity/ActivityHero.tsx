@@ -1,11 +1,11 @@
 // components/activity/ActivityHero.tsx
 
 import {
-    Dimensions,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -111,9 +111,11 @@ const styles = StyleSheet.create({
 
     fontFamily: 'Pixel',
 
-    fontSize: rf(24),
+    fontSize: rf(20),
 
     lineHeight: rf(35),
+
+    width:hp(39)
   },
 
   /* OVERVIEW ROW */

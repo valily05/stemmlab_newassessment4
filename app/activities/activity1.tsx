@@ -1,12 +1,12 @@
 // app/activities/activity1.tsx
 
 import {
-    Dimensions,
-    ImageBackground,
-    PixelRatio,
-    ScrollView,
-    StyleSheet,
-    View,
+  Dimensions,
+  ImageBackground,
+  PixelRatio,
+  ScrollView,
+  StyleSheet,
+  View,
 } from 'react-native';
 
 import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
@@ -160,7 +160,7 @@ export default function Activity1Screen() {
         <ImageBackground
           source={require('../../assets/images/spacebg2.png')}
           style={styles.heroBackground}
-          resizeMode="contain"
+          resizeMode="cover"
         >
 
           <View style={styles.overlay}>
@@ -231,9 +231,7 @@ const styles = StyleSheet.create({
   /* HERO BG */
   heroBackground: {
     width: '100%',
-
-    minHeight: hp(57),
-
+    height: hp(67), // CHANGE THIS VALUE TO RESIZE IMAGE
     justifyContent: 'flex-end',
   },
 

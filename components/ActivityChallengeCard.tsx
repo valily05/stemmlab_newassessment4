@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF5CA8',
 
     paddingHorizontal: wp(3),
-    paddingVertical: hp(0.9),
+    paddingVertical: hp(1.1),
 
     borderRadius: 5,
 

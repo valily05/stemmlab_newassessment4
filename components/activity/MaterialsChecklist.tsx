@@ -1,12 +1,12 @@
 // components/activity/MaterialsChecklist.tsx
 
 import {
-    Dimensions,
-    PixelRatio,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  PixelRatio,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 import { useState } from 'react';
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   material: {
     color: 'white',
 
-    fontFamily: 'PixeloidSans',
+    fontFamily: 'PixelOperator',
 
     fontSize: rf(11),
 
