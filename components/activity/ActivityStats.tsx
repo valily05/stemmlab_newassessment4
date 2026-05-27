@@ -41,6 +41,7 @@ const rf = (size: number) => {
 
 };
 
+/* PROPS */
 interface Props {
   timeLimit: string;
   difficulty: string;
@@ -50,6 +51,7 @@ interface Props {
 export default function ActivityStats({
   timeLimit,
   difficulty,
+  mission,
 }: Props) {
 
   /* DIFFICULTY COLOR */
@@ -67,14 +69,13 @@ export default function ActivityStats({
 
     <View style={styles.container}>
 
-      {/* ROW */}
       <View style={styles.row}>
 
         {/* MISSION CARD */}
         <ImageBackground
           source={require('../../assets/images/pinkbox.png')}
           style={styles.missionCard}
-          resizeMode="cover"
+          resizeMode="stretch"
         >
 
           <View style={styles.missionRow}>
@@ -125,7 +126,7 @@ export default function ActivityStats({
         <ImageBackground
           source={require('../../assets/images/purplebox.png')}
           style={styles.statsCard}
-          resizeMode="cover"
+          resizeMode="stretch"
         >
 
           {/* TIME */}
@@ -143,7 +144,7 @@ export default function ActivityStats({
                 Time Limit
               </Text>
 
-              <Text style={styles.orangeValue}>
+              <Text style={styles.timeValue}>
                 {timeLimit}
               </Text>
 
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
 
-    marginTop: hp(2),
+    marginTop: hp(1.5),
   },
 
   /* ROW */
@@ -215,24 +216,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
 
     alignItems: 'center',
+
+    marginTop: hp(1),
   },
 
   /* MISSION CARD */
   missionCard: {
-    width: '47%',
+    width: '79%',
 
-    aspectRatio: 2.8,
+    height: hp(10),
 
     justifyContent: 'center',
 
-    paddingHorizontal: wp(3),
+    paddingHorizontal: wp(3.2),
+
+    overflow: 'hidden',
+    zIndex:20
   },
 
   /* STATS CARD */
   statsCard: {
-    width: '50%',
+    width: '68%',
 
-    aspectRatio: 2.8,
+    height: hp(8.5),
 
     flexDirection: 'row',
 
@@ -241,6 +247,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
 
     paddingHorizontal: wp(3),
+
+    overflow: 'hidden',
   },
 
   /* INFO BLOCK */
@@ -261,11 +269,11 @@ const styles = StyleSheet.create({
 
   /* ICON */
   icon: {
-    width: rf(22),
+    width: rf(18),
 
-    height: rf(22),
+    height: rf(18),
 
-    marginRight: wp(1.5),
+    marginRight: wp(1.3),
   },
 
   /* LABEL */
@@ -274,27 +282,27 @@ const styles = StyleSheet.create({
 
     fontFamily: 'PixelOperator',
 
-    fontSize: rf(8),
+    fontSize: rf(7),
   },
 
   /* TIME VALUE */
-  orangeValue: {
-    color: '#22E7FF',
+  timeValue: {
+    color: '#FF5A5A',
 
     fontFamily: 'PixelOperator',
 
-    fontSize: rf(10),
+    fontSize: rf(8.8),
 
-    marginTop: hp(0.2),
+    marginTop: hp(0.15),
   },
 
   /* DIFFICULTY VALUE */
   difficultyValue: {
     fontFamily: 'PixelOperator',
 
-    fontSize: rf(10),
+    fontSize: rf(8.8),
 
-    marginTop: hp(0.2),
+    marginTop: hp(0.15),
   },
 
   /* MISSION ROW */
@@ -306,11 +314,11 @@ const styles = StyleSheet.create({
 
   /* MISSION ICON */
   missionIcon: {
-    width: rf(28),
+    width: rf(24),
 
-    height: rf(28),
+    height: rf(24),
 
-    marginRight: wp(2),
+    marginRight: wp(1.8),
 
     tintColor: '#FF4FB4',
   },
@@ -326,9 +334,9 @@ const styles = StyleSheet.create({
 
     fontFamily: 'Pixel',
 
-    fontSize: rf(10),
+    fontSize: rf(8.8),
 
-    marginBottom: hp(0.3),
+    marginBottom: hp(0.15),
   },
 
   /* MISSION TEXT */
@@ -337,9 +345,9 @@ const styles = StyleSheet.create({
 
     fontFamily: 'PixelOperator',
 
-    lineHeight: rf(10),
+    lineHeight: rf(8.8),
 
-    fontSize: rf(6.8),
+    fontSize: rf(5.8),
   },
 
   /* PINK */
