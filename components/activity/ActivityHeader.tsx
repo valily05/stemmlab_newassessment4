@@ -1,12 +1,12 @@
 // components/activity/ActivityHeader.tsx
 
 import {
-    Dimensions,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { useRouter } from 'expo-router';
@@ -145,6 +145,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
 
     alignItems: 'center',
+
+  
   },
 
   /* PIXEL ARROW */
@@ -199,17 +201,17 @@ const styles = StyleSheet.create({
   },
 
   p7: {
-      width: rf(10),
+      width: rf(14),
   height: rf(10),
-    left: rf(12),
+    left: rf(5),
     top: rf(8),
   },
 
     p8: {
-          width: rf(10),
+          width: rf(11),
   height: rf(10),
 
-    left: rf(20),
+    left: rf(19),
     top: rf(8),
   },
 

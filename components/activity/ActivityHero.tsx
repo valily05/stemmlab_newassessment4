@@ -65,7 +65,7 @@ export default function ActivityHero({
           <View style={styles.overviewCircle}>
 
             <Text style={styles.circleText}>
-              1
+              i
             </Text>
 
           </View>
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
 
     marginTop: hp(2.2),
+
   },
 
   /* LEFT */

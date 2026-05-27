@@ -1,12 +1,13 @@
 // components/activity/ActivityStats.tsx
 
 import {
-    Dimensions,
-    Image,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  Image,
+  ImageBackground,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -49,7 +50,6 @@ interface Props {
 export default function ActivityStats({
   timeLimit,
   difficulty,
-  mission,
 }: Props) {
 
   /* DIFFICULTY COLOR */
@@ -67,79 +67,129 @@ export default function ActivityStats({
 
     <View style={styles.container}>
 
-      {/* TOP ROW */}
+      {/* ROW */}
       <View style={styles.row}>
 
-        {/* TIME CARD */}
-        <View style={styles.smallCard}>
+        {/* MISSION CARD */}
+        <ImageBackground
+          source={require('../../assets/images/pinkbox.png')}
+          style={styles.missionCard}
+          resizeMode="cover"
+        >
 
-          <Image
-            source={require('../../assets/images/time.png')}
-            style={styles.icon}
-            resizeMode="contain"
-          />
+          <View style={styles.missionRow}>
 
-          <View>
+            <Image
+              source={require('../../assets/images/target.png')}
+              style={styles.missionIcon}
+              resizeMode="contain"
+            />
 
-            <Text style={styles.label}>
-              Time Limit
-            </Text>
+            <View style={styles.missionContent}>
 
-            <Text style={styles.orangeValue}>
-              {timeLimit}
-            </Text>
+              <Text style={styles.missionTitle}>
+                MISSION :
+              </Text>
+
+              <Text style={styles.missionText}>
+
+                Make the toy land as{' '}
+
+                <Text style={styles.pinkText}>
+                  SLOWLY
+                </Text>
+
+                ,{' '}
+
+                <Text style={styles.cyanText}>
+                  SAFELY
+                </Text>
+
+                , and{' '}
+
+                <Text style={styles.yellowText}>
+                  ACCURATELY
+                </Text>
+
+                {' '}as possible!
+
+              </Text>
+
+            </View>
 
           </View>
 
-        </View>
+        </ImageBackground>
 
-        {/* DIFFICULTY CARD */}
-        <View style={styles.smallCard}>
+        {/* STATS CARD */}
+        <ImageBackground
+          source={require('../../assets/images/purplebox.png')}
+          style={styles.statsCard}
+          resizeMode="cover"
+        >
 
-          <Image
-            source={require('../../assets/images/chart.png')}
-            style={[
-              styles.icon,
-              {
-                tintColor: difficultyColor,
-              },
-            ]}
-            resizeMode="contain"
-          />
+          {/* TIME */}
+          <View style={styles.infoBlock}>
 
-          <View>
+            <Image
+              source={require('../../assets/images/time.png')}
+              style={styles.icon}
+              resizeMode="contain"
+            />
 
-            <Text style={styles.label}>
-              Difficulty
-            </Text>
+            <View>
 
-            <Text
+              <Text style={styles.label}>
+                Time Limit
+              </Text>
+
+              <Text style={styles.orangeValue}>
+                {timeLimit}
+              </Text>
+
+            </View>
+
+          </View>
+
+          {/* DIVIDER */}
+          <View style={styles.divider} />
+
+          {/* DIFFICULTY */}
+          <View style={styles.infoBlock}>
+
+            <Image
+              source={require('../../assets/images/chart.png')}
               style={[
-                styles.difficultyValue,
+                styles.icon,
                 {
-                  color: difficultyColor,
+                  tintColor: difficultyColor,
                 },
               ]}
-            >
-              {difficulty}
-            </Text>
+              resizeMode="contain"
+            />
+
+            <View>
+
+              <Text style={styles.label}>
+                Difficulty
+              </Text>
+
+              <Text
+                style={[
+                  styles.difficultyValue,
+                  {
+                    color: difficultyColor,
+                  },
+                ]}
+              >
+                {difficulty}
+              </Text>
+
+            </View>
 
           </View>
 
-        </View>
-
-      </View>
-
-      {/* MISSION */}
-      <View style={styles.missionCard}>
-
-        <Text style={styles.missionTitle}>
-          MISSION :
-        </Text>
-
-        <Text style={styles.missionText}>
-          {mission}
-        </Text>
+        </ImageBackground>
 
       </View>
 
@@ -155,7 +205,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
 
-    marginTop: hp(3),
+    marginTop: hp(2),
   },
 
   /* ROW */
@@ -163,100 +213,154 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
 
     justifyContent: 'space-between',
-  },
-
-  /* SMALL CARD */
-  smallCard: {
-    width: '48%',
-
-    flexDirection: 'row',
-
-    backgroundColor: '#120022',
-
-    borderWidth: rf(2),
-
-    borderColor: '#FF4FB4',
-
-    borderRadius: rf(12),
-
-    padding: wp(3.5),
 
     alignItems: 'center',
   },
 
+  /* MISSION CARD */
+  missionCard: {
+    width: '47%',
+
+    aspectRatio: 2.8,
+
+    justifyContent: 'center',
+
+    paddingHorizontal: wp(3),
+  },
+
+  /* STATS CARD */
+  statsCard: {
+    width: '50%',
+
+    aspectRatio: 2.8,
+
+    flexDirection: 'row',
+
+    alignItems: 'center',
+
+    justifyContent: 'space-evenly',
+
+    paddingHorizontal: wp(3),
+  },
+
+  /* INFO BLOCK */
+  infoBlock: {
+    flexDirection: 'row',
+
+    alignItems: 'center',
+  },
+
+  /* DIVIDER */
+  divider: {
+    width: 1,
+
+    height: '45%',
+
+    backgroundColor: '#FFFFFF',
+  },
+
   /* ICON */
   icon: {
-    width: rf(26),
+    width: rf(22),
 
-    height: rf(26),
+    height: rf(22),
 
-    marginRight: wp(2.5),
+    marginRight: wp(1.5),
   },
 
   /* LABEL */
   label: {
     color: 'white',
 
-    fontFamily: 'PressStart2P',
+    fontFamily: 'PixelOperator',
 
     fontSize: rf(8),
   },
 
   /* TIME VALUE */
   orangeValue: {
-    color: '#FFB648',
+    color: '#22E7FF',
 
-    fontFamily: 'PixeloidSans',
+    fontFamily: 'PixelOperator',
 
-    fontSize: rf(12),
+    fontSize: rf(10),
 
-    marginTop: hp(0.6),
+    marginTop: hp(0.2),
   },
 
   /* DIFFICULTY VALUE */
   difficultyValue: {
-    fontFamily: 'PixeloidSans',
+    fontFamily: 'PixelOperator',
 
-    fontSize: rf(12),
+    fontSize: rf(10),
 
-    marginTop: hp(0.6),
+    marginTop: hp(0.2),
   },
 
-  /* MISSION CARD */
-  missionCard: {
-    marginTop: hp(1.5),
+  /* MISSION ROW */
+  missionRow: {
+    flexDirection: 'row',
 
-    backgroundColor: '#120022',
+    alignItems: 'flex-start',
+  },
 
-    borderWidth: rf(2),
+  /* MISSION ICON */
+  missionIcon: {
+    width: rf(28),
 
-    borderColor: '#FF4FB4',
+    height: rf(28),
 
-    borderRadius: rf(12),
+    marginRight: wp(2),
 
-    padding: wp(3.5),
+    tintColor: '#FF4FB4',
+  },
+
+  /* MISSION CONTENT */
+  missionContent: {
+    flex: 1,
   },
 
   /* MISSION TITLE */
   missionTitle: {
     color: '#FF4FB4',
 
-    fontFamily: 'PressStart2P',
+    fontFamily: 'Pixel',
 
     fontSize: rf(10),
+
+    marginBottom: hp(0.3),
   },
 
   /* MISSION TEXT */
   missionText: {
     color: 'white',
 
-    fontFamily: 'PixeloidSans',
+    fontFamily: 'PixelOperator',
 
-    marginTop: hp(1.2),
+    lineHeight: rf(10),
 
-    lineHeight: rf(20),
+    fontSize: rf(6.8),
+  },
 
-    fontSize: rf(11),
+  /* PINK */
+  pinkText: {
+    color: '#F141A7',
+
+    fontFamily: 'PixelOperator',
+  },
+
+  /* CYAN */
+  cyanText: {
+    color: '#3FFFE0',
+
+    fontFamily: 'PixelOperator',
+  },
+
+  /* YELLOW */
+  yellowText: {
+    color: '#F8EC66',
+
+    fontFamily: 'PixelOperator',
   },
 
 });

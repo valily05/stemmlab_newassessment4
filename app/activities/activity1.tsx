@@ -9,6 +9,8 @@ import {
   View,
 } from 'react-native';
 
+import { LinearGradient } from 'expo-linear-gradient';
+
 import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
 import SafetyNotes from '@/components/activity/SafetyNotes';
 import StartButton from '@/components/activity/StartButton';
@@ -158,11 +160,12 @@ export default function Activity1Screen() {
 
         {/* HERO SECTION */}
         <ImageBackground
-          source={require('../../assets/images/spacebg2.png')}
+          source={require('../../assets/images/miffyspace.png')}
           style={styles.heroBackground}
-          resizeMode="cover"
+          imageStyle={styles.heroImage}
         >
 
+          {/* OVERLAY */}
           <View style={styles.overlay}>
 
             <ActivityHeader />
@@ -179,6 +182,18 @@ export default function Activity1Screen() {
             />
 
           </View>
+
+          {/* BOTTOM BLUR */}
+          <LinearGradient
+            colors={[
+              'rgba(5,0,20,0)',
+              'rgba(5,0,20,0.35)',
+              'rgba(5,0,20,0.75)',
+              '#050014',
+            ]}
+            locations={[0, 0.4, 0.72, 1]}
+            style={styles.bottomBlur}
+          />
 
         </ImageBackground>
 
@@ -231,8 +246,16 @@ const styles = StyleSheet.create({
   /* HERO BG */
   heroBackground: {
     width: '100%',
-    height: hp(67), // CHANGE THIS VALUE TO RESIZE IMAGE
+
+
     justifyContent: 'flex-end',
+  },
+
+  /* HERO IMAGE */
+  heroImage: {
+    resizeMode: 'cover',
+
+  
   },
 
   /* OVERLAY */
@@ -240,9 +263,22 @@ const styles = StyleSheet.create({
     paddingBottom: hp(4),
   },
 
+  /* BOTTOM BLUR */
+  bottomBlur: {
+    position: 'absolute',
+
+    bottom: 0,
+
+    width: '100%',
+
+    height: hp(12),
+
+    zIndex: 1,
+  },
+
   /* CONTENT */
   content: {
-    marginTop: -hp(2),
+    marginTop: -hp(1),
   },
 
 });
