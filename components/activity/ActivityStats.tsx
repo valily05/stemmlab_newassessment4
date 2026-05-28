@@ -195,9 +195,9 @@ const styles = StyleSheet.create({
 
   /* CONTAINER */
   container: {
-    paddingHorizontal: wp(5),
+    paddingHorizontal: wp(4),
 
-    marginTop: hp(1.5),
+    marginTop: hp(1.9),
   },
 
   /* ROW */
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
 
   /* STATS CARD */
   statsCard: {
-    width: hp(21),
+    width: hp(22),
 
     height: hp(7.5),
 
@@ -259,24 +259,25 @@ const styles = StyleSheet.create({
     height: hp(2.5),
 
     backgroundColor: '#FFFFFF',
+    marginHorizontal:wp(2)
   },
 
   /* TIME ICON */
   timeIcon: {
-    width: rf(24),
+    width: rf(21),
 
-    height: rf(24),
+    height: rf(21),
 
-    marginRight: wp(1.5),
+    marginRight: wp(1),
   },
 
   /* STATS ICON */
   statsIcon: {
-    width: rf(19),
+    width: rf(17),
 
-    height: rf(19),
+    height: rf(17),
 
-    marginRight: wp(1.5),
+    marginRight: wp(1.4),
   },
 
   /* LABEL */
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
 
     fontFamily: 'PixelOperator',
 
-    fontSize: rf(13),
+    fontSize: rf(12),
   },
 
   /* TIME VALUE */

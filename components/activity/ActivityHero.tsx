@@ -149,9 +149,10 @@ const styles = StyleSheet.create({
   circleText: {
     color: 'white',
 
-    fontSize: rf(8),
+    fontSize: rf(20),
 
-    fontFamily: 'PressStart2P',
+    fontFamily: 'Wix',
+fontWeight: 'bold',
   },
 
   /* OVERVIEW TEXT */
@@ -173,11 +174,11 @@ const styles = StyleSheet.create({
 
     lineHeight: rf(20),
 
-    fontSize: rf(16),
+    fontSize: rf(17),
 
     paddingRight: wp(3),
 
-    width:rf(290),
+    width:rf(300),
   },
 
 });

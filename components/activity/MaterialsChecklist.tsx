@@ -2,6 +2,7 @@
 
 import {
   Dimensions,
+  ImageBackground,
   PixelRatio,
   Pressable,
   StyleSheet,
@@ -86,13 +87,17 @@ export default function MaterialsChecklist({
       {/* HEADER */}
       <View style={styles.headerContainer}>
 
-        <View style={styles.headerBox}>
+        <ImageBackground
+          source={require('../../assets/images/Group 217.png')}
+          style={styles.headerBox}
+          resizeMode="stretch"
+        >
 
           <Text style={styles.headerText}>
             MATERIALS CHECKLIST
           </Text>
 
-        </View>
+        </ImageBackground>
 
       </View>
 
@@ -221,15 +226,15 @@ const styles = StyleSheet.create({
   headerBox: {
     marginTop: -hp(2.5),
 
-    backgroundColor: '#160029',
+    width: wp(88),
 
-    borderWidth: rf(2),
+    height: hp(6),
 
-    borderColor: '#701BFF',
+    justifyContent: 'center',
 
-    paddingHorizontal: wp(4.5),
+    alignItems: 'center',
 
-    paddingVertical: hp(1.4),
+    overflow: 'hidden',
   },
 
   headerText: {
@@ -238,6 +243,8 @@ const styles = StyleSheet.create({
     fontFamily: 'PressStart2P',
 
     fontSize: rf(11),
+
+    marginTop: hp(0.2),
   },
 
   /* TABLE */
