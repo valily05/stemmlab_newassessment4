@@ -90,7 +90,7 @@ export default function MaterialsChecklist({
         <ImageBackground
           source={require('../../assets/images/Group 217.png')}
           style={styles.headerBox}
-          resizeMode="stretch"
+          resizeMode="contain"
         >
 
           <Text style={styles.headerText}>
@@ -122,55 +122,59 @@ export default function MaterialsChecklist({
 
         return (
 
-          <View
-            key={index}
-            style={styles.row}
-          >
+          <View key={index}>
 
-            <View style={styles.left}>
+            <View style={styles.row}>
 
-              {/* CHECKBOX */}
-              <Pressable
-                onPress={() =>
-                  toggleCheck(index)
-                }
-                style={[
-                  styles.checkbox,
+              <View style={styles.left}>
 
-                  checked &&
-                    styles.checkboxActive,
-                ]}
-              >
+                {/* CHECKBOX */}
+                <Pressable
+                  onPress={() =>
+                    toggleCheck(index)
+                  }
+                  style={[
+                    styles.checkbox,
 
-                {checked && (
-                  <Text style={styles.checkMark}>
-                    ✓
+                    checked &&
+                      styles.checkboxActive,
+                  ]}
+                >
+
+                  {checked && (
+                    <Text style={styles.checkMark}>
+                      ✓
+                    </Text>
+                  )}
+
+                </Pressable>
+
+                {/* MATERIAL */}
+                <View
+                  style={styles.materialContainer}
+                >
+
+                  <Text style={styles.triangle}>
+                    ▶
                   </Text>
-                )}
 
-              </Pressable>
+                  <Text style={styles.material}>
+                    {item.name}
+                  </Text>
 
-              {/* MATERIAL */}
-              <View
-                style={styles.materialContainer}
-              >
-
-                <Text style={styles.triangle}>
-                  ▶
-                </Text>
-
-                <Text style={styles.material}>
-                  {item.name}
-                </Text>
+                </View>
 
               </View>
 
+              {/* QUANTITY */}
+              <Text style={styles.quantity}>
+                {item.quantity}
+              </Text>
+
             </View>
 
-            {/* QUANTITY */}
-            <Text style={styles.quantity}>
-              {item.quantity}
-            </Text>
+            {/* DASHED DIVIDER */}
+            <View style={styles.dashedDivider} />
 
           </View>
 
@@ -203,7 +207,7 @@ const styles = StyleSheet.create({
 
   /* WRAPPER */
   wrapper: {
-    marginHorizontal: wp(4),
+    marginHorizontal: wp(2),
 
     marginTop: hp(5),
 
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
 
     paddingBottom: hp(2.2),
 
-    backgroundColor: '#0B001B',
+    backgroundColor: '#150F31',
   },
 
   /* HEADER */
@@ -224,11 +228,11 @@ const styles = StyleSheet.create({
   },
 
   headerBox: {
-    marginTop: -hp(2.5),
+    marginTop: -hp(2.9),
 
-    width: wp(88),
+    width: wp(80),
 
-    height: hp(6),
+    height: hp(8),
 
     justifyContent: 'center',
 
@@ -240,9 +244,9 @@ const styles = StyleSheet.create({
   headerText: {
     color: 'white',
 
-    fontFamily: 'PressStart2P',
+    fontFamily: 'Pixel',
 
-    fontSize: rf(11),
+    fontSize: rf(14),
 
     marginTop: hp(0.2),
   },
@@ -257,17 +261,18 @@ const styles = StyleSheet.create({
 
     paddingBottom: hp(1.2),
 
-    borderBottomWidth: 1,
+    borderBottomWidth: rf(3),
 
-    borderBottomColor: '#701BFF',
+    borderBottomColor: '#5711BE',
   },
 
   tableHeaderText: {
-    color: '#9B47FF',
 
-    fontFamily: 'PressStart2P',
+    color: '#8041df',
 
-    fontSize: rf(8),
+    fontFamily: 'PixelOperator',
+
+    fontSize: rf(21),
   },
 
   /* ROW */
@@ -279,10 +284,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
     paddingVertical: hp(1.8),
+  },
 
-    borderBottomWidth: 1,
+  /* DASHED DIVIDER */
+  dashedDivider: {
+    borderBottomWidth: 2,
 
-    borderBottomColor: '#701BFF',
+    borderBottomColor: '#5711BE',
+
+    borderStyle: 'dashed',
   },
 
   /* LEFT */
@@ -296,9 +306,9 @@ const styles = StyleSheet.create({
 
   /* CHECKBOX */
   checkbox: {
-    width: rf(18),
+    width: rf(20),
 
-    height: rf(18),
+    height: rf(20),
 
     borderWidth: rf(2),
 
@@ -319,13 +329,13 @@ const styles = StyleSheet.create({
 
   /* CHECK MARK */
   checkMark: {
-    color: '#0B001B',
+    color: '#ffffff',
 
-    fontSize: rf(13),
+    fontSize: rf(16),
 
-    fontFamily: 'PressStart2P',
+    fontFamily: 'LEMONMILK',
 
-    lineHeight: rf(14),
+    lineHeight: rf(17),
   },
 
   /* MATERIAL CONTAINER */
@@ -363,9 +373,9 @@ const styles = StyleSheet.create({
   quantity: {
     color: '#ED359D',
 
-    fontFamily: 'PressStart2P',
+    fontFamily: 'PixelOperator',
 
-    fontSize: rf(9),
+    fontSize: rf(18),
   },
 
   /* WARNING */
@@ -388,7 +398,7 @@ const styles = StyleSheet.create({
   warningIcon: {
     color: '#ED359D',
 
-    fontSize: rf(18),
+    fontSize: rf(40),
 
     marginRight: wp(3),
   },
@@ -398,9 +408,9 @@ const styles = StyleSheet.create({
 
     color: 'white',
 
-    fontFamily: 'PixeloidSans',
+    fontFamily: 'PixelOperator',
 
-    fontSize: rf(11),
+    fontSize: rf(15),
 
     lineHeight: rf(20),
   },
