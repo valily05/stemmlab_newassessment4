@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
 
     zIndex: 20,
+
   },
 
   /* STATS CARD */
@@ -250,6 +251,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
 
     alignItems: 'center',
+
   },
 
   /* DIVIDER */

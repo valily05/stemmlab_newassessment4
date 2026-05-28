@@ -1,9 +1,10 @@
 // components/activity/SafetyNotes.tsx
 
 import {
-    StyleSheet,
-    Text,
-    View,
+  Image,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 export default function SafetyNotes() {
@@ -12,9 +13,19 @@ export default function SafetyNotes() {
 
     <View style={styles.container}>
 
-      <Text style={styles.title}>
-        ⚠ SAFETY NOTES
-      </Text>
+    <View style={styles.titleRow}>
+
+  <Image
+    source={require('../../assets/images/Group 184.png')}
+    style={styles.warningIcon}
+    resizeMode="contain"
+  />
+
+  <Text style={styles.title}>
+    SAFETY NOTES
+  </Text>
+
+</View>
 
       <View style={styles.notesContainer}>
 
@@ -42,14 +53,14 @@ const styles = StyleSheet.create({
 
   container: {
     marginHorizontal: 18,
-    marginTop: 28,
+    marginTop: 20,
 
-    backgroundColor: '#6D264E',
+    backgroundColor: '#6C2E44',
 
     borderRadius: 16,
 
     borderWidth: 2,
-    borderColor: '#FF4FB4',
+    borderColor: '#FF5AA9',
 
     padding: 18,
   },
@@ -57,25 +68,38 @@ const styles = StyleSheet.create({
   title: {
     color: 'white',
 
-    fontFamily: 'PressStart2P',
+    fontFamily: 'Pixel',
 
-    fontSize: 11,
+    fontSize: 15,
   },
 
   notesContainer: {
-    marginTop: 18,
+    marginTop: 10,
   },
 
   note: {
     color: 'white',
 
-    fontFamily: 'PixeloidSans',
+    fontFamily: 'PixelOperator',
 
-    fontSize: 12,
+    fontSize: 16,
 
-    lineHeight: 20,
 
-    marginBottom: 12,
+    marginBottom: 9,
   },
+/* TITLE ROW */
+titleRow: {
+  flexDirection: 'row',
 
+  alignItems: 'center',
+},
+
+/* WARNING ICON */
+warningIcon: {
+  width: 28,
+
+  height: 28,
+
+  marginRight: 10,
+},
 });

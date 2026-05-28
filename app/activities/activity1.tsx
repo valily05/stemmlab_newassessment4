@@ -9,13 +9,12 @@ import {
   View,
 } from 'react-native';
 
-import { LinearGradient } from 'expo-linear-gradient';
-
+import PixelDivider from '@/components/PixelDivider';
 import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
 import SafetyNotes from '@/components/activity/SafetyNotes';
 import StartButton from '@/components/activity/StartButton';
 import StepInstructions from '@/components/activity/StepInstructions';
-
+import { LinearGradient } from 'expo-linear-gradient';
 import ActivityHeader from '../../components/activity/ActivityHeader';
 import ActivityHero from '../../components/activity/ActivityHero';
 import ActivityStats from '../../components/activity/ActivityStats';
@@ -207,14 +206,16 @@ export default function Activity1Screen() {
           <SetupGuideCarousel
             steps={activityData.setupSteps}
           />
-
+  <PixelDivider />
           <StepInstructions
             steps={activityData.instructions}
           />
 
+
           <ReferenceSetupCard
             image={require('../../assets/images/referenceSetup.png')}
           />
+
 
           <SafetyNotes />
 

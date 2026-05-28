@@ -1,13 +1,12 @@
 // components/activity/ReferenceSetupCard.tsx
 
 import {
-    Dimensions,
-    Image,
-    PixelRatio,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  Image,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -53,33 +52,37 @@ export default function ReferenceSetupCard({
 
     <View style={styles.container}>
 
-      {/* FIXED BORDER */}
+      {/* FRAME */}
       <View style={styles.frame}>
 
-        {/* ONLY IMAGE MOVES */}
-        <ScrollView
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-        >
-
-          <Image
-            source={image}
-            style={styles.image}
-          />
-
-        </ScrollView>
+        <Image
+          source={image}
+          style={styles.image}
+        />
 
       </View>
 
       {/* CAPTION */}
-      <Text style={styles.caption}>
+      <View style={styles.captionRow}>
 
-        ▶ Make sure your setup is prepared
-        to match the reference photo before
-        starting the experiment.
+        <Text style={styles.captionArrow}>
+          ▶
+        </Text>
 
-      </Text>
+<Text style={styles.caption}>
+
+  Make sure your setup is prepared
+  to match the{' '}
+
+  <Text style={styles.highlightText}>
+    reference photo
+  </Text>
+
+  {' '}before starting the experiment.
+
+</Text>
+
+      </View>
 
     </View>
 
@@ -91,48 +94,80 @@ const styles = StyleSheet.create({
 
   /* CONTAINER */
   container: {
-    marginHorizontal: wp(4.5),
+    marginHorizontal: wp(3),
 
-    marginTop: hp(3.5),
+    marginTop: hp(3),
   },
 
-  /* FIXED FRAME */
+  /* FRAME */
   frame: {
     width: '100%',
 
-    height: hp(42),
+    height: hp(30),
 
     borderWidth: rf(3),
 
-    borderColor: '#8B52FF',
 
     borderRadius: rf(18),
 
     overflow: 'hidden',
 
-    backgroundColor: '#120023',
+    backgroundColor: '#0B001B',
+
+    justifyContent: 'center',
+
+    alignItems: 'center',
   },
 
   /* IMAGE */
   image: {
-    width: width - wp(9),
+    width: '100%',
 
-    height: hp(42),
+    height: '100%',
 
-    resizeMode: 'cover',
+    resizeMode: 'contain',
+  },
+
+  /* CAPTION ROW */
+  captionRow: {
+    flexDirection: 'row',
+
+    alignItems: 'flex-start',
+
+    marginTop: hp(1.8),
+  },
+
+  /* CAPTION ARROW */
+  captionArrow: {
+    color: '#ED359D',
+
+    fontFamily: 'PressStart2P',
+
+    fontSize: rf(14),
+
+    marginRight: wp(2),
+
+    top: hp(0.2),
   },
 
   /* CAPTION */
   caption: {
-    marginTop: hp(1.8),
+    flex: 1,
 
     color: 'white',
 
-    fontFamily: 'PixeloidSans',
+    fontFamily: 'PixelOperator',
 
-    fontSize: rf(11),
+    fontSize: rf(14),
 
     lineHeight: rf(20),
   },
+
+  /* HIGHLIGHT TEXT */
+highlightText: {
+  color: '#ED359D',
+
+  fontFamily: 'PixelOperator',
+},
 
 });

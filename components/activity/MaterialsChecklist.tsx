@@ -84,6 +84,18 @@ export default function MaterialsChecklist({
 
     <View style={styles.wrapper}>
 
+      {/* FULL VERTICAL DASHED LINE */}
+      <View style={styles.fullVerticalLine}>
+
+        {Array.from({ length: 28 }).map((_, i) => (
+          <View
+            key={i}
+            style={styles.verticalDash}
+          />
+        ))}
+
+      </View>
+
       {/* HEADER */}
       <View style={styles.headerContainer}>
 
@@ -157,10 +169,23 @@ export default function MaterialsChecklist({
                   <Text style={styles.triangle}>
                     ▶
                   </Text>
+<View style={styles.materialWrapper}>
 
-                  <Text style={styles.material}>
-                    {item.name}
-                  </Text>
+  <Text
+    style={[
+      styles.material,
+
+      checked && styles.materialChecked,
+    ]}
+  >
+    {item.name}
+  </Text>
+
+  {checked && (
+    <View style={styles.strikeLine} />
+  )}
+
+</View>
 
                 </View>
 
@@ -174,7 +199,16 @@ export default function MaterialsChecklist({
             </View>
 
             {/* DASHED DIVIDER */}
-            <View style={styles.dashedDivider} />
+            <View style={styles.dashedDivider}>
+
+              {Array.from({ length: 27 }).map((_, i) => (
+                <View
+                  key={i}
+                  style={styles.dash}
+                />
+              ))}
+
+            </View>
 
           </View>
 
@@ -185,10 +219,11 @@ export default function MaterialsChecklist({
       {/* WARNING */}
       <View style={styles.warningBox}>
 
-        <Text style={styles.warningIcon}>
-          ⚠
-        </Text>
-
+     <ImageBackground
+  source={require('../../assets/images/Group 183.png')}
+  style={styles.warningIcon}
+  resizeMode="contain"
+/>
         <Text style={styles.warningText}>
           Make sure to check all required
           materials before starting the
@@ -209,7 +244,7 @@ const styles = StyleSheet.create({
   wrapper: {
     marginHorizontal: wp(2),
 
-    marginTop: hp(5),
+    marginTop: hp(3),
 
     borderWidth: rf(3),
 
@@ -220,6 +255,56 @@ const styles = StyleSheet.create({
     paddingBottom: hp(2.2),
 
     backgroundColor: '#150F31',
+
+    position: 'relative',
+  },
+/* MATERIAL WRAPPER */
+materialWrapper: {
+  position: 'relative',
+
+  justifyContent: 'center',
+},
+
+/* CHECKED MATERIAL */
+materialChecked: {
+  opacity: 0.5,
+},
+
+/* STRIKE LINE */
+strikeLine: {
+  position: 'absolute',
+
+  width: '100%',
+
+  height: rf(2),
+
+  backgroundColor: '#ED359D',
+
+  top: '50%',
+},
+  /* FULL VERTICAL DASHED LINE */
+  fullVerticalLine: {
+    position: 'absolute',
+
+    left: wp(10.9),
+
+    top: hp(11),
+
+    bottom: hp(17),
+
+    gap:hp(0.6),
+    justifyContent: 'space-between',
+
+    zIndex: 1,
+  },
+
+  /* VERTICAL DASH */
+  verticalDash: {
+    width: rf(2),
+
+    height: hp(1),
+
+    backgroundColor: '#5711BE',
   },
 
   /* HEADER */
@@ -239,6 +324,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
     overflow: 'hidden',
+
+    zIndex: 2,
   },
 
   headerText: {
@@ -248,7 +335,6 @@ const styles = StyleSheet.create({
 
     fontSize: rf(14),
 
-    marginTop: hp(0.2),
   },
 
   /* TABLE */
@@ -257,7 +343,7 @@ const styles = StyleSheet.create({
 
     justifyContent: 'space-between',
 
-    marginTop: hp(3),
+    marginTop: hp(2),
 
     paddingBottom: hp(1.2),
 
@@ -267,7 +353,6 @@ const styles = StyleSheet.create({
   },
 
   tableHeaderText: {
-
     color: '#8041df',
 
     fontFamily: 'PixelOperator',
@@ -284,15 +369,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
     paddingVertical: hp(1.8),
+
+    zIndex: 2,
   },
 
   /* DASHED DIVIDER */
   dashedDivider: {
-    borderBottomWidth: 2,
+    flexDirection: 'row',
 
-    borderBottomColor: '#5711BE',
+    gap: wp(1.3),
 
-    borderStyle: 'dashed',
+    marginBottom: hp(0.3),
+
+    width: '100%',
+  },
+
+  /* INDIVIDUAL DASH */
+  dash: {
+    width: wp(2),
+
+    height: rf(2),
+
+    backgroundColor: '#5711BE',
   },
 
   /* LEFT */
@@ -316,11 +414,13 @@ const styles = StyleSheet.create({
 
     borderRadius: rf(3),
 
-    marginRight: wp(3),
+    marginRight: wp(5),
 
     justifyContent: 'center',
 
     alignItems: 'center',
+
+    zIndex: 2,
   },
 
   checkboxActive: {
@@ -393,15 +493,18 @@ const styles = StyleSheet.create({
     padding: wp(3.5),
 
     marginTop: hp(2.2),
+
+    zIndex: 2,
   },
 
-  warningIcon: {
-    color: '#ED359D',
+ warningIcon: {
+  width: rf(40),
 
-    fontSize: rf(40),
+  height: rf(40),
 
-    marginRight: wp(3),
-  },
+  marginRight: wp(4),
+
+},
 
   warningText: {
     flex: 1,
