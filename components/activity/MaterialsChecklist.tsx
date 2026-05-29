@@ -50,35 +50,61 @@ interface Material {
 
 interface Props {
   materials: Material[];
-}
 
+  onCompleteChange?: (
+    complete: boolean
+  ) => void;
+
+  onProgressChange?: (
+    progress: number
+  ) => void;
+}
 export default function MaterialsChecklist({
   materials,
+  onCompleteChange,
+  onProgressChange,
 }: Props) {
-
   const [checkedItems, setCheckedItems] =
     useState<number[]>([]);
 
-  const toggleCheck = (index: number) => {
+const toggleCheck = (index: number) => {
 
-    if (checkedItems.includes(index)) {
+  let updatedItems: number[];
 
-      setCheckedItems(
-        checkedItems.filter(
-          (item) => item !== index
-        )
+  if (checkedItems.includes(index)) {
+
+    updatedItems =
+      checkedItems.filter(
+        (item) => item !== index
       );
 
-    } else {
+  } else {
 
-      setCheckedItems([
-        ...checkedItems,
-        index,
-      ]);
+    updatedItems = [
+      ...checkedItems,
+      index,
+    ];
 
-    }
+  }
 
-  };
+  setCheckedItems(updatedItems);
+
+  const materialProgress =
+    Math.round(
+      (updatedItems.length /
+        materials.length) * 100
+    );
+
+  onProgressChange?.(
+    materialProgress
+  );
+
+  onCompleteChange?.(
+    updatedItems.length ===
+      materials.length
+  );
+
+};
 
   return (
 
@@ -136,30 +162,32 @@ export default function MaterialsChecklist({
 
           <View key={index}>
 
-            <View style={styles.row}>
-
+<Pressable
+  style={styles.row}
+  onPress={() => toggleCheck(index)}
+>
               <View style={styles.left}>
 
                 {/* CHECKBOX */}
-                <Pressable
-                  onPress={() =>
-                    toggleCheck(index)
-                  }
-                  style={[
-                    styles.checkbox,
+              <Pressable
+  onPress={() =>
+    toggleCheck(index)
+  }
+  style={[
+    styles.checkbox,
 
-                    checked &&
-                      styles.checkboxActive,
-                  ]}
-                >
+    checked &&
+      styles.checkboxActive,
+  ]}
+>
 
-                  {checked && (
-                    <Text style={styles.checkMark}>
-                      ✓
-                    </Text>
-                  )}
+  {checked && (
+    <Text style={styles.checkMark}>
+      ✓
+    </Text>
+  )}
 
-                </Pressable>
+</Pressable>
 
                 {/* MATERIAL */}
                 <View
@@ -196,7 +224,7 @@ export default function MaterialsChecklist({
                 {item.quantity}
               </Text>
 
-            </View>
+            </Pressable>
 
             {/* DASHED DIVIDER */}
             <View style={styles.dashedDivider}>

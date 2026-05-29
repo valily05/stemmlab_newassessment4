@@ -1,37 +1,66 @@
 // components/activity/SafetyNotes.tsx
 
+import { useState } from 'react';
+
 import {
   Image,
+  Pressable,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 
-export default function SafetyNotes() {
+interface Props {
+  onAcceptedChange?: (
+    accepted: boolean
+  ) => void;
+}
+
+export default function SafetyNotes({
+  onAcceptedChange,
+}: Props) {
+
+  const [accepted, setAccepted] =
+    useState(false);
+
+  const handleToggle = () => {
+
+    const newValue =
+      !accepted;
+
+    setAccepted(newValue);
+
+    onAcceptedChange?.(
+      newValue
+    );
+
+  };
 
   return (
 
     <View style={styles.container}>
 
-    <View style={styles.titleRow}>
+      {/* TITLE */}
+      <View style={styles.titleRow}>
 
-  <Image
-    source={require('../../assets/images/Group 184.png')}
-    style={styles.warningIcon}
-    resizeMode="contain"
-  />
+        <Image
+          source={require('../../assets/images/Group 184.png')}
+          style={styles.warningIcon}
+          resizeMode="contain"
+        />
 
-  <Text style={styles.title}>
-    SAFETY NOTES
-  </Text>
+        <Text style={styles.title}>
+          SAFETY NOTES
+        </Text>
 
-</View>
+      </View>
 
+      {/* NOTES */}
       <View style={styles.notesContainer}>
 
         <Text style={styles.note}>
           • Ensure the drop area is clear
-          of people
+          {'\n'}of people
         </Text>
 
         <Text style={styles.note}>
@@ -44,15 +73,47 @@ export default function SafetyNotes() {
 
       </View>
 
+      {/* ACKNOWLEDGEMENT */}
+      <Pressable
+        style={styles.checkboxRow}
+        onPress={handleToggle}
+      >
+
+        <View
+          style={[
+            styles.checkbox,
+
+            accepted &&
+              styles.checkboxActive,
+          ]}
+        >
+
+          {accepted && (
+            <Text style={styles.checkMark}>
+              ✓
+            </Text>
+          )}
+
+        </View>
+
+        <Text style={styles.checkboxText}>
+          I have read and understood all
+          safety instructions.
+        </Text>
+
+      </Pressable>
+
     </View>
 
   );
+
 }
 
 const styles = StyleSheet.create({
 
   container: {
     marginHorizontal: 18,
+
     marginTop: 20,
 
     backgroundColor: '#6C2E44',
@@ -60,9 +121,26 @@ const styles = StyleSheet.create({
     borderRadius: 16,
 
     borderWidth: 2,
+
     borderColor: '#FF5AA9',
 
     padding: 18,
+  },
+
+  /* TITLE ROW */
+  titleRow: {
+    flexDirection: 'row',
+
+    alignItems: 'center',
+  },
+
+  /* WARNING ICON */
+  warningIcon: {
+    width: 28,
+
+    height: 28,
+
+    marginRight: 10,
   },
 
   title: {
@@ -84,22 +162,64 @@ const styles = StyleSheet.create({
 
     fontSize: 16,
 
-
     marginBottom: 9,
   },
-/* TITLE ROW */
-titleRow: {
-  flexDirection: 'row',
 
-  alignItems: 'center',
-},
+  /* CHECKBOX ROW */
+  checkboxRow: {
+    flexDirection: 'row',
 
-/* WARNING ICON */
-warningIcon: {
-  width: 28,
+    alignItems: 'center',
 
-  height: 28,
+    marginTop: 12,
 
-  marginRight: 10,
-},
+    paddingTop: 12,
+
+    borderTopWidth: 1,
+
+    borderTopColor: 'rgba(255,255,255,0.15)',
+  },
+
+  checkbox: {
+    width: 20,
+
+    height: 20,
+
+    borderWidth: 2,
+
+    borderColor: '#60BB3F',
+
+    borderRadius: 4,
+
+    justifyContent: 'center',
+
+    alignItems: 'center',
+
+    marginRight: 12,
+  },
+
+  checkboxActive: {
+    backgroundColor: '#60BB3F',
+  },
+
+  checkMark: {
+    color: '#FFFFFF',
+
+    fontSize: 16,
+
+    fontWeight: 'bold',
+
+  },
+
+  checkboxText: {
+    flex: 1,
+
+    color: '#FFFFFF',
+
+    fontFamily: 'PixelOperator',
+
+    fontSize: 14,
+
+  },
+
 });

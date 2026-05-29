@@ -7,20 +7,22 @@ import StartButton from '@/components/activity/StartButton';
 import StepInstructions from '@/components/activity/StepInstructions';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { useState } from 'react';
+
+import ProgressBar from '@/components/activity/ProgressBar';
 import {
   Dimensions,
   ImageBackground,
   PixelRatio,
   ScrollView,
   StyleSheet,
-  View,
+  View
 } from 'react-native';
 import ActivityHeader from '../../components/activity/ActivityHeader';
 import ActivityHero from '../../components/activity/ActivityHero';
 import ActivityStats from '../../components/activity/ActivityStats';
 import MaterialsChecklist from '../../components/activity/MaterialsChecklist';
 import SetupGuideCarousel from '../../components/activity/SetupGuideCarousel';
-
 const { width, height } = Dimensions.get('window');
 
 /* RESPONSIVE HELPERS */
@@ -145,6 +147,22 @@ const activityData = {
 };
 
 export default function Activity1Screen() {
+const [materialProgress,
+  setMaterialProgress] =
+  useState(0);
+
+
+const [safetyComplete,
+  setSafetyComplete] =
+  useState(false);
+const progress =
+  Math.round(
+    materialProgress * 0.5 +
+    (safetyComplete ? 50 : 0)
+  );
+const canStart =
+  progress === 100;
+
 
   return (
 
@@ -199,10 +217,12 @@ export default function Activity1Screen() {
         {/* CONTENT */}
         <View style={styles.content}>
 
-          <MaterialsChecklist
-            materials={activityData.materials}
-          />
-
+<MaterialsChecklist
+  materials={activityData.materials}
+  onProgressChange={
+    setMaterialProgress
+  }
+/>
           <SetupGuideCarousel
             steps={activityData.setupSteps}
           />
@@ -217,18 +237,25 @@ export default function Activity1Screen() {
           />
 
 
-          <SafetyNotes />
-
+<SafetyNotes
+  onAcceptedChange={
+    setSafetyComplete
+  }
+/>
 <StartButton
+  disabled={!canStart}
   onPress={() =>
     router.push({
-      pathname: '/activities/ActivityIntroScreen',
+      pathname:
+        '/activities/ActivityIntroScreen',
       params: {
         activityNumber: 1,
-        title: 'PARACHUTE DROP CHALLENGE',
+        title:
+          'PARACHUTE DROP CHALLENGE',
         objective:
           'Design and test a parachute to achieve the slowest drop time.',
-        nextScreen: '/activities/activity1',
+        nextScreen:
+          '/activities/activity1',
       },
     })
   }
@@ -236,7 +263,9 @@ export default function Activity1Screen() {
         </View>
 
       </ScrollView>
-
+<ProgressBar
+  progress={progress}
+/>
     </View>
 
   );
@@ -252,9 +281,9 @@ const styles = StyleSheet.create({
   },
 
   /* SCROLL */
-  scrollContent: {
-    paddingBottom: hp(8),
-  },
+scrollContent: {
+  paddingBottom: hp(20),
+},
 
   /* HERO BG */
   heroBackground: {

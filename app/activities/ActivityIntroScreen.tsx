@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Animated,
   Dimensions,
   Image,
   PixelRatio,
@@ -7,6 +8,8 @@ import {
   Text,
   View,
 } from 'react-native';
+
+import { useEffect, useRef } from 'react';
 
 const { width, height } = Dimensions.get('window');
 
@@ -31,6 +34,7 @@ const rf = (size: number) => {
     )
   );
 };
+
 interface Props {
   activityNumber: number;
   title: string;
@@ -44,6 +48,31 @@ export default function ActivityIntroScreen({
   objective,
   attempt = 1,
 }: Props) {
+
+  const blinkAnim = useRef(
+    new Animated.Value(1)
+  ).current;
+
+  useEffect(() => {
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(blinkAnim, {
+          toValue: 0.2,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+
+        Animated.timing(blinkAnim, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+  }, []);
+
   return (
     <View style={styles.container}>
 
@@ -101,8 +130,15 @@ export default function ActivityIntroScreen({
         style={styles.character}
       />
 
-      {/* LOADING */}
-      <View style={styles.loadingContainer}>
+      {/* BLINKING LOADING */}
+      <Animated.View
+        style={[
+          styles.loadingContainer,
+          {
+            opacity: blinkAnim,
+          },
+        ]}
+      >
 
         <ActivityIndicator
           size="large"
@@ -113,11 +149,12 @@ export default function ActivityIntroScreen({
           LOADING ACTIVITY...
         </Text>
 
-      </View>
+      </Animated.View>
 
     </View>
   );
 }
+
 const styles = StyleSheet.create({
 
   container: {
