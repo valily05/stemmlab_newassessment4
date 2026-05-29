@@ -6,13 +6,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+interface StartButtonProps {
+  onPress?: () => void;
+}
 
-export default function StartButton() {
+export default function StartButton({
+  onPress,
+}: StartButtonProps) {
   return (
-    <TouchableOpacity style={styles.button}>
-  <Text style={styles.playIcon}>
-  ▶
-</Text>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={onPress}
+    >
+      <Text style={styles.playIcon}>
+        ▶
+      </Text>
 
       <Text style={styles.text}>
         START ACTIVITY
@@ -33,16 +41,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-/* PLAY ICON */
-playIcon: {
-  color: 'white',
 
-  fontSize: 28,
+  playIcon: {
+    color: 'white',
+    fontSize: 28,
+    fontFamily: 'PressStart2P',
+    bottom: 1,
+  },
 
-  fontFamily: 'PressStart2P',
-
-  bottom: 1,
-},
   text: {
     color: 'white',
     fontFamily: 'Pixel',

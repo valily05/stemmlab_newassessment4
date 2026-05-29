@@ -53,6 +53,13 @@ export default function ActivitiesLayout() {
         options={{
           headerShown: false,
         }}
+
+        />
+      <Stack.Screen
+        name="ActivityIntroScreen"
+        options={{
+          headerShown: false,
+        }}
       />
 
     </Stack>

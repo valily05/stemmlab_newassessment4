@@ -1,5 +1,12 @@
 // app/activities/activity1.tsx
 
+import PixelDivider from '@/components/PixelDivider';
+import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
+import SafetyNotes from '@/components/activity/SafetyNotes';
+import StartButton from '@/components/activity/StartButton';
+import StepInstructions from '@/components/activity/StepInstructions';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import {
   Dimensions,
   ImageBackground,
@@ -8,13 +15,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-
-import PixelDivider from '@/components/PixelDivider';
-import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
-import SafetyNotes from '@/components/activity/SafetyNotes';
-import StartButton from '@/components/activity/StartButton';
-import StepInstructions from '@/components/activity/StepInstructions';
-import { LinearGradient } from 'expo-linear-gradient';
 import ActivityHeader from '../../components/activity/ActivityHeader';
 import ActivityHero from '../../components/activity/ActivityHero';
 import ActivityStats from '../../components/activity/ActivityStats';
@@ -219,8 +219,20 @@ export default function Activity1Screen() {
 
           <SafetyNotes />
 
-          <StartButton />
-
+<StartButton
+  onPress={() =>
+    router.push({
+      pathname: '/ActivityIntoScreen',
+      params: {
+        activityNumber: 1,
+        title: 'PARACHUTE DROP CHALLENGE',
+        objective:
+          'Design and test a parachute to achieve the slowest drop time.',
+        nextScreen: '/activities/activity1',
+      },
+    })
+  }
+/>
         </View>
 
       </ScrollView>
