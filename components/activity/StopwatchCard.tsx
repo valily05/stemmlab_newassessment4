@@ -1,43 +1,61 @@
 import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
-interface Props {
-  onPress?: () => void;
-}
+const { width, height } =
+  Dimensions.get('window');
 
-export default function StopwatchCard({
-  onPress,
-}: Props) {
+const wp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
 
+const hp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+
+const rf = (
+  size: number
+) => {
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+};
+
+interface Props {}
+
+export default function StopwatchCard() {
   return (
-
     <View style={styles.container}>
 
-      <View style={{ flex: 1 }}>
+      <View style={styles.leftContent}>
 
         <Text style={styles.title}>
           STOPWATCH
         </Text>
 
         <Text style={styles.description}>
-          Press the button the moment the object hits the ground.
-        </Text>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={onPress}
-        >
-
-          <Text style={styles.buttonText}>
-            START TIMER
+          Press the button to stop the timer,
+          the moment the object{' '}
+          <Text style={styles.yellowText}>
+            hits the ground
           </Text>
-
-        </TouchableOpacity>
+          .
+        </Text>
 
       </View>
 
@@ -47,51 +65,62 @@ export default function StopwatchCard({
       />
 
     </View>
-
   );
-
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 20,
-    marginTop: 20,
-    padding: 20,
-    borderWidth: 2,
+    marginHorizontal: wp(5),
+    marginTop: hp(2.5),
+    padding: wp(5),
+
+    borderWidth: rf(2),
     borderColor: '#5711BE',
-    borderRadius: 20,
+    borderRadius: rf(20),
+
     flexDirection: 'row',
     alignItems: 'center',
+
+    backgroundColor: '#020423',
+
+    shadowColor: '#5711BE',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 1,
+    shadowRadius: rf(12),
+
+    elevation: 12,
+  },
+
+  leftContent: {
+    flex: 1,
+    paddingRight: wp(3),
+  },
+
+  yellowText: {
+    color: '#FFE95B',
   },
 
   title: {
     color: '#FACC15',
     fontFamily: 'Pixel',
-    fontSize: 18,
+    fontSize: rf(13),
   },
 
   description: {
     color: '#FFF',
-    marginTop: 8,
+    marginTop: hp(1),
     fontFamily: 'PixelOperator',
+    fontSize: rf(15),
+    lineHeight: rf(20),
+    width: wp(60),
   },
 
   image: {
-    width: 80,
-    height: 80,
-  },
-
-  button: {
-    marginTop: 16,
-    backgroundColor: '#ED359D',
-    height: 44,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  buttonText: {
-    color: '#FFF',
-    fontFamily: 'Pixel',
+    width: rf(80),
+    height: rf(80),
+    resizeMode: 'contain',
   },
 });

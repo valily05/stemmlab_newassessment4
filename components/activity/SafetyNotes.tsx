@@ -3,13 +3,42 @@
 import { useState } from 'react';
 
 import {
+  Dimensions,
   Image,
+  PixelRatio,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+const { width, height } =
+  Dimensions.get('window');
 
+const wp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+
+const hp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+
+const rf = (
+  size: number
+) => {
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+};
 interface Props {
   onAcceptedChange?: (
     accepted: boolean
@@ -59,8 +88,7 @@ export default function SafetyNotes({
       <View style={styles.notesContainer}>
 
         <Text style={styles.note}>
-          • Ensure the drop area is clear
-          {'\n'}of people
+          • Ensure the drop area is clear of people
         </Text>
 
         <Text style={styles.note}>
@@ -110,116 +138,106 @@ export default function SafetyNotes({
 }
 
 const styles = StyleSheet.create({
+container: {
+  marginHorizontal: rf(18),
+  marginTop: rf(20),
 
-  container: {
-    marginHorizontal: 18,
+  backgroundColor: '#6C2E44',
 
-    marginTop: 20,
+  borderRadius: rf(16),
 
-    backgroundColor: '#6C2E44',
+  borderWidth: rf(2),
 
-    borderRadius: 16,
+  borderColor: '#FF5AA9',
 
-    borderWidth: 2,
+  padding: rf(18),
+},
 
-    borderColor: '#FF5AA9',
+/* TITLE ROW */
+titleRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+},
 
-    padding: 18,
-  },
+/* WARNING ICON */
+warningIcon: {
+  width: rf(28),
+  height: rf(28),
+  marginRight: rf(10),
+},
 
-  /* TITLE ROW */
-  titleRow: {
-    flexDirection: 'row',
+title: {
+  color: 'white',
+  fontFamily: 'Pixel',
+  fontSize: rf(15),
+},
 
-    alignItems: 'center',
-  },
+notesContainer: {
+  marginTop: rf(10),
+},
 
-  /* WARNING ICON */
-  warningIcon: {
-    width: 28,
+note: {
+  color: 'white',
+  fontFamily: 'PixelOperator',
+  fontSize: rf(16),
+  marginBottom: rf(9),
 
-    height: 28,
+  flexShrink: 1,
+},
 
-    marginRight: 10,
-  },
+/* CHECKBOX ROW */
+checkboxRow: {
+  flexDirection: 'row',
 
-  title: {
-    color: 'white',
+  alignItems: 'center',
 
-    fontFamily: 'Pixel',
+  marginTop: rf(12),
 
-    fontSize: 15,
-  },
+  paddingTop: rf(12),
 
-  notesContainer: {
-    marginTop: 10,
-  },
+  borderTopWidth: rf(1),
 
-  note: {
-    color: 'white',
+  borderTopColor: 'rgba(255,255,255,0.15)',
+},
 
-    fontFamily: 'PixelOperator',
+checkbox: {
+  width: rf(20),
 
-    fontSize: 16,
+  height: rf(20),
 
-    marginBottom: 9,
-  },
+  borderWidth: rf(2),
 
-  /* CHECKBOX ROW */
-  checkboxRow: {
-    flexDirection: 'row',
+  borderColor: '#60BB3F',
 
-    alignItems: 'center',
+  borderRadius: rf(4),
 
-    marginTop: 12,
+  justifyContent: 'center',
 
-    paddingTop: 12,
+  alignItems: 'center',
 
-    borderTopWidth: 1,
+  marginRight: rf(12),
+},
 
-    borderTopColor: 'rgba(255,255,255,0.15)',
-  },
+checkboxActive: {
+  backgroundColor: '#60BB3F',
+},
 
-  checkbox: {
-    width: 20,
+checkMark: {
+  color: '#FFFFFF',
 
-    height: 20,
+  fontSize: rf(16),
 
-    borderWidth: 2,
+  fontWeight: 'bold',
+},
 
-    borderColor: '#60BB3F',
+checkboxText: {
+  flex: 1,
 
-    borderRadius: 4,
+  color: '#FFFFFF',
 
-    justifyContent: 'center',
+  fontFamily: 'PixelOperator',
 
-    alignItems: 'center',
-
-    marginRight: 12,
-  },
-
-  checkboxActive: {
-    backgroundColor: '#60BB3F',
-  },
-
-  checkMark: {
-    color: '#FFFFFF',
-
-    fontSize: 16,
-
-    fontWeight: 'bold',
-
-  },
-
-  checkboxText: {
-    flex: 1,
-
-    color: '#FFFFFF',
-
-    fontFamily: 'PixelOperator',
-
-    fontSize: 14,
-
-  },
+  fontSize: rf(14),
+},
 
 });

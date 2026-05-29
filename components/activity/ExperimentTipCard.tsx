@@ -1,8 +1,39 @@
 import {
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
+
+const { width, height } =
+  Dimensions.get('window');
+
+const wp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+
+const hp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+
+const rf = (
+  size: number
+) => {
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+};
 
 interface Props {
   tips: string[];
@@ -11,13 +42,17 @@ interface Props {
 export default function ExperimentTipCard({
   tips,
 }: Props) {
-
   return (
 
     <View style={styles.container}>
 
       <Text style={styles.title}>
-        ★ BUNNY TIP
+        <Text style={styles.star}>
+          ★
+        </Text>{' '}
+        <Text style={styles.bunnyTip}>
+          BUNNY TIP
+        </Text>
       </Text>
 
       {tips.map((tip, index) => (
@@ -34,28 +69,56 @@ export default function ExperimentTipCard({
     </View>
 
   );
-
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 20,
-    marginTop: 20,
-    padding: 18,
-    borderWidth: 2,
+    marginHorizontal: wp(5),
+    marginTop: hp(2.5),
+
+    paddingHorizontal: wp(4.5),
+    paddingVertical: hp(2),
+
+    borderWidth: rf(2),
     borderColor: '#5711BE',
-    borderRadius: 16,
+    borderRadius: rf(16),
+
+    backgroundColor: '#020423',
+
+    shadowColor: '#5711BE',
+    shadowOpacity: 1,
+    shadowRadius: rf(12),
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+
+    elevation: 12,
   },
 
   title: {
+    marginBottom: hp(1.2),
+  },
+
+  star: {
     color: '#FACC15',
     fontFamily: 'Pixel',
-    marginBottom: 10,
+    fontSize: rf(22), // bigger star
+  },
+
+  bunnyTip: {
+    color: '#FACC15',
+    fontFamily: 'Pixel',
+    fontSize: rf(20), // smaller than star
   },
 
   tip: {
     color: '#FFF',
-    marginBottom: 6,
+
+    marginBottom: hp(0.8),
+
     fontFamily: 'PixelOperator',
+    fontSize: rf(14),
+    lineHeight: rf(20),
   },
 });

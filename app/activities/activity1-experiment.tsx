@@ -1,9 +1,11 @@
 // app/activities/activity1-experiment.tsx
 
+import {
+  useCameraPermissions,
+} from 'expo-camera';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-
-import { LinearGradient } from 'expo-linear-gradient';
 import {
   Dimensions,
   Image,
@@ -22,6 +24,7 @@ import ExperimentHero from '../../components/activity/ExperimentHero';
 import ExperimentStats from '../../components/activity/ExperimentStats';
 import ExperimentTipCard from '../../components/activity/ExperimentTipCard';
 import LiveTimerCard from '../../components/activity/LiveTimerCard';
+import StopwatchCard from '../../components/activity/StopwatchCard';
 const { width, height } = Dimensions.get('window');
 
 const wp = (percentage: number) =>
@@ -52,6 +55,9 @@ const stages = [
 ];
 
 export default function Activity1Experiment() {
+const [permission, requestPermission] =
+  useCameraPermissions();
+
   const [showInfo, setShowInfo] =
     useState(false);
 
@@ -189,7 +195,12 @@ return (
   style={styles.container}
 >
 
-<TouchableOpacity
+
+<ScrollView
+  showsVerticalScrollIndicator={false}
+  contentContainerStyle={styles.content}
+>
+  <TouchableOpacity
   style={styles.infoButton}
   onPress={() =>
     setShowInfo(true)
@@ -200,10 +211,6 @@ return (
     style={styles.infoIcon}
   />
 </TouchableOpacity>
-<ScrollView
-  showsVerticalScrollIndicator={false}
-  contentContainerStyle={styles.content}
->
 <ExperimentHero
   title="PARACHUTE DROP CHALLENGE"
   description={
@@ -243,11 +250,23 @@ return (
           hasStarted={
             hasStarted
           }
-          onStart={() => {
-            setHasStarted(true);
-            setIsRecording(true);
-            setElapsedTime(0);
-          }}
+onStart={async () => {
+
+  if (!permission?.granted) {
+
+    const result =
+      await requestPermission();
+
+    if (!result.granted) {
+      return;
+    }
+  }
+
+  setHasStarted(true);
+  setIsRecording(true);
+  setElapsedTime(0);
+
+}}
          onStop={() => {
   setIsRecording(false);
   setShowReview(true);
@@ -262,14 +281,24 @@ return (
           }
         />
 
-        <LiveTimerCard
-          time={formatTime(
-            elapsedTime
-          )}
-          isRecording={
-            isRecording
-          }
-        />
+{
+  !hasStarted ? (
+    <StopwatchCard
+      onPress={() => {
+        // optional
+      }}
+    />
+  ) : (
+    <LiveTimerCard
+      time={formatTime(
+        elapsedTime
+      )}
+      isRecording={
+        isRecording
+      }
+    />
+  )
+}
 
         <ExperimentTipCard
 tips={[
@@ -438,6 +467,7 @@ heroDescription: {
   color: '#FFFFFF',
   fontSize: rf(15),
   fontFamily: 'PixelOperator',
+  lineHeight: rf(22),
   width:rf(252)
 },
 

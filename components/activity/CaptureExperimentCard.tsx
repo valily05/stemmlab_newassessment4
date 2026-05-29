@@ -1,5 +1,8 @@
 // components/activity/CaptureExperimentCard.tsx
-
+import {
+  CameraView,
+  useCameraPermissions,
+} from 'expo-camera';
 import {
   Dimensions,
   Image,
@@ -9,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -48,7 +52,11 @@ export default function CaptureExperimentCard({
   onStop,
   onRetry,
   onSaveIteration,
+
 }: Props) {
+  const [permission, requestPermission] =
+  useCameraPermissions();
+
   if (hasStarted) {
     return (
       <View style={styles.recordingCard}>
@@ -63,12 +71,17 @@ export default function CaptureExperimentCard({
           </Text>
         </View>
 
-        <View style={styles.cameraPreview}>
-          <Image
-            source={require('../../assets/images/camera-icon.png')}
-            style={styles.cameraIcon}
-          />
-        </View>
+<View style={styles.cameraPreview}>
+
+  <CameraView
+    style={{
+      flex: 1,
+      borderRadius: 20,
+    }}
+    facing="back"
+  />
+
+</View>
 
         {isRecording && (
           <TouchableOpacity
@@ -112,62 +125,84 @@ export default function CaptureExperimentCard({
   return (
     <View style={styles.card}>
 
-      <View style={styles.header}>
+<View style={styles.header}>
 
-        <View>
+  <View style={styles.leftContent}>
 
-          <Text style={styles.title}>
-            CAPTURE EXPERIMENT
-          </Text>
+<Text
+  style={styles.title}
+  numberOfLines={1}
+>
+  CAPTURE EXPERIMENT
+</Text>
 
-          <View style={styles.requiredBadge}>
-            <Text style={styles.requiredText}>
-              Required
-            </Text>
-          </View>
-
-        </View>
-
-        <Image
-          source={require('../../assets/images/phone-camera.png')}
-          style={styles.phoneImage}
-        />
-
-      </View>
-
-      <Text style={styles.description}>
-        Record the entire experiment to
-        analyze your parachute's performance.
+    <View style={styles.requiredBadge}>
+      <Text style={styles.requiredText}>
+        Required
       </Text>
+    </View>
 
-      <Text style={styles.tipTitle}>
-        ★ BUNNY TIP
-      </Text>
+<Text style={styles.description}>
+  Record the{' '}
+  <Text style={styles.yellowText}>
+    entire experiment
+  </Text>{' '}
+  to analyze your parachute's performance.
+</Text>
 
-      <Text style={styles.tip}>
-        Use a ruler in frame for scale
-      </Text>
+  </View>
 
-      <Text style={styles.tip}>
-        Identify first contact for contact time
-      </Text>
+  <Image
+    source={require('../../assets/images/phone-camera.png')}
+    style={styles.phoneImage}
+  />
 
-      <Text style={styles.tip}>
-        Identify when object leaves surface for bounce calculation
-      </Text>
+</View>
 
-      <View style={styles.divider} />
+   
 
-      <Text style={styles.howTitle}>
-        HOW IT WORKS
-      </Text>
+<View style={styles.tipCard}>
+
+<Text style={styles.tipTitle}>
+  <Text style={styles.tipStar}>
+    ★
+  </Text>{' '}
+  BUNNY TIP
+</Text>
+
+  <Text style={styles.tip}>
+    • Use a ruler in frame for scale
+  </Text>
+
+  <Text style={styles.tip}>
+    • Identify first contact for contact time
+  </Text>
+
+  <Text style={styles.tip}>
+    • Identify when the object leaves the surface for bounce calculation
+  </Text>
+
+</View>
+
+<View style={styles.howWorksContainer}>
+
+  <View style={styles.howLine} />
+
+  <Text style={styles.howTitle}>
+    HOW IT WORKS
+  </Text>
+
+  <View style={styles.howLine} />
+
+</View>
 
       <View style={styles.stepsRow}>
 
         <View style={styles.step}>
-          <Text style={styles.stepEmoji}>
-            📹
-          </Text>
+<Image
+  source={require('../../assets/images/record-icon.png')}
+  style={styles.stepIcon}
+/>
 
           <Text style={styles.stepTitle}>
             1. RECORD
@@ -179,9 +214,10 @@ export default function CaptureExperimentCard({
         </View>
 
         <View style={styles.step}>
-          <Text style={styles.stepEmoji}>
-            🪂
-          </Text>
+  <Image
+  source={require('../../assets/images/parachute-icon.png')}
+  style={styles.stepIcon}
+/>
 
           <Text style={styles.stepTitle}>
             2. DROP
@@ -193,9 +229,10 @@ export default function CaptureExperimentCard({
         </View>
 
         <View style={styles.step}>
-          <Text style={styles.stepEmoji}>
-            ⏱️
-          </Text>
+<Image
+  source={require('../../assets/images/stopwatch-icon.png')}
+  style={styles.stepIcon}
+/>
 
           <Text style={styles.stepTitle}>
             3. STOP
@@ -212,9 +249,10 @@ export default function CaptureExperimentCard({
         style={styles.startButton}
         onPress={onStart}
       >
-        <Text style={styles.startIcon}>
-          🎥
-        </Text>
+<Image
+  source={require('../../assets/images/video-icon.png')}
+  style={styles.startButtonIcon}
+/>
 
         <Text style={styles.startText}>
           START
@@ -226,88 +264,138 @@ export default function CaptureExperimentCard({
 }
 
 const styles = StyleSheet.create({
+leftContent: {
+  flex: 1,
+  paddingRight: wp(3),
+},
+card: {
+  marginHorizontal: wp(5),
+  marginTop: hp(3),
 
-  card: {
-    marginHorizontal: wp(5),
-    marginTop: hp(3),
-    backgroundColor: '#02032A',
-    borderRadius: rf(22),
-    padding: wp(5),
-    borderWidth: rf(1.5),
-    borderColor: '#5711BE',
-    shadowColor: '#6A36FF',
-    shadowOpacity: 0.8,
-    shadowRadius: 20,
-    elevation: 12,
+  backgroundColor: '#02032A',
+
+  borderRadius: rf(22),
+  padding: wp(5),
+paddingTop:wp(6),
+  borderWidth: rf(2),
+  borderColor: '#3D438F',
+
+  shadowColor: '#3D438F',
+  shadowOpacity: 1,
+  shadowRadius: rf(10),
+  shadowOffset: {
+    width: 0,
+    height: 0,
   },
+
+  elevation: 12,
+},
+
+tipStar: {
+  color: '#FFE95B',
+  fontSize: rf(20), // bigger than Bunny Tip
+},
 
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+yellowText: {
+  color: '#FFE95B',
+},
 
-  title: {
-    color: '#FFE95B',
-    fontSize: rf(18),
-    fontFamily: 'Pixel',
-  },
+title: {
+  color: '#FFE95B',
+  fontSize: rf(14),
+  fontFamily: 'Pixel',
 
+  width: wp(70),
+},
   requiredBadge: {
-    backgroundColor: '#8B002B',
-    paddingHorizontal: wp(3),
+backgroundColor: '#FF000036',    paddingHorizontal: wp(3),
     paddingVertical: hp(0.4),
     borderRadius: rf(10),
-    marginTop: hp(1),
+    marginTop: hp(1.5),    
+    marginBottom: hp(0.5),
+
     alignSelf: 'flex-start',
   },
 
   requiredText: {
-    color: '#FF4D6D',
-    fontSize: rf(9),
+    color: '#FF0000',
+    fontSize: rf(14),
     fontFamily: 'PixelOperator',
   },
 
-  phoneImage: {
-    width: rf(75),
-    height: rf(75),
-    resizeMode: 'contain',
-  },
+phoneImage: {
+  width: rf(120),
+  height: rf(120),
+  resizeMode: 'contain',
 
-  description: {
-    color: '#FFFFFF',
-    fontSize: rf(12),
-    lineHeight: rf(18),
-    fontFamily: 'PixelOperator',
-    marginTop: hp(1),
-  },
+  transform: [
+    { translateX: rf(34) }
+  ],
+},
 
-  tipTitle: {
-    color: '#FFE95B',
-    fontSize: rf(18),
-    fontFamily: 'Pixel',
-    marginTop: hp(2),
-  },
+description: {
+  color: '#FFFFFF',
+  fontSize: rf(15),
+  lineHeight: rf(18),
+  fontFamily: 'PixelOperator',
+  marginTop: hp(1),
+  width: wp(65),
+},
 
-  tip: {
-    color: '#FFFFFF',
-    fontSize: rf(12),
-    lineHeight: rf(18),
-    fontFamily: 'PixelOperator',
-  },
+tipCard: {
+  marginTop: hp(0),
 
-  divider: {
-    height: 1,
-    backgroundColor: '#2B2F68',
-    marginTop: hp(2),
-  },
+  backgroundColor: '#150F31',
 
-  howTitle: {
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontSize: rf(12),
-    fontFamily: 'PixelOperator',
-    marginTop: hp(1),
-  },
+  borderWidth: rf(1.5),
+  borderColor: '#6954A6',
+  borderStyle: 'dashed',
+
+  borderRadius: rf(10),
+
+  paddingHorizontal: wp(4),
+  paddingVertical: hp(1.5),
+},
+tipTitle: {
+  color: '#FFE95B',
+  fontSize: rf(12),
+  fontFamily: 'Pixel',
+  marginBottom: hp(1),
+},
+
+tip: {
+  color: '#FFFFFF',
+  fontSize: rf(15),
+  lineHeight: rf(16),
+  fontFamily: 'PixelOperator',
+  marginBottom: hp(0.6),
+},
+
+
+
+ howWorksContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: hp(2),
+},
+
+howLine: {
+  flex: 1,
+  height: rf(2),
+  backgroundColor: '#2B2F68',
+},
+
+howTitle: {
+  color: '#FFFFFF',
+  fontSize: rf(18),
+  fontFamily: 'PixelOperator',
+
+  marginHorizontal: wp(3),
+},
 
   stepsRow: {
     flexDirection: 'row',
@@ -316,27 +404,26 @@ const styles = StyleSheet.create({
   },
 
   step: {
-    width: wp(24),
+    width: wp(26),
     alignItems: 'center',
   },
 
-  stepEmoji: {
-    fontSize: rf(28),
-  },
+
 
   stepTitle: {
     color: '#FFE95B',
-    fontSize: rf(11),
-    fontFamily: 'Pixel',
-    marginTop: hp(1),
+    fontSize: rf(19),
+    fontFamily: 'PixelOperator',
+    marginTop: hp(0.3),
   },
 
   stepText: {
     color: '#FFFFFF',
-    fontSize: rf(8),
+    fontSize: rf(14),
     textAlign: 'center',
     marginTop: hp(0.5),
     fontFamily: 'PixelOperator',
+    width:rf(98)
   },
 
   startButton: {
@@ -349,10 +436,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  startIcon: {
-    fontSize: rf(18),
-    marginRight: wp(2),
-  },
+stepIcon: {
+  width: rf(48),
+  height: rf(48),
+  resizeMode: 'contain',
+  marginBottom: hp(1),
+},
+
+startButtonIcon: {
+  width: rf(22),
+  height: rf(22),
+  resizeMode: 'contain',
+  marginRight: wp(3),
+},
 
   startText: {
     color: '#FFFFFF',
@@ -362,15 +458,28 @@ const styles = StyleSheet.create({
 
   /* RECORDING MODE */
 
-  recordingCard: {
-    marginHorizontal: wp(5),
-    marginTop: hp(3),
-    backgroundColor: '#02032A',
-    borderRadius: rf(22),
-    padding: wp(5),
-    borderWidth: rf(1.5),
-    borderColor: '#5711BE',
+recordingCard: {
+  marginHorizontal: wp(5),
+  marginTop: hp(3),
+
+  backgroundColor: '#02032A',
+
+  borderRadius: rf(22),
+  padding: wp(5),
+
+  borderWidth: rf(2),
+  borderColor: '#3D438F',
+
+  shadowColor: '#3D438F',
+  shadowOpacity: 1,
+  shadowRadius: rf(18),
+  shadowOffset: {
+    width: 0,
+    height: 0,
   },
+
+  elevation: 15,
+},
 
   recordingHeader: {
     flexDirection: 'row',
@@ -379,7 +488,7 @@ const styles = StyleSheet.create({
 
   recordingTitle: {
     color: '#FFE95B',
-    fontSize: rf(18),
+    fontSize: rf(20),
     fontFamily: 'Pixel',
   },
 
@@ -389,14 +498,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Pixel',
   },
 
-  cameraPreview: {
-    height: hp(35),
-    borderRadius: rf(18),
-    backgroundColor: '#010125',
-    marginTop: hp(2),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+cameraPreview: {
+  height: hp(35),
+  overflow: 'hidden',
+  borderRadius: rf(18),
+  marginTop: hp(2),
+},
 
   cameraIcon: {
     width: rf(80),
