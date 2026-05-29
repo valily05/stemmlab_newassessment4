@@ -14,9 +14,9 @@ import {
     View
 } from 'react-native';
 
-import { AuthButton, AuthInput } from '../components/AuthElements';
-import { LAYOUT } from '../constants/layout';
-import { useLanguage } from '../context/LanguageContext';
+import { AuthButton, AuthInput } from '../../components/AuthElements';
+import { LAYOUT } from '../../constants/layout';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function LoginScreen() {
   const router = useRouter();

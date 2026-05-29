@@ -14,11 +14,11 @@ import {
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import { AuthButton, AuthInput } from '../components/AuthElements';
-import PasswordChecklist from '../components/PasswordChecklist';
-import PasswordStrength from '../components/PasswordStrength';
-import { LAYOUT } from '../constants/layout';
-import { useLanguage } from '../context/LanguageContext';
+import { AuthButton, AuthInput } from '../../components/AuthElements';
+import PasswordChecklist from '../../components/PasswordChecklist';
+import PasswordStrength from '../../components/PasswordStrength';
+import { LAYOUT } from '../../constants/layout';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function RegisterScreen() {
   const router = useRouter();
