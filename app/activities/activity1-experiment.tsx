@@ -9,14 +9,12 @@ import { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
-  Modal,
   PixelRatio,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import CaptureExperimentCard from '../../components/activity/CaptureExperimentCard';
 import ExitButton from '../../components/activity/ExitButton';
@@ -66,10 +64,10 @@ const [permission, requestPermission] =
   useState(false);
 
 const [firstHitTime, setFirstHitTime] =
-  useState('');
+  useState<string | null>(null);
 
 const [stopMovingTime, setStopMovingTime] =
-  useState('');
+  useState<string | null>(null);
 
   const [currentStage, setCurrentStage] =
     useState(0);
@@ -162,7 +160,8 @@ const result = {
       setCurrentStage(
         prev => prev + 1
       );
-
+setFirstHitTime(null);
+setStopMovingTime(null);
 setElapsedTime(0);
 setIsRecording(false);
     } else {
@@ -272,9 +271,8 @@ onStart={async () => {
   setElapsedTime(0);
 
 }}
-         onStop={() => {
+onStop={() => {
   setIsRecording(false);
-  setShowReview(true);
 }}
 onRetry={() => {
   setIsRecording(true);
@@ -287,14 +285,77 @@ onRetry={() => {
 
 {
   !hasStarted ? (
-<StopwatchCard />
+    <StopwatchCard />
   ) : (
-  <LiveTimerCard
-  time={formatTime(elapsedTime)}
-  isRecording={isRecording}
-/>
+    <>
+      <LiveTimerCard
+        time={formatTime(elapsedTime)}
+        isRecording={isRecording}
+      />
+
+      <View
+        style={{
+          marginHorizontal: wp(5),
+          marginTop: hp(2),
+          gap: hp(1.5),
+        }}
+      >
+
+        <TouchableOpacity
+          style={styles.hitButton}
+          disabled={!isRecording || !!firstHitTime}
+          onPress={() => {
+            setFirstHitTime(
+              formatTime(elapsedTime)
+            );
+          }}
+        >
+          <Text style={styles.hitButtonText}>
+            HIT GROUND
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.stopButton}
+          disabled={
+            !isRecording ||
+            !firstHitTime ||
+            !!stopMovingTime
+          }
+          onPress={() => {
+            setStopMovingTime(
+              formatTime(elapsedTime)
+            );
+
+            setIsRecording(false);
+          }}
+        >
+          <Text style={styles.hitButtonText}>
+            STOPPED MOVING
+          </Text>
+        </TouchableOpacity>
+
+        {firstHitTime && (
+          <Text style={styles.resultText}>
+            First Hit Ground:
+            {' '}
+            {firstHitTime}
+          </Text>
+        )}
+
+        {stopMovingTime && (
+          <Text style={styles.resultText}>
+            Stopped Moving:
+            {' '}
+            {stopMovingTime}
+          </Text>
+        )}
+
+      </View>
+    </>
   )
 }
+
 {!hasStarted && (
   <ExperimentTipCard
     tips={[
@@ -328,83 +389,7 @@ onRetry={() => {
   }
 />
 
-<Modal
-  visible={showReview}
-  transparent
-  animationType="slide"
->
-  <View style={styles.modalOverlay}>
-    <View style={styles.modalCard}>
-      <Text style={styles.modalTitle}>
-        REVIEW RECORDING
-      </Text>
 
-      <Text style={styles.modalText}>
-        Watch the video and enter
-        the observed times.
-      </Text>
-
-      <Text style={styles.inputLabel}>
-        First Hit Ground (s)
-      </Text>
-
-      <TextInput
-        style={styles.input}
-        value={firstHitTime}
-        onChangeText={setFirstHitTime}
-        keyboardType="numeric"
-        placeholder="2.31"
-        placeholderTextColor="#999"
-      />
-
-      <Text style={styles.inputLabel}>
-        Stopped Moving (s)
-      </Text>
-
-      <TextInput
-        style={styles.input}
-        value={stopMovingTime}
-        onChangeText={setStopMovingTime}
-        keyboardType="numeric"
-        placeholder="2.73"
-        placeholderTextColor="#999"
-      />
-
-<TouchableOpacity
-  style={styles.closeButton}
-  onPress={() => {
-    saveIteration();
-
-    setFirstHitTime('');
-    setStopMovingTime('');
-
-    setShowReview(false);
-  }}
->
-  <Text style={styles.closeText}>
-    SAVE ITERATION
-  </Text>
-</TouchableOpacity>
-
-<TouchableOpacity
-  style={styles.retryButton}
-onPress={() => {
-  setShowReview(false);
-
-  setFirstHitTime('');
-  setStopMovingTime('');
-
-  setElapsedTime(0);
-  setIsRecording(false);
-}}
->
-  <Text style={styles.closeText}>
-    RETRY
-  </Text>
-</TouchableOpacity>
-    </View>
-  </View>
-</Modal>
 </LinearGradient>
   );
 }
@@ -437,6 +422,46 @@ modalOverlay: {
   justifyContent: 'center',
   alignItems: 'center',
   padding: wp(5),
+},
+
+hitButton: {
+  height: hp(6.5),
+
+  borderRadius: rf(16),
+
+  backgroundColor: '#ED359D',
+
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+stopButton: {
+  height: hp(6.5),
+
+  borderRadius: rf(16),
+
+  backgroundColor: '#5711BE',
+
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+hitButtonText: {
+  color: '#FFFFFF',
+
+  fontFamily: 'Pixel',
+
+  fontSize: rf(14),
+},
+
+resultText: {
+  color: '#FFD94E',
+
+  fontFamily: 'PixelOperator',
+
+  fontSize: rf(15),
+
+  textAlign: 'center',
 },
 heroDescription: {
   color: '#FFFFFF',
