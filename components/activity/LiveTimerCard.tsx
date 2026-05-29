@@ -42,7 +42,6 @@ interface Props {
 
 export default function LiveTimerCard({
   time,
-  isRecording,
 }: Props) {
   return (
     <View style={styles.card}>
@@ -55,73 +54,60 @@ export default function LiveTimerCard({
         {time}
       </Text>
 
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-card: {
-  marginHorizontal: wp(5),
-  marginTop: hp(2.5),
+  card: {
+    marginHorizontal: wp(5),
+    marginTop: hp(2.5),
 
-  padding: wp(5),
+    padding: wp(5),
 
-  borderRadius: rf(20),
+    borderRadius: rf(20),
 
-  backgroundColor: '#22134D',
+    backgroundColor: '#22134D',
 
-  alignItems: 'center',
+    borderWidth: rf(2),
+    borderColor: '#5711BE',
 
-  borderWidth: rf(2),
-  borderColor: '#5711BE',
+    shadowColor: '#5711BE',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 1,
+    shadowRadius: rf(15),
 
-  shadowColor: '#5711BE',
-  shadowOffset: {
-    width: 0,
-    height: 0,
+    elevation: 15,
   },
-  shadowOpacity: 1,
-  shadowRadius: rf(15),
 
-  elevation: 15,
+title: {
+  color: '#FFFFFF',
+
+  fontFamily: 'Pixel',
+
+  fontSize: rf(16),
+
+  textAlign: 'center',
+
+  alignSelf: 'center',
+
+  marginBottom: hp(1),
 },
-
-  title: {
-    color: '#FFFFFF',
-
-    fontFamily: 'Pixel',
-
-    fontSize: rf(16),
-  },
 
   timer: {
     color: '#FFD94E',
 
-    fontSize: rf(36),
-
-    marginTop: hp(1.5),
-
-    fontFamily: 'PressStart2P',
-
-    textAlign: 'center',
-  },
-
-  badge: {
-    marginTop: hp(2),
-
-    paddingHorizontal: wp(4),
-
-    paddingVertical: hp(0.8),
-
-    borderRadius: rf(20),
-  },
-
-  badgeText: {
-    color: '#FFFFFF',
+    fontSize: rf(26),
 
     fontFamily: 'Pixel',
 
-    fontSize: rf(13),
+    textAlign: 'center',
+
+    alignSelf: 'center',
+
+    marginTop: hp(0.5),
   },
 });

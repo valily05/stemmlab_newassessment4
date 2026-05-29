@@ -370,21 +370,38 @@ onRetry={() => {
         placeholderTextColor="#999"
       />
 
-      <TouchableOpacity
-        style={styles.closeButton}
-        onPress={() => {
-          saveIteration();
+<TouchableOpacity
+  style={styles.closeButton}
+  onPress={() => {
+    saveIteration();
 
-          setFirstHitTime('');
-          setStopMovingTime('');
+    setFirstHitTime('');
+    setStopMovingTime('');
 
-          setShowReview(false);
-        }}
-      >
-        <Text style={styles.closeText}>
-          SAVE ITERATION
-        </Text>
-      </TouchableOpacity>
+    setShowReview(false);
+  }}
+>
+  <Text style={styles.closeText}>
+    SAVE ITERATION
+  </Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+  style={styles.retryButton}
+onPress={() => {
+  setShowReview(false);
+
+  setFirstHitTime('');
+  setStopMovingTime('');
+
+  setElapsedTime(0);
+  setIsRecording(false);
+}}
+>
+  <Text style={styles.closeText}>
+    RETRY
+  </Text>
+</TouchableOpacity>
     </View>
   </View>
 </Modal>
@@ -442,10 +459,11 @@ modalCard: {
 },
 modalTitle: {
   color: '#FFD94E',
-  fontSize: rf(22),
+  fontSize: rf(19),
   fontFamily: 'Pixel',
   marginBottom: hp(2),
   textAlign: 'center',
+  width:hp(36)
 },
 modalText: {
   color: 'white',
@@ -462,6 +480,18 @@ closeButton: {
   justifyContent: 'center',
   alignItems: 'center',
 },
+retryButton: {
+  marginTop: hp(1.5),
+
+  height: hp(6.5),
+
+  borderRadius: rf(16),
+
+  backgroundColor: '#5711BE',
+
+  justifyContent: 'center',
+  alignItems: 'center',
+},
 closeText: {
   color: 'white',
   fontFamily: 'Pixel',
@@ -472,8 +502,8 @@ inputLabel: {
   color: '#FFD94E',
   marginTop: hp(1.5),
   marginBottom: hp(0.8),
-  fontSize: rf(14),
-  fontFamily: 'Pixel',
+  fontSize: rf(20),
+  fontFamily: 'PixelOperator',
 },
 
 input: {

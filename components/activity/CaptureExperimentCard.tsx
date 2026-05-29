@@ -120,23 +120,8 @@ export default function CaptureExperimentCard({
         {!isRecording && (
           <View style={styles.actionButtons}>
 
-            <TouchableOpacity
-              style={styles.retryButton}
-              onPress={onRetry}
-            >
-              <Text style={styles.buttonText}>
-                RETRY
-              </Text>
-            </TouchableOpacity>
+          
 
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={onSaveIteration}
-            >
-              <Text style={styles.buttonText}>
-                SAVE ITERATION
-              </Text>
-            </TouchableOpacity>
 
           </View>
         )}
