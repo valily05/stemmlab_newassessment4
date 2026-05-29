@@ -14,11 +14,11 @@ import {
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import { AuthButton, AuthInput } from '../components/AuthElements';
-import PasswordChecklist from '../components/PasswordChecklist';
-import PasswordStrength from '../components/PasswordStrength';
-import { LAYOUT } from '../constants/layout';
-import { useLanguage } from '../context/LanguageContext';
+import { AuthButton, AuthInput } from '../../components/AuthElements';
+import PasswordChecklist from '../../components/PasswordChecklist';
+import PasswordStrength from '../../components/PasswordStrength';
+import { LAYOUT } from '../../constants/layout';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -335,19 +335,19 @@ React.useEffect(() => {
               style={styles.langContainer}
 onPress={() => router.push('/language')}
             >
-              <Image source={require('../assets/images/globe.png')} style={styles.langIcon} />
+              <Image source={require('../../assets/images/globe.png')} style={styles.langIcon} />
               <Text style={[styles.langText, { fontSize: FONT }]}>{language}</Text>
               <Text style={styles.langArrow}>▼</Text>
             </TouchableOpacity>
 
-            <Image source={require('../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
+            <Image source={require('../../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
 
             <View style={styles.content}>
 
 {/* FULL NAME */}
 <AuthInput
   label={t.fullName}
-  image={require('../assets/images/User.png')}
+  image={require('../../assets/images/User.png')}
 placeholder={t.placeholderName}
   value={fullName}
   onChangeText={setFullName}
@@ -356,7 +356,7 @@ placeholder={t.placeholderName}
 {isNameOffensive && (
   <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 4, marginBottom: 9, marginTop: -2 }}>
     <Image
-      source={require('../assets/images/warning.png')}
+      source={require('../../assets/images/warning.png')}
       style={{ width: 16, height: 16, marginRight: 7 }}
     />
     <Text style={{
@@ -370,11 +370,11 @@ placeholder={t.placeholderName}
   </View>
 )}
               <AuthInput label={t.email} 
-              image={require('../assets/images/Letter.png')}placeholder={t.placeholderEmail} value={email} onChangeText={setEmail} />
+              image={require('../../assets/images/Letter.png')}placeholder={t.placeholderEmail} value={email} onChangeText={setEmail} />
               {isEmailOffensive && (
  <View style={{ flexDirection: 'row', alignItems: 'center',marginLeft: 4,marginBottom:9,marginTop:-2 }}>
   <Image
-    source={require('../assets/images/warning.png')}
+    source={require('../../assets/images/warning.png')}
     style={{ width: 16, height: 16, marginRight: 7 }}
   />
   <Text style={{
@@ -387,7 +387,7 @@ placeholder={t.placeholderName}
   </Text>
 </View>
 )}
-              <AuthInput label={t.password} image={require('../assets/images/Lock.png')} placeholder={t.placeholderPassword} isPassword value={password} onChangeText={setPassword} onFocus={() => scrollTo(100)} borderColor={borderColor} />
+              <AuthInput label={t.password} image={require('../../assets/images/Lock.png')} placeholder={t.placeholderPassword} isPassword value={password} onChangeText={setPassword} onFocus={() => scrollTo(100)} borderColor={borderColor} />
 
 <PasswordChecklist password={password} t={t} />
 <PasswordStrength password={password} labelEmpty={t.PS} t={t} />
@@ -396,7 +396,7 @@ placeholder={t.placeholderName}
 {isCommonPassword && (
   <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 4, marginTop: 4 }}>
     <Image
-      source={require('../assets/images/warning.png')}
+      source={require('../../assets/images/warning.png')}
       style={{ width: 16, height: 16, marginRight: 7 }}
     />
     <Text style={{
@@ -413,7 +413,7 @@ placeholder={t.placeholderName}
 {isOffensive && (
   <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 4, marginTop: 4,marginBottom:9, }}>
     <Image
-      source={require('../assets/images/warning.png')}
+      source={require('../../assets/images/warning.png')}
       style={{ width: 16, height: 16, marginRight: 7 }}
     />
     <Text style={{
@@ -426,7 +426,7 @@ placeholder={t.placeholderName}
   </View>
 )}
               <View ref={confirmRef}>
-                <AuthInput label={t.confirmPassword} image={require('../assets/images/Lock.png')} placeholder={t.placeholderConfirm}isPassword value={confirmPassword} onChangeText={(text) => {
+                <AuthInput label={t.confirmPassword} image={require('../../assets/images/Lock.png')} placeholder={t.placeholderConfirm}isPassword value={confirmPassword} onChangeText={(text) => {
                   setConfirmPassword(text);
                   if (text.length > 0 && text !== password) triggerShake();
                 }} onFocus={() => scrollTo(260)} borderColor={borderColor} />

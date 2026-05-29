@@ -14,9 +14,9 @@ import {
     View
 } from 'react-native';
 
-import { AuthButton, AuthInput } from '../components/AuthElements';
-import { LAYOUT } from '../constants/layout';
-import { useLanguage } from '../context/LanguageContext';
+import { AuthButton, AuthInput } from '../../components/AuthElements';
+import { LAYOUT } from '../../constants/layout';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -86,12 +86,12 @@ export default function LoginScreen() {
 
             {/* LANGUAGE */}
             <TouchableOpacity style={styles.langContainer}>
-              <Image source={require('../assets/images/globe.png')} style={styles.langIcon}/>
+              <Image source={require('../../assets/images/globe.png')} style={styles.langIcon}/>
               <Text style={styles.langText}>{language}</Text>
                 <Text style={styles.langArrow}>▼</Text>
             </TouchableOpacity>
 
-            <Image source={require('../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
+            <Image source={require('../../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
 
             {/*  TITLE */}
             <Text style={styles.title}>{t.loginTitle || "WELCOME BACK !"}</Text>
@@ -102,7 +102,7 @@ export default function LoginScreen() {
               {/*  EMAIL */}
               <AuthInput
                 label={t.email}
-                image={require('../assets/images/Letter.png')}
+                image={require('../../assets/images/Letter.png')}
                 placeholder={t.enterEmail || "Enter your email"}
                 value={email}
                 onChangeText={setEmail}
@@ -111,7 +111,7 @@ export default function LoginScreen() {
               {/*  PASSWORD */}
               <AuthInput
                 label={t.password}
-                image={require('../assets/images/Lock.png')}
+                image={require('../../assets/images/Lock.png')}
                 placeholder={t.enterPassword || "Enter your password"}
                 isPassword
                 value={password}
@@ -137,7 +137,7 @@ export default function LoginScreen() {
               <TouchableOpacity style={styles.googleBtn} activeOpacity={0.8}>
                 <View style={styles.googleContent}>
                   <Image
-                    source={require('../assets/images/google.png')}
+                    source={require('../../assets/images/google.png')}
                     style={styles.googleIcon}
                   />
                   <Text style={styles.googleText}>
