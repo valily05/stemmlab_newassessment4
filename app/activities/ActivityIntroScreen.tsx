@@ -1,20 +1,41 @@
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
+  PixelRatio,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+};
+
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+};
+
+const rf = (size: number) => {
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+};
 interface Props {
   activityNumber: number;
   title: string;
   objective: string;
   attempt?: number;
-  onStart?: () => void;
 }
 
 export default function ActivityIntroScreen({
@@ -22,20 +43,19 @@ export default function ActivityIntroScreen({
   title,
   objective,
   attempt = 1,
-  onStart,
 }: Props) {
   return (
     <View style={styles.container}>
-      {/* Background */}
+
+      {/* BACKGROUND */}
       <Image
         source={require('../../assets/images/activity-bg.png')}
         style={styles.background}
       />
 
- 
-
-      {/* Header */}
+      {/* HEADER */}
       <View style={styles.header}>
+
         <Text style={styles.activityNumber}>
           ACTIVITY #{activityNumber}
         </Text>
@@ -44,43 +64,62 @@ export default function ActivityIntroScreen({
           {title}
         </Text>
 
+        {/* ATTEMPT BADGE */}
         <View style={styles.attemptBadge}>
           <Text style={styles.attemptText}>
-            ATTEMPT #{attempt}
+            ATTEMPT : {attempt}
           </Text>
         </View>
+
       </View>
 
-      {/* Objective Card */}
-      <View style={styles.card}>
-        <Text style={styles.objectiveTitle}>
-          ✨ Activity Objective :
-        </Text>
+      {/* SPEECH BUBBLE */}
+      <View style={styles.speechBubbleContainer}>
 
-        <Text style={styles.objectiveText}>
-          {objective}
-        </Text>
+        <Image
+          source={require('../../assets/images/Group 14.png')}
+          style={styles.speechBubble}
+        />
+
+        <View style={styles.speechContent}>
+
+          <Text style={styles.objectiveTitle}>
+            Activity Objective :
+          </Text>
+
+          <Text style={styles.objectiveText}>
+            {objective}
+          </Text>
+
+        </View>
+
       </View>
 
-      {/* Character */}
+      {/* CHARACTER */}
       <Image
         source={require('../../assets/images/miffy-scientist.png')}
         style={styles.character}
       />
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={onStart}
-      >
-        <Text style={styles.buttonText}>
-          START ACTIVITY
+      {/* LOADING */}
+      <View style={styles.loadingContainer}>
+
+        <ActivityIndicator
+          size="large"
+          color="#FFFFFF"
+        />
+
+        <Text style={styles.loadingText}>
+          LOADING ACTIVITY...
         </Text>
-      </TouchableOpacity>
+
+      </View>
+
     </View>
   );
 }
-
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
     backgroundColor: '#04061B',
@@ -88,94 +127,144 @@ const styles = StyleSheet.create({
 
   background: {
     position: 'absolute',
+
     width: '100%',
     height: '100%',
+
     resizeMode: 'cover',
   },
 
-
+  /* HEADER */
   header: {
-    paddingHorizontal: 24,
-    marginTop: 80,
+    paddingHorizontal: wp(6),
+
+    marginTop: hp(8),
   },
 
   activityNumber: {
     color: '#FFD94E',
-    fontSize: 22,
+
+    fontSize: rf(22),
+
     fontWeight: '900',
-    letterSpacing: 1,
+
+    letterSpacing: rf(1),
   },
 
   title: {
-    color: 'white',
-    fontSize: 32,
+    color: '#FFFFFF',
+
+    fontSize: rf(30),
+
     fontWeight: '900',
-    marginTop: 10,
-    width: 250,
-    lineHeight: 34,
+
+    lineHeight: rf(34),
+
+    width: wp(65),
+
+    marginTop: hp(1),
   },
 
+  /* ATTEMPT */
   attemptBadge: {
-    marginTop: 16,
-    backgroundColor: '#FFE66A',
+    marginTop: hp(1.5),
+
     alignSelf: 'flex-start',
-    paddingHorizontal: 18,
-    paddingVertical: 8,
   },
 
   attemptText: {
-    color: '#3D55E6',
-    fontWeight: '900',
-    fontSize: 14,
+    color: '#FFFFFF',
+
+    fontSize: rf(18),
+
+    fontWeight: '700',
   },
 
-  card: {
-    marginTop: 140,
-    marginHorizontal: 30,
-    backgroundColor: '#F6F6F6',
-    borderWidth: 4,
-    borderColor: '#C7C7C7',
-    padding: 20,
+  /* SPEECH BUBBLE */
+  speechBubbleContainer: {
+    marginTop: hp(5),
+
+    alignItems: 'center',
+
+    position: 'relative',
+  },
+
+  speechBubble: {
+    width: wp(90),
+
+    height: wp(55),
+
+    resizeMode: 'contain',
+  },
+
+  speechContent: {
+    position: 'absolute',
+
+    width: wp(58),
+
+    top: hp(2.7),
+
+    alignItems: 'center',
   },
 
   objectiveTitle: {
     color: '#4D7FFF',
+
+    fontSize: rf(18),
+
     fontWeight: '700',
-    fontSize: 18,
-    textAlign: 'center',
+
+    marginBottom: hp(1),
   },
 
   objectiveText: {
-    marginTop: 12,
-    color: '#111',
+    color: '#111111',
+
     textAlign: 'center',
-    fontSize: 22,
+
+    fontSize: rf(20),
+
     fontWeight: '700',
-    lineHeight: 32,
+
+    lineHeight: rf(30),
   },
 
+  /* CHARACTER */
   character: {
-    width: 180,
-    height: 180,
+    width: wp(115),
+
+    height: wp(115),
+
     resizeMode: 'contain',
+
     position: 'absolute',
-    bottom: 120,
-    left: 20,
+
+    right: wp(-8),
+
+    bottom: hp(-2),
   },
 
-  button: {
+  /* LOADING */
+  loadingContainer: {
     position: 'absolute',
-    bottom: 40,
+
+    bottom: hp(5),
+
     alignSelf: 'center',
-    backgroundColor: '#5711BE',
-    paddingHorizontal: 30,
-    paddingVertical: 14,
-    borderRadius: 12,
+
+    alignItems: 'center',
   },
 
-  buttonText: {
-    color: 'white',
-    fontWeight: '900',
-    fontSize: 16,
+  loadingText: {
+    marginTop: hp(1),
+
+    color: '#FFFFFF',
+
+    fontSize: rf(18),
+
+    fontWeight: '700',
+
+    letterSpacing: rf(1),
   },
+
 });

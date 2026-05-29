@@ -222,7 +222,7 @@ export default function Activity1Screen() {
 <StartButton
   onPress={() =>
     router.push({
-      pathname: '/ActivityIntoScreen',
+      pathname: '/activities/ActivityIntroScreen',
       params: {
         activityNumber: 1,
         title: 'PARACHUTE DROP CHALLENGE',
