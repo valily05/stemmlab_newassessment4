@@ -3,25 +3,41 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   Dimensions,
+  Image,
   Modal,
   PixelRatio,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-
 import CaptureExperimentCard from '../../components/activity/CaptureExperimentCard';
 import ExitButton from '../../components/activity/ExitButton';
 import ExperimentHero from '../../components/activity/ExperimentHero';
 import ExperimentStats from '../../components/activity/ExperimentStats';
 import ExperimentTipCard from '../../components/activity/ExperimentTipCard';
 import LiveTimerCard from '../../components/activity/LiveTimerCard';
+const { width, height } = Dimensions.get('window');
 
-const { height } = Dimensions.get('window');
+const wp = (percentage: number) =>
+  PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+
+const rf = (size: number) => {
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+};
 
 const hp = (percentage: number) =>
   PixelRatio.roundToNearestPixel(
@@ -39,15 +55,26 @@ export default function Activity1Experiment() {
   const [showInfo, setShowInfo] =
     useState(false);
 
+    const [showReview, setShowReview] =
+  useState(false);
+
+const [firstHitTime, setFirstHitTime] =
+  useState('');
+
+const [stopMovingTime, setStopMovingTime] =
+  useState('');
+
   const [currentStage, setCurrentStage] =
     useState(0);
 
-  const [results, setResults] = useState<
-    {
-      stage: string;
-      time: number;
-    }[]
-  >([]);
+const [results, setResults] = useState<
+  {
+    stage: string;
+    dropTime: number;
+    firstHitTime: string;
+    stopMovingTime: string;
+  }[]
+>([]);
 
   const [isRecording, setIsRecording] =
     useState(false);
@@ -102,11 +129,12 @@ export default function Activity1Experiment() {
   };
 
   const saveIteration = () => {
-    const result = {
-      stage:
-        stages[currentStage],
-      time: elapsedTime,
-    };
+const result = {
+  stage: stages[currentStage],
+  dropTime: elapsedTime,
+  firstHitTime,
+  stopMovingTime,
+};
 
     const updatedResults = [
       ...results,
@@ -138,35 +166,66 @@ export default function Activity1Experiment() {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={
-          false
-        }
-        contentContainerStyle={
-          styles.content
-        }
-      >
-        <TouchableOpacity
-          style={styles.infoButton}
-          onPress={() =>
-            setShowInfo(true)
-          }
-        >
-          <Text style={styles.infoIcon}>
-            ⓘ
-          </Text>
-        </TouchableOpacity>
+return (
+<LinearGradient
+ colors={[
+    '#0B0820', 
+    '#14103A', 
+    '#1D1854',
+    '#26216D',
+    '#312C88',
+    '#3A35A3',
+  ]}
+  locations={[
+    0,
+    0.50,
+    0.75,
+    0.88,
+    0.94,
+    1,
+  ]}
+  start={{ x: 0.5, y: 0 }}
+  end={{ x: 0.5, y: 1 }}
+  style={styles.container}
+>
 
-        <ExperimentHero
-          title="PARACHUTE DROP CHALLENGE"
-          description={
-            currentStage === 0
-              ? 'Drop the toy WITHOUT a parachute.'
-              : 'Drop the toy WITH your parachute design.'
-          }
-        />
+<TouchableOpacity
+  style={styles.infoButton}
+  onPress={() =>
+    setShowInfo(true)
+  }
+>
+  <Image
+    source={require('../../assets/images/info-icon.png')}
+    style={styles.infoIcon}
+  />
+</TouchableOpacity>
+<ScrollView
+  showsVerticalScrollIndicator={false}
+  contentContainerStyle={styles.content}
+>
+<ExperimentHero
+  title="PARACHUTE DROP CHALLENGE"
+  description={
+    currentStage === 0 ? (
+      <Text style={styles.heroDescription}>
+        Drop the toy{' '}
+        <Text style={styles.pinkText}>
+          WITHOUT
+        </Text>{' '}
+        a parachute.
+      </Text>
+    ) : (
+      <Text style={styles.heroDescription}>
+        Drop the toy{' '}
+        <Text style={styles.pinkText}>
+          WITH
+        </Text>{' '}
+        your parachute design.
+      </Text>
+    )
+  }
+/>
 
         <ExperimentStats
           timeLeft={formatTime(
@@ -189,9 +248,10 @@ export default function Activity1Experiment() {
             setIsRecording(true);
             setElapsedTime(0);
           }}
-          onStop={() => {
-            setIsRecording(false);
-          }}
+         onStop={() => {
+  setIsRecording(false);
+  setShowReview(true);
+}}
           onRetry={() => {
             setHasStarted(false);
             setIsRecording(false);
@@ -212,12 +272,10 @@ export default function Activity1Experiment() {
         />
 
         <ExperimentTipCard
-          tips={[
-            currentStage === 0
-              ? 'This is the baseline test. Do not attach the parachute.'
-              : 'Use your parachute design for this test.',
-            `Current Stage: ${stages[currentStage]}`,
-          ]}
+tips={[
+  'Review the recording after each test.',
+  `Current Stage: ${stages[currentStage]}`,
+]}
         />
 
         <ExitButton
@@ -226,236 +284,217 @@ export default function Activity1Experiment() {
           }
         />
       </ScrollView>
+<Modal
+  visible={showInfo}
+  transparent
+  animationType="fade"
+>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalCard}>
+      <Text style={styles.modalTitle}>
+        HOW TO COMPLETE THIS ACTIVITY
+      </Text>
 
-      <Modal
-        visible={showInfo}
-        transparent
-        animationType="fade"
+      <Text style={styles.modalText}>
+        1. Place the object at the drop height.
+      </Text>
+
+      <Text style={styles.modalText}>
+        2. Press Start Recording.
+      </Text>
+
+      <Text style={styles.modalText}>
+        3. Drop the object.
+      </Text>
+
+      <Text style={styles.modalText}>
+        4. Press Stop Recording.
+      </Text>
+
+      <Text style={styles.modalText}>
+        5. Review the recording.
+      </Text>
+
+      <Text style={styles.modalText}>
+        6. Determine the first hit time.
+      </Text>
+
+      <Text style={styles.modalText}>
+        7. Determine the stop moving time.
+      </Text>
+
+      <Text style={styles.modalText}>
+        8. Save Iteration.
+      </Text>
+
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() =>
+          setShowInfo(false)
+        }
       >
-        <View
-          style={
-            styles.modalOverlay
-          }
-        >
-          <View
-            style={styles.modalCard}
-          >
-            <Text
-              style={
-                styles.modalTitle
-              }
-            >
-              {stages[currentStage]}
-            </Text>
-
-            {currentStage === 0 ? (
-              <>
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  1. Do not attach
-                  the parachute.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  2. Place the toy
-                  at the drop height.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  3. Press Start
-                  Recording.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  4. Drop the toy.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  5. Press Stop
-                  Recording.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  6. Save Iteration.
-                </Text>
-              </>
-            ) : (
-              <>
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  1. Attach your
-                  parachute.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  2. Use the same
-                  drop height.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  3. Press Start
-                  Recording.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  4. Drop the toy.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  5. Press Stop
-                  Recording.
-                </Text>
-
-                <Text
-                  style={
-                    styles.modalText
-                  }
-                >
-                  6. Save Iteration.
-                </Text>
-              </>
-            )}
-
-            <TouchableOpacity
-              style={
-                styles.closeButton
-              }
-              onPress={() =>
-                setShowInfo(false)
-              }
-            >
-              <Text
-                style={
-                  styles.closeText
-                }
-              >
-                GOT IT
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+        <Text style={styles.closeText}>
+          GOT IT
+        </Text>
+      </TouchableOpacity>
     </View>
+  </View>
+</Modal>
+
+<Modal
+  visible={showReview}
+  transparent
+  animationType="slide"
+>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalCard}>
+      <Text style={styles.modalTitle}>
+        REVIEW RECORDING
+      </Text>
+
+      <Text style={styles.modalText}>
+        Watch the video and enter
+        the observed times.
+      </Text>
+
+      <Text style={styles.inputLabel}>
+        First Hit Ground (s)
+      </Text>
+
+      <TextInput
+        style={styles.input}
+        value={firstHitTime}
+        onChangeText={setFirstHitTime}
+        keyboardType="numeric"
+        placeholder="2.31"
+        placeholderTextColor="#999"
+      />
+
+      <Text style={styles.inputLabel}>
+        Stopped Moving (s)
+      </Text>
+
+      <TextInput
+        style={styles.input}
+        value={stopMovingTime}
+        onChangeText={setStopMovingTime}
+        keyboardType="numeric"
+        placeholder="2.73"
+        placeholderTextColor="#999"
+      />
+
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => {
+          saveIteration();
+
+          setFirstHitTime('');
+          setStopMovingTime('');
+
+          setShowReview(false);
+        }}
+      >
+        <Text style={styles.closeText}>
+          SAVE ITERATION
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+</LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#13082E',
-  },
+container: {
+  flex: 1,
+},
 
   content: {
     paddingTop: hp(4),
     paddingBottom: hp(5),
   },
 
-  infoButton: {
-    position: 'absolute',
-    top: hp(1),
-    right: 20,
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: '#5711BE',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
-  },
+infoIcon: {
+  width: rf(34),
+  height: rf(34),
+  resizeMode: 'contain',
+},
 
-  infoIcon: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '700',
-  },
+infoButton: {
+  position: 'absolute',
+  top: hp(7),
+  right: wp(6),
+  zIndex: 999,
+},
+modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.75)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: wp(5),
+},
+heroDescription: {
+  color: '#FFFFFF',
+  fontSize: rf(15),
+  fontFamily: 'PixelOperator',
+  width:rf(252)
+},
 
-  modalOverlay: {
-    flex: 1,
-    backgroundColor:
-      'rgba(0,0,0,0.75)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
+pinkText: {
+  color: '#EC588C',
+},
+modalCard: {
+  width: '100%',
+  backgroundColor: '#1A123D',
+  borderRadius: rf(24),
+  padding: wp(6),
+  borderWidth: rf(2),
+  borderColor: '#5711BE',
+},
+modalTitle: {
+  color: '#FFD94E',
+  fontSize: rf(22),
+  fontFamily: 'Pixel',
+  marginBottom: hp(2),
+  textAlign: 'center',
+},
+modalText: {
+  color: 'white',
+  fontSize: rf(15),
+  lineHeight: rf(28),
+  marginBottom: hp(0.8),
+  fontFamily: 'PixelOperator',
+},
+closeButton: {
+  marginTop: hp(2),
+  height: hp(6.5),
+  borderRadius: rf(16),
+  backgroundColor: '#FF5AA9',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+closeText: {
+  color: 'white',
+  fontFamily: 'Pixel',
+  fontSize: rf(15),
+},
 
-  modalCard: {
-    width: '100%',
-    backgroundColor: '#1A123D',
-    borderRadius: 24,
-    padding: 24,
-    borderWidth: 2,
-    borderColor: '#5711BE',
-  },
+inputLabel: {
+  color: '#FFD94E',
+  marginTop: hp(1.5),
+  marginBottom: hp(0.8),
+  fontSize: rf(14),
+  fontFamily: 'Pixel',
+},
 
-  modalTitle: {
-    color: '#FFD94E',
-    fontSize: 22,
-    fontWeight: '700',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-
-  modalText: {
-    color: 'white',
-    fontSize: 15,
-    lineHeight: 28,
-    marginBottom: 6,
-  },
-
-  closeButton: {
-    marginTop: 20,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: '#FF5AA9',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  closeText: {
-    color: 'white',
-    fontWeight: '700',
-    fontSize: 15,
-  },
+input: {
+  height: hp(6),
+  backgroundColor: '#2A1A55',
+  borderRadius: rf(12),
+  paddingHorizontal: wp(4),
+  color: 'white',
+  fontSize: rf(15),
+  fontFamily: 'PixelOperator',
+},
 });

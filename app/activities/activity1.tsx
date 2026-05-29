@@ -246,8 +246,7 @@ const canStart =
   disabled={!canStart}
   onPress={() =>
     router.push({
-      pathname:
-        '/activities/ActivityIntroScreen',
+      pathname:'/activities/ActivityIntroScreen',
       params: {
         activityNumber: 1,
         title:
@@ -255,7 +254,7 @@ const canStart =
         objective:
           'Design and test a parachute to achieve the slowest drop time.',
         nextScreen:
-          '/activities/activity1',
+          '/activities/activity1-experiment',
       },
     })
   }

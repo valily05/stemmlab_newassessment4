@@ -1,9 +1,35 @@
 import {
-    Image,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  Image,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+};
+
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+};
+
+const rf = (size: number) => {
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+};
 
 interface Props {
   timeLeft: string;
@@ -14,9 +40,7 @@ export default function ExperimentStats({
   timeLeft,
   iteration,
 }: Props) {
-
   return (
-
     <View style={styles.card}>
 
       <View style={styles.item}>
@@ -64,47 +88,54 @@ export default function ExperimentStats({
       </View>
 
     </View>
-
   );
-
 }
 
 const styles = StyleSheet.create({
+
   card: {
-    marginHorizontal: 20,
-    marginTop: 24,
-    padding: 20,
-    borderWidth: 2,
+    marginHorizontal: wp(5),
+    marginTop: hp(3),
+    padding: wp(5),
+    borderWidth: rf(2.5),
     borderColor: '#5711BE',
-    borderRadius: 20,
+    borderRadius: rf(18),
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
 
   item: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
 
   icon: {
-    width: 34,
-    height: 34,
-    marginRight: 10,
+    width: rf(34),
+    height: rf(34),
+    marginRight: wp(2.5),
+    resizeMode: 'contain',
   },
 
   label: {
     color: '#2AE3DA',
     fontFamily: 'PixelOperator',
+    fontSize: rf(20),
+    marginBottom: hp(0.4),
   },
 
   value: {
     color: '#FFF',
     fontFamily: 'Pixel',
-    fontSize: 18,
+    fontSize: rf(10),
   },
 
   divider: {
-    width: 1,
+    width: rf(1),
+    height: hp(5),
     backgroundColor: '#5711BE',
+    marginHorizontal: wp(3),
   },
+
 });

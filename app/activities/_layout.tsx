@@ -60,6 +60,12 @@ export default function ActivitiesLayout() {
         options={{
           headerShown: false,
         }}
+/>
+          <Stack.Screen
+        name="activity1-experiment"
+        options={{
+          headerShown: false,
+        }}
       />
 
     </Stack>
