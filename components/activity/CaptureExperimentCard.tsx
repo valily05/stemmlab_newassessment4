@@ -83,16 +83,39 @@ export default function CaptureExperimentCard({
 
 </View>
 
-        {isRecording && (
-          <TouchableOpacity
-            style={styles.stopButton}
-            onPress={onStop}
-          >
-            <Text style={styles.buttonText}>
-              STOP RECORDING
-            </Text>
-          </TouchableOpacity>
-        )}
+{isRecording ? (
+
+  <TouchableOpacity
+    style={styles.stopRecordingButton}
+    onPress={onStop}
+  >
+    <Text style={styles.stopRecordingText}>
+      <Text style={styles.stopIcon}>
+        ■
+      </Text>{' '}
+      <Text style={styles.stopLabel}>
+        STOP
+      </Text>
+    </Text>
+  </TouchableOpacity>
+
+) : (
+
+  <TouchableOpacity
+    style={styles.startRecordingButton}
+    onPress={onStart}
+  >
+    <Text style={styles.startRecordingText}>
+      <Text style={styles.playIcon}>
+        ▶
+      </Text>{' '}
+      <Text style={styles.startLabel}>
+        START
+      </Text>
+    </Text>
+  </TouchableOpacity>
+
+)}
 
         {!isRecording && (
           <View style={styles.actionButtons}>
@@ -268,6 +291,19 @@ leftContent: {
   flex: 1,
   paddingRight: wp(3),
 },
+
+stopIcon: {
+  fontSize: rf(18),
+  color: '#FF4D8D',
+  fontFamily: 'PixelOperator', // different font
+},
+
+stopLabel: {
+  fontSize: rf(14),
+  color: '#FF4D8D',
+  fontFamily: 'Pixel',
+},
+
 card: {
   marginHorizontal: wp(5),
   marginTop: hp(3),
@@ -290,7 +326,43 @@ paddingTop:wp(6),
 
   elevation: 12,
 },
+recordControls: {
+  flexDirection: 'row',
+  gap: wp(3),
+  marginTop: hp(2),
+},
 
+startRecordingButton: {
+  flex: 1,
+  height: hp(5.5),
+  borderRadius: rf(10),
+  borderWidth: rf(1.5),
+  borderColor: '#00D9FF',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+stopRecordingButton: {
+  flex: 1,
+  height: hp(5.5),
+  borderRadius: rf(10),
+  borderWidth: rf(1.5),
+  borderColor: '#FF4D8D',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+startRecordingText: {
+  color: '#00D9FF',
+  fontFamily: 'Pixel',
+  fontSize: rf(14),
+},
+
+stopRecordingText: {
+  color: '#FF4D8D',
+  fontFamily: 'Pixel',
+  fontSize: rf(14),
+},
 tipStar: {
   color: '#FFE95B',
   fontSize: rf(20), // bigger than Bunny Tip
@@ -303,7 +375,17 @@ tipStar: {
 yellowText: {
   color: '#FFE95B',
 },
+playIcon: {
+  fontSize: rf(18),
+  color: '#00D9FF',
+  fontFamily:'PressStart2P'
+},
 
+startLabel: {
+  fontSize: rf(14),
+  color: '#00D9FF',
+  fontFamily: 'Pixel', // your normal font
+},
 title: {
   color: '#FFE95B',
   fontSize: rf(14),

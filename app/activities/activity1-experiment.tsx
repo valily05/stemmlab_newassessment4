@@ -157,9 +157,8 @@ const result = {
         prev => prev + 1
       );
 
-      setElapsedTime(0);
-      setHasStarted(false);
-      setIsRecording(false);
+setElapsedTime(0);
+setIsRecording(false);
     } else {
       console.log(
         'Activity Complete',
@@ -271,11 +270,10 @@ onStart={async () => {
   setIsRecording(false);
   setShowReview(true);
 }}
-          onRetry={() => {
-            setHasStarted(false);
-            setIsRecording(false);
-            setElapsedTime(0);
-          }}
+onRetry={() => {
+  setIsRecording(true);
+  setElapsedTime(0);
+}}
           onSaveIteration={
             saveIteration
           }
@@ -285,22 +283,19 @@ onStart={async () => {
   !hasStarted ? (
 <StopwatchCard />
   ) : (
-    <LiveTimerCard
-      time={formatTime(
-        elapsedTime
-      )}
-      isRecording={
-        isRecording
-      }
-    />
+  <LiveTimerCard
+  time={formatTime(elapsedTime)}
+  isRecording={isRecording}
+/>
   )
 }
-
-<ExperimentTipCard
-  tips={[
-    'The timer continues running even if you exit the app. Complete all iterations before finishing.',
-  ]}
-/>
+{!hasStarted && (
+  <ExperimentTipCard
+    tips={[
+      'Complete all iterations before finishing the experiment.',
+    ]}
+  />
+)}
 
         <ExitButton
           onPress={() =>
