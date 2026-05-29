@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#FFD94E',
 
-    fontSize: rf(18),
+    fontSize: rf(10),
 
     fontFamily: 'Pixel',
 
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#FFFFFF',
 
-    fontSize: rf(15),
+    fontSize: rf(16),
 
     lineHeight: rf(28),
 

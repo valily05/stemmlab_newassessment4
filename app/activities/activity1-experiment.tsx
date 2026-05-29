@@ -100,15 +100,11 @@ const [results, setResults] = useState<
       typeof setInterval
     >;
 
-    if (isRecording) {
-      interval = setInterval(() => {
-        setElapsedTime(prev => prev + 1);
-
-        setTimeLeft(prev =>
-          prev > 0 ? prev - 1 : 0
-        );
-      }, 1000);
-    }
+if (isRecording) {
+  interval = setInterval(() => {
+    setElapsedTime(prev => prev + 10);
+  }, 10);
+}
 
     return () => {
       if (interval) {
@@ -117,23 +113,32 @@ const [results, setResults] = useState<
     };
   }, [isRecording]);
 
-  const formatTime = (
-    seconds: number
-  ) => {
-    const mins = Math.floor(
-      seconds / 60
-    );
+const formatTime = (
+  milliseconds: number
+) => {
 
-    const secs = seconds % 60;
+  const mins = Math.floor(
+    milliseconds / 60000
+  );
 
-    return `${String(mins).padStart(
-      2,
-      '0'
-    )}:${String(secs).padStart(
-      2,
-      '0'
-    )}`;
-  };
+  const secs = Math.floor(
+    (milliseconds % 60000) / 1000
+  );
+
+  const centiseconds = Math.floor(
+    (milliseconds % 1000) / 10
+  );
+
+  return `${String(mins).padStart(
+    2,
+    '0'
+  )}:${String(secs).padStart(
+    2,
+    '0'
+  )}.${String(
+    centiseconds
+  ).padStart(2, '0')}`;
+};
 
   const saveIteration = () => {
 const result = {

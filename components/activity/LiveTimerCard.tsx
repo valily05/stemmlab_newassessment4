@@ -1,8 +1,39 @@
 import {
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
+
+const { width, height } =
+  Dimensions.get('window');
+
+const wp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+
+const hp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+
+const rf = (
+  size: number
+) => {
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+};
 
 interface Props {
   time: string;
@@ -15,6 +46,7 @@ export default function LiveTimerCard({
 }: Props) {
   return (
     <View style={styles.card}>
+
       <Text style={styles.title}>
         STOPWATCH
       </Text>
@@ -23,59 +55,73 @@ export default function LiveTimerCard({
         {time}
       </Text>
 
-      <View
-        style={[
-          styles.badge,
-          {
-            backgroundColor:
-              isRecording
-                ? '#FF5AA9'
-                : '#2AE3DA',
-          },
-        ]}
-      >
-        <Text style={styles.badgeText}>
-          {isRecording
-            ? 'RECORDING'
-            : 'READY'}
-        </Text>
-      </View>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginHorizontal: 20,
-    marginTop: 20,
-    padding: 20,
-    borderRadius: 20,
-    backgroundColor: '#22134D',
-    alignItems: 'center',
+card: {
+  marginHorizontal: wp(5),
+  marginTop: hp(2.5),
+
+  padding: wp(5),
+
+  borderRadius: rf(20),
+
+  backgroundColor: '#22134D',
+
+  alignItems: 'center',
+
+  borderWidth: rf(2),
+  borderColor: '#5711BE',
+
+  shadowColor: '#5711BE',
+  shadowOffset: {
+    width: 0,
+    height: 0,
   },
+  shadowOpacity: 1,
+  shadowRadius: rf(15),
+
+  elevation: 15,
+},
 
   title: {
-    color: '#FFF',
+    color: '#FFFFFF',
+
     fontFamily: 'Pixel',
-    fontSize: 16,
+
+    fontSize: rf(16),
   },
 
   timer: {
     color: '#FFD94E',
-    fontSize: 42,
-    marginTop: 12,
+
+    fontSize: rf(36),
+
+    marginTop: hp(1.5),
+
     fontFamily: 'PressStart2P',
+
+    textAlign: 'center',
   },
 
   badge: {
-    marginTop: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    marginTop: hp(2),
+
+    paddingHorizontal: wp(4),
+
+    paddingVertical: hp(0.8),
+
+    borderRadius: rf(20),
   },
 
   badgeText: {
-    color: '#FFF',
+    color: '#FFFFFF',
+
     fontFamily: 'Pixel',
+
+    fontSize: rf(13),
   },
 });
