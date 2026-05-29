@@ -33,11 +33,15 @@ const rf = (size: number) => {
 
 interface Props {
   visible: boolean;
+  title: string;
+  instructions: string[];
   onClose: () => void;
 }
 
 export default function InfoModal({
   visible,
+  title,
+  instructions,
   onClose,
 }: Props) {
   return (
@@ -50,40 +54,19 @@ export default function InfoModal({
         <View style={styles.card}>
 
           <Text style={styles.title}>
-            HOW TO COMPLETE THIS ACTIVITY
+            {title}
           </Text>
 
-          <Text style={styles.text}>
-            1. Place the object at the drop height.
-          </Text>
-
-          <Text style={styles.text}>
-            2. Press Start Recording.
-          </Text>
-
-          <Text style={styles.text}>
-            3. Drop the object.
-          </Text>
-
-          <Text style={styles.text}>
-            4. Press Stop Recording.
-          </Text>
-
-          <Text style={styles.text}>
-            5. Review the recording.
-          </Text>
-
-          <Text style={styles.text}>
-            6. Determine the first hit time.
-          </Text>
-
-          <Text style={styles.text}>
-            7. Determine the stop moving time.
-          </Text>
-
-          <Text style={styles.text}>
-            8. Save Iteration.
-          </Text>
+          {instructions.map(
+            (instruction, index) => (
+              <Text
+                key={index}
+                style={styles.text}
+              >
+                {index + 1}. {instruction}
+              </Text>
+            )
+          )}
 
           <TouchableOpacity
             style={styles.button}

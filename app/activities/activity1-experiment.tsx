@@ -23,6 +23,7 @@ import ExitButton from '../../components/activity/ExitButton';
 import ExperimentHero from '../../components/activity/ExperimentHero';
 import ExperimentStats from '../../components/activity/ExperimentStats';
 import ExperimentTipCard from '../../components/activity/ExperimentTipCard';
+import InfoModal from '../../components/activity/InfoModal';
 import LiveTimerCard from '../../components/activity/LiveTimerCard';
 import StopwatchCard from '../../components/activity/StopwatchCard';
 const { width, height } = Dimensions.get('window');
@@ -303,62 +304,24 @@ onRetry={() => {
           }
         />
       </ScrollView>
-<Modal
+
+<InfoModal
   visible={showInfo}
-  transparent
-  animationType="fade"
->
-  <View style={styles.modalOverlay}>
-    <View style={styles.modalCard}>
-      <Text style={styles.modalTitle}>
-        HOW TO COMPLETE THIS ACTIVITY
-      </Text>
-
-      <Text style={styles.modalText}>
-        1. Place the object at the drop height.
-      </Text>
-
-      <Text style={styles.modalText}>
-        2. Press Start Recording.
-      </Text>
-
-      <Text style={styles.modalText}>
-        3. Drop the object.
-      </Text>
-
-      <Text style={styles.modalText}>
-        4. Press Stop Recording.
-      </Text>
-
-      <Text style={styles.modalText}>
-        5. Review the recording.
-      </Text>
-
-      <Text style={styles.modalText}>
-        6. Determine the first hit time.
-      </Text>
-
-      <Text style={styles.modalText}>
-        7. Determine the stop moving time.
-      </Text>
-
-      <Text style={styles.modalText}>
-        8. Save Iteration.
-      </Text>
-
-      <TouchableOpacity
-        style={styles.closeButton}
-        onPress={() =>
-          setShowInfo(false)
-        }
-      >
-        <Text style={styles.closeText}>
-          GOT IT
-        </Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+  title="HOW TO COMPLETE THIS ACTIVITY"
+  instructions={[
+    'Place the object at the drop height.',
+    'Press Start Recording.',
+    'Drop the object.',
+    'Press Stop Recording.',
+    'Review the recording.',
+    'Determine the first hit time.',
+    'Determine the stop moving time.',
+    'Save Iteration.',
+  ]}
+  onClose={() =>
+    setShowInfo(false)
+  }
+/>
 
 <Modal
   visible={showReview}
