@@ -61,7 +61,7 @@ export default function ExperimentTipCard({
           key={index}
           style={styles.tip}
         >
-          • {tip}
+         {tip}
         </Text>
 
       ))}
@@ -81,19 +81,13 @@ const styles = StyleSheet.create({
 
     borderWidth: rf(2),
     borderColor: '#5711BE',
-    borderRadius: rf(16),
+    borderRadius: rf(15),
 
     backgroundColor: '#020423',
 
     shadowColor: '#5711BE',
     shadowOpacity: 1,
-    shadowRadius: rf(12),
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
 
-    elevation: 12,
   },
 
   title: {
@@ -103,13 +97,13 @@ const styles = StyleSheet.create({
   star: {
     color: '#FACC15',
     fontFamily: 'Pixel',
-    fontSize: rf(22), // bigger star
+    fontSize: rf(20), // bigger star
   },
 
   bunnyTip: {
     color: '#FACC15',
     fontFamily: 'Pixel',
-    fontSize: rf(20), // smaller than star
+    fontSize: rf(13), // smaller than star
   },
 
   tip: {

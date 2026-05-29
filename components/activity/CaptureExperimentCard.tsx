@@ -488,13 +488,13 @@ recordingCard: {
 
   recordingTitle: {
     color: '#FFE95B',
-    fontSize: rf(20),
+    fontSize: rf(12),
     fontFamily: 'Pixel',
   },
 
   recordingBadge: {
     color: '#FF3B3B',
-    fontSize: rf(12),
+    fontSize: rf(9),
     fontFamily: 'Pixel',
   },
 

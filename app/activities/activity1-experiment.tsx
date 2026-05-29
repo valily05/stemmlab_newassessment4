@@ -283,11 +283,7 @@ onStart={async () => {
 
 {
   !hasStarted ? (
-    <StopwatchCard
-      onPress={() => {
-        // optional
-      }}
-    />
+<StopwatchCard />
   ) : (
     <LiveTimerCard
       time={formatTime(
@@ -300,12 +296,11 @@ onStart={async () => {
   )
 }
 
-        <ExperimentTipCard
-tips={[
-  'Review the recording after each test.',
-  `Current Stage: ${stages[currentStage]}`,
-]}
-        />
+<ExperimentTipCard
+  tips={[
+    'The timer continues running even if you exit the app. Complete all iterations before finishing.',
+  ]}
+/>
 
         <ExitButton
           onPress={() =>

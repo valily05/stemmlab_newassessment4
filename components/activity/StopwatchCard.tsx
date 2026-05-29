@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
 
     borderWidth: rf(2),
     borderColor: '#5711BE',
-    borderRadius: rf(20),
+    borderRadius: rf(15),
 
     flexDirection: 'row',
     alignItems: 'center',
@@ -122,5 +122,6 @@ const styles = StyleSheet.create({
     width: rf(80),
     height: rf(80),
     resizeMode: 'contain',
+    
   },
 });
