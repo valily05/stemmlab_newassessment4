@@ -142,8 +142,8 @@ const formatTime = (
 const result = {
   stage: stages[currentStage],
   dropTime: elapsedTime,
-  firstHitTime,
-  stopMovingTime,
+  firstHitTime: firstHitTime ?? '',
+  stopMovingTime: stopMovingTime ?? '',
 };
 
     const updatedResults = [
