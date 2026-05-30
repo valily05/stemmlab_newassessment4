@@ -175,16 +175,23 @@ const formatTime = (
 
 const saveIteration = () => {
 
-  const result = {
-    stage: stages[currentStage],
-    dropTime: elapsedTime,
-    firstHitTime: firstHitTime ?? '',
-    stopMovingTime: stopMovingTime ?? '',
-    videoUri: videos[currentStage] ?? '',
+const impactForce =
+  bounced === true
+    ? 'MEDIUM'
+    : 'LOW';
 
-    inTarget,
-    bounced,
-  };
+const result = {
+  stage: stages[currentStage],
+  dropTime: elapsedTime,
+  firstHitTime: firstHitTime ?? '',
+  stopMovingTime: stopMovingTime ?? '',
+  videoUri: videos[currentStage] ?? '',
+
+  inTarget,
+  bounced,
+
+  impactForce,
+};
 
   const updatedResults = [
     ...results,
