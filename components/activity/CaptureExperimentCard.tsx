@@ -11,8 +11,9 @@ import {
   PixelRatio,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 
@@ -54,6 +55,10 @@ onStartRecording: () => void;
   onVideoSaved?: (
     uri: string
   ) => void;
+    dropHeight: string;
+  setDropHeight: (
+    value: string
+  ) => void;
 }
 
 export default function CaptureExperimentCard({
@@ -67,6 +72,8 @@ export default function CaptureExperimentCard({
   canStopRecording,
   videoUri,
   onStartRecording,
+    dropHeight,
+  setDropHeight,
 }: Props) {
 
   const [permission, requestPermission] =
@@ -410,6 +417,23 @@ recordingPromise
         </View>
 
       </View>
+<View style={styles.heightCard}>
+
+  <Text style={styles.heightLabel}>
+    DROP HEIGHT (m)
+  </Text>
+
+  <TextInput
+    style={styles.heightInput}
+    placeholder="e.g. 1.0"
+    placeholderTextColor="#8A8FBF"
+    keyboardType="numeric"
+    value={dropHeight}
+    onChangeText={setDropHeight}
+  />
+
+</View>
+
 
      <TouchableOpacity
   style={styles.startButton}
@@ -463,8 +487,8 @@ reviewIcon: {
 },
 
 recordingBadge: {
-  fontSize: rf(9),
-  fontFamily: 'Pixel',
+  fontSize: rf(16),
+  fontFamily: 'PixelOperator',
 },
 stopLabel: {
   fontSize: rf(14),
@@ -486,7 +510,44 @@ retryRecordingButton: {
 
   alignItems: 'center',
 },
+heightCard: {
+  marginTop: hp(2),
 
+  backgroundColor: '#150F31',
+
+  borderWidth: rf(1.5),
+  borderColor: '#6954A6',
+
+  borderRadius: rf(12),
+
+  padding: wp(4),
+},
+
+heightLabel: {
+  color: '#FFE95B',
+
+  fontFamily: 'Pixel',
+
+  fontSize: rf(12),
+
+  marginBottom: hp(1),
+},
+
+heightInput: {
+  height: hp(5.5),
+
+  backgroundColor: '#0E0B24',
+
+  borderRadius: rf(10),
+
+  paddingHorizontal: wp(4),
+
+  color: 'white',
+
+  fontFamily: 'PixelOperator',
+
+  fontSize: rf(15),
+},
 retryRecordingText: {
   color: '#FFD94E',
 
@@ -761,8 +822,8 @@ recordingCard: {
 
   recordingTitle: {
     color: '#FFE95B',
-    fontSize: rf(12),
-    fontFamily: 'Pixel',
+    fontSize: rf(20),
+    fontFamily: 'PixelBold',
   },
 
 

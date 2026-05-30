@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import CaptureExperimentCard from '../../components/activity/CaptureExperimentCard';
 import ExitButton from '../../components/activity/ExitButton';
+import Experiment1Observation from '../../components/activity/Experiment1Observation';
 import ExperimentHero from '../../components/activity/ExperimentHero';
 import ExperimentStats from '../../components/activity/ExperimentStats';
 import ExperimentTipCard from '../../components/activity/ExperimentTipCard';
@@ -113,6 +114,15 @@ const [canStopRecording, setCanStopRecording] =
 const [recordingComplete, setRecordingComplete] =
   useState(false);
 
+const [dropHeight, setDropHeight] =
+  useState('');
+
+const [inTarget, setInTarget] =
+  useState<boolean | null>(null);
+
+const [bounced, setBounced] =
+  useState<boolean | null>(null);
+  
   useEffect(() => {
     let interval: ReturnType<
       typeof setInterval
@@ -158,48 +168,60 @@ const formatTime = (
   ).padStart(2, '0')}`;
 };
 
-  const saveIteration = () => {
-const result = {
-  stage: stages[currentStage],
-  dropTime: elapsedTime,
-  firstHitTime: firstHitTime ?? '',
-  stopMovingTime: stopMovingTime ?? '',
+const saveIteration = () => {
+
+  const result = {
+    stage: stages[currentStage],
+    dropTime: elapsedTime,
+    firstHitTime: firstHitTime ?? '',
+    stopMovingTime: stopMovingTime ?? '',
     videoUri: videos[currentStage] ?? '',
-};
 
-
-    const updatedResults = [
-      ...results,
-      result,
-    ];
-
-    setResults(updatedResults);
-
-    if (
-      currentStage <
-      stages.length - 1
-    ) {
-      setCurrentStage(
-        prev => prev + 1
-      );
-setFirstHitTime(null);
-setStopMovingTime(null);
-setCurrentVideoUri(null);
-setCanStopRecording(false);
-setRecordingComplete(false);
-setHasStarted(true);
-setIsRecording(false);
-    } else {
-      console.log(
-        'Activity Complete',
-        updatedResults
-      );
-
-      router.push(
-        '/activities/activity1'
-      );
-    }
+    inTarget,
+    bounced,
   };
+
+  const updatedResults = [
+    ...results,
+    result,
+  ];
+
+  setResults(updatedResults);
+
+  if (
+    currentStage <
+    stages.length - 1
+  ) {
+
+    setCurrentStage(
+      prev => prev + 1
+    );
+
+    setFirstHitTime(null);
+    setStopMovingTime(null);
+    setCurrentVideoUri(null);
+
+    setInTarget(null);
+    setBounced(null);
+
+    setCanStopRecording(false);
+    setRecordingComplete(false);
+
+    setHasStarted(true);
+    setIsRecording(false);
+
+  } else {
+
+    console.log(
+      'Activity Complete',
+      updatedResults
+    );
+
+    router.push(
+      '/activities/activity1'
+    );
+  }
+};
 
 return (
 <LinearGradient
@@ -277,6 +299,8 @@ return (
   hasStarted={hasStarted}
   canStopRecording={canStopRecording}
   videoUri={currentVideoUri}
+    dropHeight={dropHeight}
+  setDropHeight={setDropHeight}
 
 onStartRecording={startRecording}
 onVideoSaved={(uri) => {
@@ -439,8 +463,30 @@ onPress={() => {
 
 {recordingComplete && (
   <>
+<Experiment1Observation
+  inTarget={inTarget}
+  setInTarget={setInTarget}
+  bounced={bounced}
+  setBounced={setBounced}
+
+  dropHeight={Number(dropHeight)}
+
+  firstHitTime={firstHitTime}
+  stopMovingTime={stopMovingTime}
+/>
+
     <TouchableOpacity
-      style={styles.hitButton}
+      style={[
+        styles.hitButton,
+        (inTarget === null ||
+          bounced === null) && {
+          opacity: 0.4,
+        },
+      ]}
+      disabled={
+        inTarget === null ||
+        bounced === null
+      }
       onPress={saveIteration}
     >
       <Text style={styles.hitButtonText}>
@@ -458,6 +504,9 @@ onPress={() => {
 
   setFirstHitTime(null);
   setStopMovingTime(null);
+
+  setInTarget(null);
+  setBounced(null);
 
   setElapsedTime(0);
 
