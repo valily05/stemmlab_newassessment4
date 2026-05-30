@@ -94,13 +94,50 @@ const [cameraReady, setCameraReady] =
             VIDEO RECORDING
           </Text>
 
-<Text style={styles.recordingBadge}>
-  {isRecording
-    ? '● RECORDING'
-    : videoUri
-    ? '▶ REVIEW'
-    : 'READY'}
-</Text>
+<View style={styles.recordingBadgeContainer}>
+
+  {isRecording ? (
+    <>
+      <Text style={styles.recordingIcon}>
+        ●
+      </Text>
+
+      <Text
+        style={[
+          styles.recordingBadge,
+          { color: '#FF4D4D' },
+        ]}
+      >
+        RECORDING
+      </Text>
+    </>
+  ) : videoUri ? (
+    <>
+      <Text style={styles.reviewIcon}>
+        ▶
+      </Text>
+
+      <Text
+        style={[
+          styles.recordingBadge,
+          { color: '#FFA726' },
+        ]}
+      >
+        REVIEW
+      </Text>
+    </>
+  ) : (
+    <Text
+      style={[
+        styles.recordingBadge,
+        { color: '#4CAF50' },
+      ]}
+    >
+      READY
+    </Text>
+  )}
+
+</View>
         </View>
 
 <View style={styles.cameraPreview}>
@@ -132,30 +169,8 @@ const [cameraReady, setCameraReady] =
 )}
 
 </View>
-<Text
-  style={{
-    color: cameraReady
-      ? '#00FF00'
-      : '#FF0000',
-    textAlign: 'center',
-  }}
->
-  {cameraReady
-    ? 'CAMERA READY'
-    : 'CAMERA LOADING'}
-</Text>
 
-<Text
-  style={{
-    color: 'white',
-    textAlign: 'center',
-    marginTop: 10,
-  }}
->
-  {videoUri
-    ? 'VIDEO SAVED ✅'
-    : 'NO VIDEO ❌'}
-</Text>
+
 
 {isRecording ? (
 <TouchableOpacity
@@ -204,9 +219,7 @@ onPress={() => {
       style={styles.startRecordingButton}
 onPress={async () => {
 
-  if (!cameraReady) {
-    return;
-  }
+
 try {
 
   console.log('START RECORDING PRESSED');
@@ -431,7 +444,28 @@ stopIcon: {
   color: '#FF4D8D',
   fontFamily: 'PixelOperator', // different font
 },
+recordingBadgeContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: wp(1),
+},
 
+recordingIcon: {
+  color: '#FF4D4D',
+  fontSize: rf(12),
+  fontFamily: 'PressStart2P', // different font
+},
+
+reviewIcon: {
+  color: '#FFA726',
+  fontSize: rf(12),
+  fontFamily: 'PressStart2P', // different font
+},
+
+recordingBadge: {
+  fontSize: rf(9),
+  fontFamily: 'Pixel',
+},
 stopLabel: {
   fontSize: rf(14),
   color: '#FF4D8D',
@@ -512,6 +546,7 @@ startRecordingText: {
   color: '#00D9FF',
   fontFamily: 'Pixel',
   fontSize: rf(14),
+  
 },
 
 stopRecordingText: {
@@ -730,11 +765,6 @@ recordingCard: {
     fontFamily: 'Pixel',
   },
 
-  recordingBadge: {
-    color: '#FF3B3B',
-    fontSize: rf(9),
-    fontFamily: 'Pixel',
-  },
 
 cameraPreview: {
   height: hp(35),

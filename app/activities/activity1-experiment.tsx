@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
+  ImageBackground,
   PixelRatio,
   ScrollView,
   StyleSheet,
@@ -353,7 +354,31 @@ setHasStarted(false);
           gap: hp(1.5),
         }}
       >
+        {firstHitTime && stopMovingTime && (
+  <View style={styles.frame}>
 
+    <ImageBackground
+      source={require('../../assets/images/Group 224.png')}
+      style={styles.ribbonImage}
+      resizeMode="stretch"
+    >
+      <Text style={styles.resultHeader}>
+        {stages[currentStage]} RESULTS
+      </Text>
+    </ImageBackground>
+
+    <Text style={styles.resultText}>
+      First Hit Ground: {firstHitTime}
+    </Text>
+
+    <Text style={styles.resultText}>
+      Stopped Moving: {stopMovingTime}
+    </Text>
+
+  </View>
+)}
+{!recordingComplete && (
+  <>
 <TouchableOpacity
   style={[
     styles.hitButton,
@@ -409,21 +434,9 @@ onPress={() => {
             STOPPED MOVING
           </Text>
         </TouchableOpacity>
-
-        {firstHitTime && (
-          <Text style={styles.resultText}>
-            First Hit Ground:
-            {' '}
-            {firstHitTime}
-          </Text>
-        )}
-        {stopMovingTime && (
-  <Text style={styles.resultText}>
-    Stopped Moving:
-    {' '}
-    {stopMovingTime}
-  </Text>
+</>
 )}
+
 {recordingComplete && (
   <>
     <TouchableOpacity
@@ -526,6 +539,20 @@ infoButton: {
   right: wp(6),
   zIndex: 999,
 },
+
+ribbonImage: {
+  width: wp(70),
+
+  height: hp(7),
+
+  alignSelf: 'center',
+
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: hp(-6),
+  marginBottom:hp(2),
+  zIndex:100
+},
 modalOverlay: {
   flex: 1,
   backgroundColor: 'rgba(0,0,0,0.75)',
@@ -533,7 +560,62 @@ modalOverlay: {
   alignItems: 'center',
   padding: wp(5),
 },
+ribbonContainer: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
 
+  marginBottom: hp(1.5),
+},
+
+ribbonCenter: {
+  backgroundColor: '#EC588C',
+
+  minWidth: wp(55),
+
+  paddingVertical: hp(0.8),
+  paddingHorizontal: wp(4),
+
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+ribbonLeft: {
+  width: 0,
+  height: 0,
+
+  borderTopWidth: rf(10),
+  borderBottomWidth: rf(10),
+  borderRightWidth: rf(14),
+
+  borderTopColor: 'transparent',
+  borderBottomColor: 'transparent',
+  borderRightColor: '#D94079',
+},
+
+ribbonRight: {
+  width: 0,
+  height: 0,
+
+  borderTopWidth: rf(10),
+  borderBottomWidth: rf(10),
+  borderLeftWidth: rf(14),
+
+  borderTopColor: 'transparent',
+  borderBottomColor: 'transparent',
+  borderLeftColor: '#D94079',
+},
+
+resultHeader: {
+  color: '#FFFFFF',
+
+  fontFamily: 'PixelOperator',
+
+  fontSize: rf(21),
+
+  textAlign: 'center',
+  marginBottom:rf(10)
+},
 hitButton: {
   height: hp(6.5),
 
@@ -564,14 +646,33 @@ hitButtonText: {
   fontSize: rf(14),
 },
 
+frame: {
+  backgroundColor: '#140B3A',
+
+  borderWidth: 3,
+  borderColor: '#7D5AC7',
+
+  borderRadius: 0,
+
+  paddingVertical: hp(2),
+  paddingHorizontal: wp(4),
+
+  position: 'relative',
+
+  marginTop: hp(5),
+},
+
+
 resultText: {
-  color: '#FFD94E',
+  color: '#FFFFFF',
 
   fontFamily: 'PixelOperator',
 
-  fontSize: rf(15),
+  fontSize: rf(16),
 
   textAlign: 'center',
+
+  lineHeight: rf(22),
 },
 heroDescription: {
   color: '#FFFFFF',
