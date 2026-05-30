@@ -1,10 +1,15 @@
+import * as FileSystem from 'expo-file-system/legacy';
 import { useLocalSearchParams } from 'expo-router';
+import * as Sharing from 'expo-sharing';
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+
+
 
 export default function Activity1Results() {
   const params = useLocalSearchParams();
@@ -40,67 +45,118 @@ export default function Activity1Results() {
             100
         )
       : 0;
+const experimentTime =
+  parsedResults.reduce(
+    (total, item) =>
+      total + (item.dropTime || 0),
+    0
+  );
 
-  const experimentTime =
-    parsedResults.reduce(
-      (
-        total,
-        item
-      ) =>
-        total +
-        (item.dropTime || 0),
-      0
-    );
+const formatSeconds = (
+  value: string | number | null | undefined
+) => {
+  if (value === null || value === undefined) {
+    return '0.00 s';
+  }
 
-  const bestResult =
-    parsedResults.reduce(
-      (
-        best,
-        current
-      ) => {
+  if (typeof value === 'number') {
+    return `${(value / 1000).toFixed(2)} s`;
+  }
 
-        if (!best) {
-          return current;
-        }
+  const parts = value.split(':');
 
-        const bestTarget =
-          best.inTarget
-            ? 1
-            : 0;
+  if (parts.length === 2) {
+    const minutes = Number(parts[0]);
+    const seconds = Number(parts[1]);
 
-        const currentTarget =
-          current.inTarget
-            ? 1
-            : 0;
+    return `${(
+      minutes * 60 +
+      seconds
+    ).toFixed(2)} s`;
+  }
 
-        if (
-          currentTarget >
-          bestTarget
-        ) {
-          return current;
-        }
+  return value;
+};
+const downloadResultsTable = async () => {
+  const csvContent = [
+    [
+      'Iteration',
+      'First Hit (s)',
+      'Stop Moving (s)',
+      'Drop Time (s)',
+      'In Target',
+      'Bounce',
+      'Impact Force',
+    ].join(','),
 
-        if (
-          currentTarget ===
-            bestTarget &&
-          current.dropTime <
-            best.dropTime
-        ) {
-          return current;
-        }
+    ...parsedResults.map(item =>
+      [
+        item.stage,
+        formatSeconds(item.firstHitTime).replace(' s', ''),
+        formatSeconds(item.stopMovingTime).replace(' s', ''),
+        formatSeconds(item.dropTime).replace(' s', ''),
+        item.inTarget ? 'Yes' : 'No',
+        item.bounced ? 'Yes' : 'No',
+        item.impactForce,
+      ].join(',')
+    ),
+  ].join('\n');
 
-        return best;
-      },
-      null as any
-    );
+const fileUri =
+  FileSystem.documentDirectory +
+  'Activity1Results.csv';
+  await FileSystem.writeAsStringAsync(
+    fileUri,
+    csvContent
+  );
 
-  return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={
-        styles.content
+  await Sharing.shareAsync(fileUri);
+};
+
+const bestResult =
+  parsedResults.reduce(
+    (
+      best,
+      current
+    ) => {
+      if (!best) {
+        return current;
       }
-    >
+
+      const bestTarget =
+        best.inTarget ? 1 : 0;
+
+      const currentTarget =
+        current.inTarget ? 1 : 0;
+
+      if (
+        currentTarget >
+        bestTarget
+      ) {
+        return current;
+      }
+
+      if (
+        currentTarget ===
+          bestTarget &&
+        current.dropTime <
+          best.dropTime
+      ) {
+        return current;
+      }
+
+      return best;
+    },
+    null as any
+  );
+
+return (
+  <ScrollView
+    style={styles.container}
+    contentContainerStyle={
+      styles.content
+    }
+  >
       <Text style={styles.title}>
         ACTIVITY 1 RESULTS
       </Text>
@@ -171,16 +227,15 @@ export default function Activity1Results() {
             Experiment Time
           </Text>
 
-          <Text
-            style={
-              styles.statValue
-            }
-          >
-            {experimentTime.toFixed(
-              2
-            )}
-            s
-          </Text>
+         <Text
+  style={
+    styles.statValue
+  }
+>
+  {formatSeconds(
+    experimentTime
+  )}
+</Text>
 
           <Text
             style={[
@@ -205,16 +260,26 @@ export default function Activity1Results() {
           </Text>
 
         </View>
+</View>
 
-      </View>
+<TouchableOpacity
+  style={styles.downloadButton}
+  onPress={downloadResultsTable}
+>
+  <Text
+    style={styles.downloadButtonText}
+  >
+    📊 DOWNLOAD RESULTS TABLE
+  </Text>
+</TouchableOpacity>
 
-      <Text
-        style={
-          styles.sectionTitle
-        }
-      >
-        ITERATION COMPARISON
-      </Text>
+<Text
+  style={
+    styles.sectionTitle
+  }
+>
+  ITERATION COMPARISON
+</Text>
 
       {parsedResults.map(
         (
@@ -265,40 +330,39 @@ export default function Activity1Results() {
 
             </View>
 
-            <Text
-              style={
-                styles.text
-              }
-            >
-              First Hit
-              Ground:{' '}
-              {
-                item.firstHitTime
-              }
-            </Text>
+           <Text
+  style={
+    styles.text
+  }
+>
+  First Hit
+  Ground:{' '}
+  {formatSeconds(
+    item.firstHitTime
+  )}
+</Text>
 
-            <Text
-              style={
-                styles.text
-              }
-            >
-              Stop Moving:{' '}
-              {
-                item.stopMovingTime
-              }
-            </Text>
+         <Text
+  style={
+    styles.text
+  }
+>
+  Stop Moving:{' '}
+  {formatSeconds(
+    item.stopMovingTime
+  )}
+</Text>
 
-            <Text
-              style={
-                styles.text
-              }
-            >
-              Drop Time:{' '}
-              {item.dropTime?.toFixed(
-                2
-              )}
-              s
-            </Text>
+       <Text
+  style={
+    styles.text
+  }
+>
+  Drop Time:{' '}
+  {formatSeconds(
+    item.dropTime
+  )}
+</Text>
 
             <Text
               style={
@@ -356,7 +420,25 @@ const styles =
       paddingTop: 80,
       paddingBottom: 40,
     },
+downloadButton: {
+  backgroundColor: '#FFE95B',
 
+  paddingVertical: 14,
+
+  borderRadius: 14,
+
+  alignItems: 'center',
+
+  marginBottom: 20,
+},
+
+downloadButtonText: {
+  color: '#0B0820',
+
+  fontWeight: 'bold',
+
+  fontSize: 16,
+},
     title: {
       color: 'white',
       fontSize: 30,
