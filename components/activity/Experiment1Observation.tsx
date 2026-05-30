@@ -1,4 +1,10 @@
 import {
+  ArrowDown,
+  Calculator,
+  ChartColumn,
+  Clock3, ShieldAlert
+} from 'lucide-react-native';
+import {
   Dimensions,
   PixelRatio,
   StyleSheet,
@@ -6,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 const { width, height } =
   Dimensions.get('window');
 
@@ -112,10 +119,24 @@ export default function Experiment1Observation({
     ratingColor = '#FFD54F';
   }
 
+
   if (gForce >= 10) {
     impactRating = 'HARD';
     ratingColor = '#FF4D4D';
   }
+  const iconColor =
+  impactRating === 'SAFE'
+    ? '#00E84A'
+    : impactRating === 'MEDIUM'
+    ? '#FFD54F'
+    : '#FF4D4D';
+
+const ratingBackground =
+  impactRating === 'SAFE'
+    ? '#10311A'
+    : impactRating === 'MEDIUM'
+    ? '#3A2F08'
+    : '#3A1010';
 
   return (
     <View style={styles.card}>
@@ -202,9 +223,16 @@ export default function Experiment1Observation({
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.question}>
-        Formula Used
-      </Text>
+<View style={styles.metricHeader}>
+  <Calculator
+    size={rf(22)}
+    color="#9B6DFF"
+  />
+
+  <Text style={styles.metricHeaderText}>
+    FORMULA USED
+  </Text>
+</View>
 
       <View style={styles.formulaBox}>
         <Text style={styles.formula}>
@@ -213,97 +241,153 @@ export default function Experiment1Observation({
             : 'G = v / (t × 9.81)'}
         </Text>
       </View>
+<View style={styles.metricRow}>
+  <View style={styles.metricLeft}>
+    <ArrowDown
+      size={rf(20)}
+      color="#9B6DFF"
+    />
 
-      <Text style={styles.question}>
-        Drop Height
-      </Text>
+    <Text style={styles.metricLabel}>
+      DROP HEIGHT
+    </Text>
+  </View>
 
-      <Text style={styles.value}>
-        {dropHeight} m
-      </Text>
+  <Text style={styles.metricValue}>
+    {dropHeight} m
+  </Text>
+</View>
 
-      <Text style={styles.question}>
-        Contact Time
-      </Text>
+<View style={styles.metricRow}>
+  <View style={styles.metricLeft}>
+    <Clock3
+      size={rf(20)}
+      color="#9B6DFF"
+    />
 
-      <Text style={styles.value}>
-        {contactTime.toFixed(2)} s
-      </Text>
+    <Text style={styles.metricLabel}>
+      CONTACT TIME
+    </Text>
+  </View>
 
-      <Text style={styles.question}>
-        Calculated G-Force
-      </Text>
+  <Text style={styles.metricValue}>
+    {contactTime.toFixed(2)} s
+  </Text>
+</View>
 
-      <Text style={styles.value}>
-        {gForce.toFixed(2)} g
-      </Text>
+<View style={styles.metricRow}>
+  <View style={styles.metricLeft}>
+<ChartColumn
+  size={rf(22)}
+  color="#9B6DFF"
+/>
 
-      <Text style={styles.question}>
-        Impact Rating
-      </Text>
+    <Text style={styles.metricLabel}>
+      CALCULATED G-FORCE
+    </Text>
+  </View>
 
-      <Text
-        style={[
-          styles.rating,
-          {
-            color: ratingColor,
-          },
-        ]}
-      >
-        {impactRating}
-      </Text>
+  <Text style={styles.metricValue}>
+    {gForce.toFixed(2)} g
+  </Text>
+</View>
+<Text style={styles.impactLabel}>
+  IMPACT RATING
+</Text>
 
-      <View style={styles.legendCard}>
+<View
+  style={[
+    styles.ratingBox,
+    {
+      backgroundColor: ratingBackground,
+      borderColor: iconColor,
+    },
+  ]}
+>
+  <ShieldAlert
+    size={rf(22)}
+    color={iconColor}
+  />
 
-        <View style={styles.legendRow}>
-          <Text style={styles.legendDot}>
-            🟢
-          </Text>
+  <Text
+    style={[
+      styles.ratingText,
+      {
+        color: iconColor,
+      },
+    ]}
+  >
+    {impactRating}
+  </Text>
+</View>
 
-          <View>
-            <Text style={styles.legendTitle}>
-              SAFE
-            </Text>
+<View style={styles.legendCard}>
 
-            <Text style={styles.legendSubtitle}>
-              1–5 g
-            </Text>
-          </View>
-        </View>
+  <View style={styles.legendItem}>
+    <View
+      style={[
+        styles.legendCircle,
+        {
+          backgroundColor:
+            '#00E84A',
+        },
+      ]}
+    />
 
-        <View style={styles.legendRow}>
-          <Text style={styles.legendDot}>
-            🟡
-          </Text>
+    <Text style={styles.legendTitle}>
+      SAFE
+    </Text>
 
-          <View>
-            <Text style={styles.legendTitle}>
-              MEDIUM
-            </Text>
+    <Text style={styles.legendSubtitle}>
+      1-5 g
+    </Text>
+  </View>
 
-            <Text style={styles.legendSubtitle}>
-              5–10 g
-            </Text>
-          </View>
-        </View>
+  <View style={styles.legendDivider} />
 
-        <View style={styles.legendRow}>
-          <Text style={styles.legendDot}>
-            🔴
-          </Text>
+  <View style={styles.legendItem}>
+    <View
+      style={[
+        styles.legendCircle,
+        {
+          backgroundColor:
+            '#FFD54F',
+        },
+      ]}
+    />
 
-          <View>
-            <Text style={styles.legendTitle}>
-              HARD
-            </Text>
+    <Text style={styles.legendTitle}>
+      MEDIUM
+    </Text>
 
-            <Text style={styles.legendSubtitle}>
-              10+ g
-            </Text>
-          </View>
-        </View>
+    <Text style={styles.legendSubtitle}>
+      5-10 g
+    </Text>
+  </View>
 
-      </View>
+  <View style={styles.legendDivider} />
+
+  <View style={styles.legendItem}>
+    <View
+      style={[
+        styles.legendCircle,
+        {
+          backgroundColor:
+            '#FF4D4D',
+        },
+      ]}
+    />
+
+    <Text style={styles.legendTitle}>
+      HARD
+    </Text>
+
+    <Text style={styles.legendSubtitle}>
+      10+ g
+    </Text>
+  </View>
+
+</View>
 
     </View>
   );
@@ -338,9 +422,92 @@ const styles = StyleSheet.create({
     fontSize: rf(20),
     textAlign: 'center',
   },
+metricHeader: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: wp(3),
+  marginTop: hp(2),
+  marginBottom: hp(1),
+},
 
+metricHeaderText: {
+  color: '#FF6BB5',
+  fontFamily: 'PixelBold',
+  fontSize: rf(17),
+},
+
+metricRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingVertical: hp(1.5),
+  borderBottomWidth: 1,
+  borderBottomColor: '#2B2554',
+},
+
+metricLeft: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: wp(3),
+},
+
+metricLabel: {
+  color: '#FFFFFF',
+  fontFamily: 'PixelOperator',
+  fontSize: rf(15),
+},
+
+metricValue: {
+  color: '#00D9FF',
+  fontFamily: 'PixelBold',
+  fontSize: rf(19),
+},
+
+impactLabel: {
+  color: '#FF6BB5',
+  fontFamily: 'PixelBold',
+  fontSize: rf(19),
+  marginTop: hp(3),
+  marginBottom: hp(2),
+},
+
+ratingBox: {
+  backgroundColor: '#0E0B24',
+  borderWidth: 1,
+  borderColor: '#2B2554',
+  borderRadius: rf(14),
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: wp(3),
+  paddingVertical: hp(2),
+  marginBottom: hp(2),
+},
+
+ratingText: {
+  fontFamily: 'PixelBold',
+  fontSize: rf(32),
+},
+
+legendItem: {
+  flex: 1,
+  alignItems: 'center',
+},
+
+legendDivider: {
+  width: 1,
+  height: hp(5),
+  backgroundColor: '#2B2554',
+},
+
+legendCircle: {
+  width: rf(18),
+  height: rf(18),
+  borderRadius: rf(9),
+  marginBottom: hp(0.8),
+},
   question: {
-    color: '#FFC509',
+    color: '#AC60FC',
     fontFamily: 'PixelBold',
     fontSize: rf(20),
 
@@ -360,7 +527,7 @@ const styles = StyleSheet.create({
   },
 
   selected: {
-    color: '#FFE95B',
+    color: '#FFC509',
   },
 
   formulaBox: {
@@ -374,10 +541,10 @@ const styles = StyleSheet.create({
   },
 
   formula: {
-    color: '#00D9FF',
+    color: '#FFC509',
     textAlign: 'center',
     fontFamily: 'PixelOperator',
-    fontSize: rf(15),
+    fontSize: rf(17),
   },
 
   value: {
@@ -390,7 +557,7 @@ const styles = StyleSheet.create({
   rating: {
     textAlign: 'center',
 
-    fontFamily: 'Pixel',
+    fontFamily: 'PixelOperator',
 
     fontSize: rf(34),
 
@@ -399,15 +566,16 @@ const styles = StyleSheet.create({
     marginBottom: hp(2.5),
   },
 
-  legendCard: {
-    backgroundColor: '#0E0B24',
+legendCard: {
+  backgroundColor: '#0E0B24',
+  borderRadius: rf(14),
+  paddingVertical: hp(2),
+  paddingHorizontal: wp(2),
 
-    borderRadius: rf(14),
-
-    padding: wp(4),
-
-    gap: hp(1.5),
-  },
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+},
 
   legendRow: {
     flexDirection: 'row',
@@ -420,23 +588,15 @@ const styles = StyleSheet.create({
     marginRight: wp(3),
   },
 
-  legendTitle: {
-    color: 'white',
-
-    fontFamily: 'Pixel',
-
-    fontSize: rf(20),
-
-    letterSpacing: rf(2),
-  },
-
-  legendSubtitle: {
-    color: '#BFC4FF',
-
-    fontFamily: 'PixelOperator',
-
-    fontSize: rf(14),
-
-    marginTop: hp(0.2),
-  },
+legendTitle: {
+  color: 'white',
+  fontFamily: 'PixelBold',
+  fontSize: rf(14),
+},
+legendSubtitle: {
+  color: '#BFC4FF',
+  fontFamily: 'PixelOperator',
+  fontSize: rf(11),
+  marginTop: hp(0.3),
+},
 });
