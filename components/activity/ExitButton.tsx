@@ -1,4 +1,5 @@
 import {
+  Alert,
   Dimensions,
   Image,
   PixelRatio,
@@ -43,13 +44,31 @@ interface Props {
 export default function ExitButton({
   onPress,
 }: Props) {
-  return (
+  const handleExit = () => {
+    Alert.alert(
+      'Exit Activity?',
+      'Your progress will not be saved.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Exit',
+          style: 'destructive',
+          onPress: () => {
+            onPress?.();
+          },
+        },
+      ]
+    );
+  };
 
+  return (
     <TouchableOpacity
       style={styles.container}
-      onPress={onPress}
+      onPress={handleExit}
     >
-
       <Image
         source={require('../../assets/images/exit-icon.png')}
         style={styles.icon}
@@ -58,9 +77,7 @@ export default function ExitButton({
       <Text style={styles.text}>
         EXIT
       </Text>
-
     </TouchableOpacity>
-
   );
 }
 
@@ -76,14 +93,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
 
-    alignSelf: 'flex-start', // left side
+    alignSelf: 'flex-start',
 
     marginTop: hp(3),
-    marginLeft: wp(5), // distance from left edge
+    marginLeft: wp(5),
 
     borderWidth: rf(2),
     borderColor: '#A83A6A',
-
 
     elevation: 8,
   },

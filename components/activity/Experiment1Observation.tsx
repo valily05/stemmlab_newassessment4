@@ -1,10 +1,39 @@
 import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+const { width, height } =
+  Dimensions.get('window');
 
+const wp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+
+const hp = (
+  percentage: number
+) =>
+  PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+
+const rf = (
+  size: number
+) => {
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+};
 interface Props {
   inTarget: boolean | null;
   setInTarget: (
@@ -91,9 +120,11 @@ export default function Experiment1Observation({
   return (
     <View style={styles.card}>
 
-      <Text style={styles.title}>
-        OBSERVATION
-      </Text>
+<View style={styles.titleContainer}>
+  <Text style={styles.title}>
+    OBSERVATION
+  </Text>
+</View>
 
       <Text style={styles.question}>
         ① In Target?
@@ -281,38 +312,51 @@ export default function Experiment1Observation({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#15112F',
-    borderWidth: 2,
+    borderWidth: rf(2),
     borderColor: '#6954A6',
-    borderRadius: 16,
-    padding: 16,
-    marginTop: 12,
+    borderRadius: rf(16),
+    padding: wp(4),
+    marginTop: hp(1.5),
+  },
+
+  titleContainer: {
+    backgroundColor: '#7A224A',
+
+    borderWidth: rf(2),
+    borderColor: '#A83A6A',
+
+    borderRadius: rf(12),
+
+    paddingVertical: hp(1.2),
+
+    marginBottom: hp(2.5),
   },
 
   title: {
-    color: '#FFE95B',
+    color: '#FFFFFF',
     fontFamily: 'Pixel',
-    fontSize: 20,
+    fontSize: rf(20),
     textAlign: 'center',
-    marginBottom: 20,
   },
 
   question: {
-    color: 'white',
-    fontFamily: 'PixelOperator',
-    fontSize: 16,
-    marginTop: 12,
-    marginBottom: 8,
+    color: '#FFC509',
+    fontFamily: 'PixelBold',
+    fontSize: rf(20),
+
+    marginTop: hp(1.5),
+    marginBottom: hp(1),
   },
 
   row: {
     flexDirection: 'row',
-    gap: 30,
+    gap: wp(8),
   },
 
   option: {
     color: 'white',
     fontFamily: 'PixelOperator',
-    fontSize: 16,
+    fontSize: rf(18),
   },
 
   selected: {
@@ -321,38 +365,48 @@ const styles = StyleSheet.create({
 
   formulaBox: {
     backgroundColor: '#0E0B24',
-    borderRadius: 12,
-    padding: 14,
-    marginTop: 8,
+
+    borderRadius: rf(12),
+
+    padding: wp(4),
+
+    marginTop: hp(1),
   },
 
   formula: {
     color: '#00D9FF',
     textAlign: 'center',
     fontFamily: 'PixelOperator',
-    fontSize: 15,
+    fontSize: rf(15),
   },
 
   value: {
     color: '#00D9FF',
     textAlign: 'center',
     fontFamily: 'PixelOperator',
-    fontSize: 18,
+    fontSize: rf(20),
   },
 
   rating: {
     textAlign: 'center',
+
     fontFamily: 'Pixel',
-    fontSize: 28,
-    marginTop: 8,
-    marginBottom: 20,
+
+    fontSize: rf(34),
+
+    marginTop: hp(1),
+
+    marginBottom: hp(2.5),
   },
 
   legendCard: {
     backgroundColor: '#0E0B24',
-    borderRadius: 14,
-    padding: 16,
-    gap: 14,
+
+    borderRadius: rf(14),
+
+    padding: wp(4),
+
+    gap: hp(1.5),
   },
 
   legendRow: {
@@ -361,20 +415,28 @@ const styles = StyleSheet.create({
   },
 
   legendDot: {
-    fontSize: 24,
-    marginRight: 12,
+    fontSize: rf(24),
+
+    marginRight: wp(3),
   },
 
   legendTitle: {
     color: 'white',
+
     fontFamily: 'Pixel',
-    fontSize: 18,
+
+    fontSize: rf(20),
+
+    letterSpacing: rf(2),
   },
 
   legendSubtitle: {
     color: '#BFC4FF',
+
     fontFamily: 'PixelOperator',
-    fontSize: 14,
-    marginTop: 2,
+
+    fontSize: rf(14),
+
+    marginTop: hp(0.2),
   },
 });
