@@ -431,17 +431,32 @@ recordingPromise
     value={dropHeight}
     onChangeText={setDropHeight}
   />
-
+{!dropHeight.trim() && (
+  <Text
+    style={{
+      color: '#FF6B6B',
+      fontSize: rf(14),
+      fontFamily: 'PixelOperator',
+      marginTop: hp(0.8),
+    }}
+  >
+    * Enter the drop height before starting
+  </Text>
+)}
 </View>
 
 
-     <TouchableOpacity
-  style={styles.startButton}
-onPress={async () => {
-
-  onStart();
-
-}}
+<TouchableOpacity
+  style={[
+    styles.startButton,
+    !dropHeight.trim() && {
+      opacity: 0.4,
+    },
+  ]}
+  disabled={!dropHeight.trim()}
+  onPress={async () => {
+    onStart();
+  }}
 >
 <Image
   source={require('../../assets/images/video-icon.png')}
@@ -526,9 +541,9 @@ heightCard: {
 heightLabel: {
   color: '#FFE95B',
 
-  fontFamily: 'Pixel',
+  fontFamily: 'PixelBold',
 
-  fontSize: rf(12),
+  fontSize: rf(19),
 
   marginBottom: hp(1),
 },
@@ -591,6 +606,7 @@ startRecordingButton: {
   borderColor: '#00D9FF',
   justifyContent: 'center',
   alignItems: 'center',
+  marginTop: hp(2),
 },
 
 stopRecordingButton: {
@@ -601,6 +617,7 @@ stopRecordingButton: {
   borderColor: '#FF4D8D',
   justifyContent: 'center',
   alignItems: 'center',
+   marginTop: hp(2),
 },
 
 startRecordingText: {
