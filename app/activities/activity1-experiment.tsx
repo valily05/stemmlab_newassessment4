@@ -78,15 +78,20 @@ const [stopMovingTime, setStopMovingTime] =
   const [currentStage, setCurrentStage] =
     useState(0);
 
-const [results, setResults] = useState<
-  {
-    stage: string;
-    dropTime: number;
-    firstHitTime: string;
-    stopMovingTime: string;
-    
-  }[]
->([]);
+const [results, setResults] =
+  useState<
+    {
+      stage: string;
+      dropTime: number;
+      firstHitTime: string;
+      stopMovingTime: string;
+
+      videoUri?: string;
+
+      inTarget?: boolean | null;
+      bounced?: boolean | null;
+    }[]
+  >([]);
 
   const [isRecording, setIsRecording] =
     useState(false);
@@ -170,16 +175,23 @@ const formatTime = (
 
 const saveIteration = () => {
 
-  const result = {
-    stage: stages[currentStage],
-    dropTime: elapsedTime,
-    firstHitTime: firstHitTime ?? '',
-    stopMovingTime: stopMovingTime ?? '',
-    videoUri: videos[currentStage] ?? '',
+const impactForce =
+  bounced === true
+    ? 'MEDIUM'
+    : 'LOW';
 
-    inTarget,
-    bounced,
-  };
+const result = {
+  stage: stages[currentStage],
+  dropTime: elapsedTime,
+  firstHitTime: firstHitTime ?? '',
+  stopMovingTime: stopMovingTime ?? '',
+  videoUri: videos[currentStage] ?? '',
+
+  inTarget,
+  bounced,
+
+  impactForce,
+};
 
   const updatedResults = [
     ...results,
@@ -217,10 +229,17 @@ const saveIteration = () => {
       updatedResults
     );
 
-    router.push(
-      '/activities/activity1'
-    );
-  }
+router.push({
+  pathname:
+    '/activities/activity1-results',
+  params: {
+    results: JSON.stringify(
+      updatedResults
+    ),
+  },
+});
+
+}
 };
 
 return (

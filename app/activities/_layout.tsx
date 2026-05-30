@@ -67,7 +67,12 @@ export default function ActivitiesLayout() {
           headerShown: false,
         }}
       />
-
+   <Stack.Screen
+        name="activity1-results"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
 
   );
