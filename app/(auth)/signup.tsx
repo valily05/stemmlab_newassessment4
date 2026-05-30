@@ -15,13 +15,14 @@ import {
     View
 } from 'react-native';
 
-import { AuthButton, AuthInput } from '../../components/AuthElements';
-import PasswordChecklist from '../../components/PasswordChecklist';
-import PasswordStrength from '../../components/PasswordStrength';
-import { LAYOUT } from '../../constants/layout';
-import { useLanguage } from '../../context/LanguageContext';
+import { AuthButton, AuthInput } from '@/components/AuthElements';
+import PasswordChecklist from '@/components/PasswordChecklist';
+import PasswordStrength from '@/components/PasswordStrength';
+import { LAYOUT } from '@/constants/layout';
+import { useLanguage } from '@/context/LanguageContext';
 
 import { signUp } from "@/services/firebase/authService";
+import { createUserProfile } from '@/services/firebase/userService';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -246,13 +247,41 @@ export default function RegisterScreen() {
     if(!isFormValid) return;
 
     try {
-      const userCredential = await signUp(email, password);
+      //Create Firebase Authentication account
+      const userCredential = await signUp(email.trim(), password);
+      const uid = userCredential.user.uid;
+
+      //Create Firestore profile
+      await createUserProfile({
+        uid,
+        fullName: fullName.trim(),
+        email: email.trim().toLowerCase(),
+
+        role: "Student",
+      });
 
       console.log(userCredential.user.uid);
 
       router.replace('/homescreen');
     } catch(error:any) {
-      console.log(error.message);
+      console.error(error);
+
+      switch(error.code) {
+        case "auth/email-already-in-use":
+        alert("This email is already registered.");
+        break;
+
+        case "auth/invalid-email":
+          alert("Please enter a valid email.");
+          break;
+
+        case "auth/weak-password":
+          alert("Password is too weak.");
+          break;
+
+        default:
+          alert("Registration failed. Please try again.");
+      }
     }
   };
 

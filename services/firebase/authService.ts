@@ -7,10 +7,7 @@ import {
 import { auth } from "./config";
 
 // Register
-export async function signUp(
-  email: string,
-  password: string
-) {
+export async function signUp(email: string, password: string) {
   return createUserWithEmailAndPassword(
     auth,
     email,
