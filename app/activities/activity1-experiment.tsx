@@ -59,6 +59,10 @@ const [permission, requestPermission] =
 
   const [showInfo, setShowInfo] =
     useState(false);
+const startRecording = () => {
+  setIsRecording(true);
+  setElapsedTime(0);
+};
 
     const [showReview, setShowReview] =
   useState(false);
@@ -78,6 +82,7 @@ const [results, setResults] = useState<
     dropTime: number;
     firstHitTime: string;
     stopMovingTime: string;
+    
   }[]
 >([]);
 
@@ -92,6 +97,20 @@ const [results, setResults] = useState<
 
   const [timeLeft, setTimeLeft] =
     useState(20 * 60);
+const [videos, setVideos] =
+  useState<string[]>([]);
+const [currentVideoUri, setCurrentVideoUri] =
+  useState<string | null>(null);
+
+console.log(
+  'PARENT VIDEO',
+  currentVideoUri
+);
+const [canStopRecording, setCanStopRecording] =
+  useState(false);
+
+const [recordingComplete, setRecordingComplete] =
+  useState(false);
 
   useEffect(() => {
     let interval: ReturnType<
@@ -144,7 +163,9 @@ const result = {
   dropTime: elapsedTime,
   firstHitTime: firstHitTime ?? '',
   stopMovingTime: stopMovingTime ?? '',
+    videoUri: videos[currentStage] ?? '',
 };
+
 
     const updatedResults = [
       ...results,
@@ -162,7 +183,10 @@ const result = {
       );
 setFirstHitTime(null);
 setStopMovingTime(null);
-setElapsedTime(0);
+setCurrentVideoUri(null);
+setCanStopRecording(false);
+setRecordingComplete(false);
+setHasStarted(true);
 setIsRecording(false);
     } else {
       console.log(
@@ -247,13 +271,24 @@ return (
           }
         />
 
-        <CaptureExperimentCard
-          isRecording={
-            isRecording
-          }
-          hasStarted={
-            hasStarted
-          }
+<CaptureExperimentCard
+  isRecording={isRecording}
+  hasStarted={hasStarted}
+  canStopRecording={canStopRecording}
+  videoUri={currentVideoUri}
+
+onStartRecording={startRecording}
+onVideoSaved={(uri) => {
+
+  setCurrentVideoUri(uri);
+
+  setVideos(prev => [
+    ...prev,
+    uri,
+  ]);
+
+}}
+
 onStart={async () => {
 
   if (!permission?.granted) {
@@ -267,21 +302,38 @@ onStart={async () => {
   }
 
   setHasStarted(true);
-  setIsRecording(true);
-  setElapsedTime(0);
 
 }}
+
 onStop={() => {
+
+  console.log('PARENT ONSTOP');
+
   setIsRecording(false);
+
+  setRecordingComplete(true);
+
+setHasStarted(true);
+
 }}
 onRetry={() => {
-  setIsRecording(true);
+
+  setCurrentVideoUri(null);
+
   setElapsedTime(0);
+
+  setFirstHitTime(null);
+  setStopMovingTime(null);
+
+  setCanStopRecording(false);
+  setRecordingComplete(false);
+
+  setIsRecording(false);
+setHasStarted(false);
 }}
-          onSaveIteration={
-            saveIteration
-          }
-        />
+
+  onSaveIteration={saveIteration}
+/>
 
 {
   !hasStarted ? (
@@ -293,6 +345,7 @@ onRetry={() => {
         isRecording={isRecording}
       />
 
+
       <View
         style={{
           marginHorizontal: wp(5),
@@ -301,35 +354,57 @@ onRetry={() => {
         }}
       >
 
-        <TouchableOpacity
-          style={styles.hitButton}
-          disabled={!isRecording || !!firstHitTime}
-          onPress={() => {
-            setFirstHitTime(
-              formatTime(elapsedTime)
-            );
-          }}
+<TouchableOpacity
+  style={[
+    styles.hitButton,
+    (!isRecording || !!firstHitTime) && {
+      opacity: 0.4,
+    },
+  ]}
+  disabled={!isRecording || !!firstHitTime}    
+onPress={() => {
+  setFirstHitTime(
+    formatTime(elapsedTime)
+  );
+}}
         >
+          
           <Text style={styles.hitButtonText}>
             HIT GROUND
           </Text>
         </TouchableOpacity>
+<TouchableOpacity
+style={[
+  styles.stopButton,
+  (!isRecording || !firstHitTime || !!stopMovingTime) && {
+    opacity: 0.4,
+  },
+]}
+disabled={
+  !isRecording ||
+  !firstHitTime ||
+  !!stopMovingTime
+}
+onPress={() => {
 
-        <TouchableOpacity
-          style={styles.stopButton}
-          disabled={
-            !isRecording ||
-            !firstHitTime ||
-            !!stopMovingTime
-          }
-          onPress={() => {
-            setStopMovingTime(
-              formatTime(elapsedTime)
-            );
+  const time =
+    formatTime(elapsedTime);
 
-            setIsRecording(false);
-          }}
-        >
+  console.log(
+    'STOPPED MOVING:',
+    time
+  );
+
+  setStopMovingTime(time);
+
+  setCanStopRecording(true);
+
+  console.log(
+    'can stop enabled'
+  );
+
+}}
+>
           <Text style={styles.hitButtonText}>
             STOPPED MOVING
           </Text>
@@ -342,14 +417,49 @@ onRetry={() => {
             {firstHitTime}
           </Text>
         )}
-
         {stopMovingTime && (
-          <Text style={styles.resultText}>
-            Stopped Moving:
-            {' '}
-            {stopMovingTime}
-          </Text>
-        )}
+  <Text style={styles.resultText}>
+    Stopped Moving:
+    {' '}
+    {stopMovingTime}
+  </Text>
+)}
+{recordingComplete && (
+  <>
+    <TouchableOpacity
+      style={styles.hitButton}
+      onPress={saveIteration}
+    >
+      <Text style={styles.hitButtonText}>
+        SAVE ITERATION
+      </Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      style={styles.stopButton}
+onPress={() => {
+  setCurrentVideoUri(null);
+
+  setRecordingComplete(false);
+  setCanStopRecording(false);
+
+  setFirstHitTime(null);
+  setStopMovingTime(null);
+
+  setElapsedTime(0);
+
+  setHasStarted(true);
+  setIsRecording(false);
+}}
+    >
+      <Text style={styles.hitButtonText}>
+        RETRY
+      </Text>
+    </TouchableOpacity>
+  </>
+)}
+
+        
 
       </View>
     </>
@@ -359,7 +469,7 @@ onRetry={() => {
 {!hasStarted && (
   <ExperimentTipCard
     tips={[
-      'Complete all iterations before finishing the experiment.',
+      'The timer continues running even if you exit the app. Complete all integrations before finishing.',
     ]}
   />
 )}

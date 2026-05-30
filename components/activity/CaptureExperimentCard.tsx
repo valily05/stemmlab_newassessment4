@@ -1,8 +1,10 @@
 // components/activity/CaptureExperimentCard.tsx
+import { ResizeMode, Video } from 'expo-av';
 import {
   CameraView,
   useCameraPermissions,
 } from 'expo-camera';
+import { useRef, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -36,13 +38,22 @@ const rf = (size: number) => {
   );
 };
 
+
 interface Props {
   isRecording: boolean;
   hasStarted: boolean;
   onStart: () => void;
   onStop: () => void;
   onRetry: () => void;
+  canStopRecording: boolean;
+onStartRecording: () => void;
+  videoUri: string | null;
+
   onSaveIteration: () => void;
+
+  onVideoSaved?: (
+    uri: string
+  ) => void;
 }
 
 export default function CaptureExperimentCard({
@@ -52,10 +63,27 @@ export default function CaptureExperimentCard({
   onStop,
   onRetry,
   onSaveIteration,
-
+  onVideoSaved,
+  canStopRecording,
+  videoUri,
+  onStartRecording,
 }: Props) {
+
   const [permission, requestPermission] =
   useCameraPermissions();
+  const cameraRef = useRef<any>(null);
+
+
+console.log(
+  'CURRENT VIDEO URI',
+  videoUri
+);
+console.log(
+  'CAN STOP?',
+  canStopRecording
+);
+const [cameraReady, setCameraReady] =
+  useState(false);
 
   if (hasStarted) {
     return (
@@ -66,29 +94,99 @@ export default function CaptureExperimentCard({
             VIDEO RECORDING
           </Text>
 
-          <Text style={styles.recordingBadge}>
-            ● RECORDING
-          </Text>
+<Text style={styles.recordingBadge}>
+  {isRecording
+    ? '● RECORDING'
+    : videoUri
+    ? '▶ REVIEW'
+    : 'READY'}
+</Text>
         </View>
 
 <View style={styles.cameraPreview}>
 
-  <CameraView
+{videoUri ? (
+  <Video
+    source={{ uri: videoUri }}
     style={{
       flex: 1,
-      borderRadius: 20,
     }}
-    facing="back"
+    useNativeControls
+    resizeMode={ResizeMode.CONTAIN}
+    shouldPlay
   />
+) : (
+<CameraView
+  ref={cameraRef}
+  style={{
+    flex: 1,
+    borderRadius: 20,
+  }}
+  facing="back"
+  mode="video"
+  onCameraReady={() => {
+    console.log('CAMERA READY');
+    setCameraReady(true);
+  }}
+/>
+)}
 
 </View>
+<Text
+  style={{
+    color: cameraReady
+      ? '#00FF00'
+      : '#FF0000',
+    textAlign: 'center',
+  }}
+>
+  {cameraReady
+    ? 'CAMERA READY'
+    : 'CAMERA LOADING'}
+</Text>
+
+<Text
+  style={{
+    color: 'white',
+    textAlign: 'center',
+    marginTop: 10,
+  }}
+>
+  {videoUri
+    ? 'VIDEO SAVED ✅'
+    : 'NO VIDEO ❌'}
+</Text>
 
 {isRecording ? (
+<TouchableOpacity
+  style={[
+    styles.stopRecordingButton,
+    !canStopRecording && {
+      opacity: 0.4,
+    },
+  ]}
+  disabled={!canStopRecording}
+onPress={() => {
 
-  <TouchableOpacity
-    style={styles.stopRecordingButton}
-    onPress={onStop}
-  >
+  console.log('STOP PRESSED');
+
+  try {
+
+    cameraRef.current?.stopRecording();
+
+    onStop();
+
+  } catch (err) {
+
+    console.log(
+      'STOP ERROR',
+      err
+    );
+
+  }
+
+}}
+>
     <Text style={styles.stopRecordingText}>
       <Text style={styles.stopIcon}>
         ■
@@ -101,30 +199,77 @@ export default function CaptureExperimentCard({
 
 ) : (
 
-  <TouchableOpacity
-    style={styles.startRecordingButton}
-    onPress={onStart}
-  >
-    <Text style={styles.startRecordingText}>
-      <Text style={styles.playIcon}>
-        ▶
-      </Text>{' '}
-      <Text style={styles.startLabel}>
-        START
+  <>
+    <TouchableOpacity
+      style={styles.startRecordingButton}
+onPress={async () => {
+
+  if (!cameraReady) {
+    return;
+  }
+try {
+
+  console.log('START RECORDING PRESSED');
+
+  onStartRecording();
+
+  const recordingPromise =
+    cameraRef.current?.recordAsync();
+
+recordingPromise
+  ?.then((video: any) => {
+
+    console.log(
+      'RECORDING FINISHED',
+      video
+    );
+
+      if (video?.uri) {
+
+        console.log(
+          'SETTING URI',
+          video.uri
+        );
+
+        onVideoSaved?.(
+          video.uri
+        );
+
+        onStop();
+
+      }
+
+    })
+.catch((err: any) => {      console.log(
+        'RECORD ERROR',
+        err
+      );
+    });
+
+} catch (err) {
+
+  console.log(err);
+
+}
+  
+}}
+    >
+      <Text style={styles.startRecordingText}>
+        <Text style={styles.playIcon}>
+          ▶
+        </Text>{' '}
+        <Text style={styles.startLabel}>
+          START
+        </Text>
       </Text>
-    </Text>
-  </TouchableOpacity>
+    </TouchableOpacity>
+
+  </>
 
 )}
 
-        {!isRecording && (
-          <View style={styles.actionButtons}>
 
-          
-
-
-          </View>
-        )}
+       
 
       </View>
     );
@@ -253,10 +398,14 @@ export default function CaptureExperimentCard({
 
       </View>
 
-      <TouchableOpacity
-        style={styles.startButton}
-        onPress={onStart}
-      >
+     <TouchableOpacity
+  style={styles.startButton}
+onPress={async () => {
+
+  onStart();
+
+}}
+>
 <Image
   source={require('../../assets/images/video-icon.png')}
   style={styles.startButtonIcon}
@@ -288,7 +437,29 @@ stopLabel: {
   color: '#FF4D8D',
   fontFamily: 'Pixel',
 },
+retryRecordingButton: {
+  marginTop: hp(1.2),
 
+  height: hp(5.5),
+
+  borderRadius: rf(10),
+
+  borderWidth: rf(1.5),
+
+  borderColor: '#FFD94E',
+
+  justifyContent: 'center',
+
+  alignItems: 'center',
+},
+
+retryRecordingText: {
+  color: '#FFD94E',
+
+  fontFamily: 'Pixel',
+
+  fontSize: rf(14),
+},
 card: {
   marginHorizontal: wp(5),
   marginTop: hp(3),
@@ -587,20 +758,7 @@ cameraPreview: {
     marginTop: hp(2),
   },
 
-  actionButtons: {
-    flexDirection: 'row',
-    gap: wp(3),
-    marginTop: hp(2),
-  },
 
-  retryButton: {
-    flex: 1,
-    height: hp(6),
-    borderRadius: rf(14),
-    backgroundColor: '#5711BE',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 
   saveButton: {
     flex: 1,
