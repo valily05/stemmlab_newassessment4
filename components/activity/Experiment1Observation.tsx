@@ -2,8 +2,10 @@ import {
   ArrowDown,
   Calculator,
   ChartColumn,
-  Clock3, ShieldAlert
+  Clock3,
+  ShieldAlert
 } from 'lucide-react-native';
+import { useState } from 'react';
 import {
   Dimensions,
   PixelRatio,
@@ -67,6 +69,11 @@ export default function Experiment1Observation({
   firstHitTime,
   stopMovingTime,
 }: Props) {
+  const [showTimeFormula, setShowTimeFormula] =
+  useState(false);
+
+const [showGForceFormula, setShowGForceFormula] =
+  useState(false);
   const parseTime = (
     value: string | null
   ) => {
@@ -258,7 +265,14 @@ const ratingBackground =
   </Text>
 </View>
 
-<View style={styles.metricRow}>
+<TouchableOpacity
+  style={styles.metricRow}
+  onPress={() =>
+    setShowTimeFormula(
+      !showTimeFormula
+    )
+  }
+>
   <View style={styles.metricLeft}>
     <Clock3
       size={rf(20)}
@@ -266,31 +280,105 @@ const ratingBackground =
     />
 
     <Text style={styles.metricLabel}>
-      CONTACT TIME
+      TIME TO STOP
     </Text>
   </View>
 
+<View
+  style={{
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(2),
+  }}
+>
   <Text style={styles.metricValue}>
     {contactTime.toFixed(2)} s
   </Text>
-</View>
 
-<View style={styles.metricRow}>
+  <Text style={styles.expandIcon}>
+    {showTimeFormula ? '−' : '+'}
+  </Text>
+</View>
+</TouchableOpacity>
+
+{showTimeFormula && (
+  <View style={styles.dropdownBox}>
+    <Text style={styles.dropdownTitle}>
+      Formula
+    </Text>
+
+    <Text style={styles.dropdownText}>
+      Time To Stop =
+      Stop Moving Time -
+      First Hit Time
+    </Text>
+
+    <Text style={styles.dropdownExample}>
+      {stopMovingTime || '--'} -
+      {firstHitTime || '--'}
+    </Text>
+
+    <Text style={styles.dropdownResult}>
+      = {contactTime.toFixed(2)} s
+    </Text>
+  </View>
+)}
+<TouchableOpacity
+  style={styles.metricRow}
+  onPress={() =>
+    setShowGForceFormula(
+      !showGForceFormula
+    )
+  }
+>
   <View style={styles.metricLeft}>
-<ChartColumn
-  size={rf(22)}
-  color="#9B6DFF"
-/>
+    <ChartColumn
+      size={rf(22)}
+      color="#9B6DFF"
+    />
 
     <Text style={styles.metricLabel}>
       CALCULATED G-FORCE
     </Text>
   </View>
 
-  <Text style={styles.metricValue}>
-    {gForce.toFixed(2)} g
-  </Text>
+  <View
+    style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: wp(2),
+    }}
+  >
+    <Text style={styles.metricValue}>
+      {gForce.toFixed(2)} g
+    </Text>
+<Text style={styles.expandIcon}>
+  {showGForceFormula ? '−' : '+'}
+</Text>
 </View>
+</TouchableOpacity>
+
+{showGForceFormula && (
+  <View style={styles.dropdownBox}>
+    <Text style={styles.dropdownTitle}>
+      Formula
+    </Text>
+
+    <Text style={styles.dropdownText}>
+      G = v / (t × 9.81)
+    </Text>
+
+    <Text style={styles.dropdownExample}>
+      {velocity.toFixed(2)} / (
+      {contactTime.toFixed(2)} ×
+      9.81)
+    </Text>
+
+    <Text style={styles.dropdownResult}>
+      = {gForce.toFixed(2)} g
+    </Text>
+  </View>
+)}
 <Text style={styles.impactLabel}>
   IMPACT RATING
 </Text>
@@ -402,7 +490,51 @@ const styles = StyleSheet.create({
     padding: wp(4),
     marginTop: hp(1.5),
   },
+dropdownBox: {
+  backgroundColor: '#0E0B24',
+  borderWidth: 1,
+  borderColor: '#2B2554',
+  borderRadius: rf(12),
+  padding: wp(4),
+  marginTop: hp(1),
+  marginBottom: hp(1),
+},
+expandIcon: {
+  color: '#AC60FC',
+  fontFamily: 'PixelOperator',
+  fontSize: rf(27),
+  width: rf(27),
+  textAlign: 'center',
+},
+dropdownTitle: {
+  color: '#ffffff',
+  fontFamily: 'PixelBold',
+  fontSize: rf(17),
+  marginBottom: hp(1),
+  backgroundColor:'#FF6BB5',
+  width:rf(68),
+  padding:rf(4)
+},
 
+dropdownText: {
+  color: '#ffffff',
+  fontFamily: 'PixelOperator',
+  fontSize: rf(16),
+},
+
+dropdownExample: {
+  color: '#ffffff',
+  fontFamily: 'PixelOperator',
+  fontSize: rf(16),
+  marginTop: hp(1),
+},
+
+dropdownResult: {
+  color: '#00E84A',
+  fontFamily: 'PixelBold',
+  fontSize: rf(17),
+  marginTop: hp(1),
+},
   titleContainer: {
     backgroundColor: '#7A224A',
 
@@ -452,7 +584,7 @@ metricLeft: {
 },
 
 metricLabel: {
-  color: '#FFFFFF',
+  color: '#AC60FC',
   fontFamily: 'PixelOperator',
   fontSize: rf(15),
 },
