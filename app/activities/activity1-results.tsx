@@ -527,8 +527,8 @@ return (
         <View style={styles.bestResultTag}>
 <Star
   size={rf(13)}
-  color="#121127"
-  fill="#121127"
+  color="#FFD633"
+  fill="#FFD633"
 />
 
   <Text style={styles.bestResultTagText}>
@@ -1041,11 +1041,11 @@ csvButton:{
     fontWeight: 'bold',
   },
 resultCard:{
-  backgroundColor:'#565B69',
+  backgroundColor:'#5b6174',
 
   borderRadius:rf(18),
 
-  padding:rf(4),
+  padding:rf(2.7),
 
   marginBottom:hp(2.2),
 },
@@ -1068,8 +1068,9 @@ resultCardInner:{
 
   resultStage: {
     color: '#FFFFFF',
-    fontSize: rf(20),
+    fontSize: rf(12),
     fontWeight: 'bold',
+    fontFamily:'Pixel'
   },
 bestResultTag:{
   alignSelf:'flex-start',
@@ -1077,21 +1078,29 @@ bestResultTag:{
   flexDirection:'row',
   alignItems:'center',
 
-  backgroundColor:'rgba(240,235,204,0.95)',
+  backgroundColor:'rgba(255,214,51,0.15)',
 
-  paddingHorizontal:wp(2),
-  paddingVertical:hp(0.4),
+  borderWidth:1,
+  borderColor:'rgba(255,214,51,0.45)',
 
-  borderRadius:rf(6),
+  paddingHorizontal:wp(2.3),
+  paddingVertical:hp(0.6),
 
-  marginTop:hp(0.8),
+  borderRadius:rf(8),
 
-  gap:wp(1),
+  marginTop:hp(0.9),
+
+  gap:wp(1.2),
 },
 bestResultTagText:{
-  color:'#FBF479',
+  color:'#FFD633',
+
   fontSize:rf(10),
+
   fontFamily:'PixelBold',
+
+  textShadowColor:'rgba(255,214,51,0.7)',
+  textShadowRadius:8,
 },
 resultTime:{
   color:'#FFE95B',
@@ -1112,13 +1121,14 @@ resultTime:{
 
   miniLabel: {
     color: '#9AA3D8',
-    fontSize: rf(12),
+    fontSize: rf(16),
     marginBottom: hp(0.5),
+    fontFamily:'PixelOperator'
   },
 
   resultValue: {
-    fontSize: rf(16),
-    fontWeight: 'bold',
+    fontSize: rf(19),
+    fontFamily:'PixelBold'
   },
 
   feedbackCard: {
