@@ -60,13 +60,13 @@ export default function BottomNavbar() {
         }
       >
 
-        <Image
-          source={require('../assets/images/Group 74.png')}
-          style={[
-            styles.homeIcon,
-            isHome && styles.activeIconImage,
-          ]}
-        />
+<Image
+  source={require('../assets/images/Group 74.png')}
+  style={[
+    styles.icon,
+    isHome && styles.activeIconImage,
+  ]}
+/>
 
         <View style={styles.labelWrapper}>
 
@@ -95,13 +95,13 @@ export default function BottomNavbar() {
         }
       >
 
-        <Image
-          source={require('../assets/images/Group 75.png')}
-          style={[
-            styles.activitiesIcon,
-            isActivities && styles.activeIconImage,
-          ]}
-        />
+<Image
+  source={require('../assets/images/rocket.png')}
+  style={[
+    styles.icon,
+    isActivities && styles.activeIconImage,
+  ]}
+/>
 
         <View style={styles.labelWrapper}>
 
@@ -130,13 +130,13 @@ export default function BottomNavbar() {
         }
       >
 
-        <Image
-          source={require('../assets/images/Group 76.png')}
-          style={[
-            styles.leaderboardIcon,
-            isLeaderboard && styles.activeIconImage,
-          ]}
-        />
+<Image
+  source={require('../assets/images/Group 76.png')}
+  style={[
+    styles.icon,
+    isLeaderboard && styles.activeIconImage,
+  ]}
+/>
 
         <View style={styles.labelWrapper}>
 
@@ -164,15 +164,13 @@ export default function BottomNavbar() {
           router.push('/(tabs)/team')
         }
       >
-
-        <Image
-          source={require('../assets/images/Group 160.png')}
-          style={[
-            styles.teamIcon,
-            isTeam && styles.activeIconImage,
-          ]}
-        />
-
+<Image
+  source={require('../assets/images/Group 160.png')}
+  style={[
+    styles.icon,
+    isTeam && styles.activeIconImage,
+  ]}
+/>
         <View style={styles.labelWrapper}>
 
           <Text
@@ -199,90 +197,61 @@ export default function BottomNavbar() {
 
 const styles = StyleSheet.create({
 
-  /* NAVBAR CONTAINER */
-  container: {
-    position: 'absolute',
+container: {
+  position: 'absolute',
 
-    bottom: hp(2.2),
+  bottom: hp(0),
 
-    alignSelf: 'center',
+  alignSelf: 'center',
 
-    width: '93%',
+  width: '100%',
 
-    height: hp(9),
+  height: hp(10),
 
-    paddingVertical: hp(1),
-    paddingHorizontal: wp(2),
+  paddingHorizontal: wp(3),
 
-    borderRadius: wp(4.5),
 
-    backgroundColor: 'rgba(58, 33, 102, 0.89)',
+  flexDirection: 'row',
 
-    borderWidth: 1.2,
-    borderColor: 'rgba(185, 160, 255, 0.18)',
+  justifyContent: 'space-around',
 
-    flexDirection: 'row',
+  alignItems: 'center',
 
-    justifyContent: 'space-around',
+backgroundColor: 'rgba(18, 12, 46, 0.75)',
+borderTopWidth: 1.5,
+borderTopColor: 'rgba(255,255,255,0.12)',
 
-    alignItems: 'center',
+  shadowColor: '#000',
 
-    shadowColor: '#A855F7',
-    shadowOpacity: 0.28,
-    shadowRadius: 22,
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
+  shadowOpacity: 0.35,
 
-    elevation: 15,
+  shadowRadius: 20,
+
+  shadowOffset: {
+    width: 0,
+    height: -2,
   },
+
+  elevation: 20,
+},
 
   /* EACH ITEM */
   item: {
     alignItems: 'center',
     justifyContent: 'center',
+     bottom: hp(1),
   },
 
-  /* HOME ICON */
-  homeIcon: {
-    width: wp(8.3),
-    height: wp(8.3),
 
-    resizeMode: 'contain',
 
-    opacity: 0.72,
-  },
+icon: {
+  width: wp(9),
+  height: wp(9),
 
-  /* ACTIVITIES ICON */
-  activitiesIcon: {
-    width: wp(8.4),
-    height: wp(8.4),
+  resizeMode: 'contain',
 
-    resizeMode: 'contain',
-
-    opacity: 0.72,
-  },
-
-  /* LEADERBOARD ICON */
-  leaderboardIcon: {
-    width: wp(8.7),
-    height: wp(8.7),
-
-    resizeMode: 'contain',
-
-    opacity: 0.72,
-  },
-
-  /* TEAM ICON */
-  teamIcon: {
-    width: wp(7.2),
-    height: wp(7.2),
-
-    resizeMode: 'contain',
-
-    opacity: 0.72,
-  },
+  opacity: 0.4,
+},
 
   /* ACTIVE ICON */
   activeIconImage: {
@@ -305,6 +274,7 @@ const styles = StyleSheet.create({
     fontSize: fp(9),
 
     fontFamily: 'Pixel',
+    opacity:0.5,
   },
 
   /* ACTIVE LABEL */
@@ -313,6 +283,7 @@ const styles = StyleSheet.create({
 
     textShadowColor: '#FFE66D',
     textShadowRadius: 10,
+    opacity:1
   },
 
   /* UNDERLINE */

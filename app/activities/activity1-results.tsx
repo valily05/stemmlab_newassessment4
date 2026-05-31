@@ -1,13 +1,19 @@
+import MaskedView from '@react-native-masked-view/masked-view';
 import * as FileSystem from 'expo-file-system/legacy';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import {
+  ChartNoAxesColumn,
   Clock3,
   Crosshair,
+  Download,
   RotateCcw,
+  Star,
   Trophy,
+  Video
 } from 'lucide-react-native';
+import { useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -55,7 +61,8 @@ export default function Activity1Results() {
       error
     );
   }
-
+const [selectedVideo, setSelectedVideo] =
+  useState(0);
   const totalIterations =
     parsedResults.length;
 
@@ -218,30 +225,51 @@ return (
         false
       }
     >
-      <Text style={styles.title}>
-        ACTIVITY 1 RESULTS
-      </Text>
-
+<MaskedView
+  maskElement={
+    <Text style={styles.title}>
+      ACTIVITY 1 RESULTS
+    </Text>
+  }
+>
 <LinearGradient
   colors={[
-    '#090714',
-    '#120D2D',
-    '#1A1242',
-    '#24185A',
+    '#E39BFF',
+    '#C86DFF',
+    '#FF5BC7',
+  ]}
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 0 }}
+>
+    <Text
+      style={[
+        styles.title,
+        { opacity: 0 },
+      ]}
+    >
+      ACTIVITY 1 RESULTS
+    </Text>
+  </LinearGradient>
+</MaskedView>
+<LinearGradient
+  colors={[
+    '#2A0D45',
+    '#351058',
+    '#2B0A3D',
+    '#12031E',
   ]}
   locations={[
     0,
-    0.45,
-    0.75,
+    0.35,
+    0.7,
     1,
   ]}
   start={{ x: 0, y: 0 }}
   end={{ x: 1, y: 1 }}
   style={styles.heroCard}
 >
-
 <Text style={styles.heroTitle}>
-  Total Score:
+  Total Score
 </Text>
 
 <View style={styles.scoreRow}>
@@ -253,9 +281,39 @@ return (
     style={styles.bigMedal}
   />
 
-<Text style={styles.heroScore}>
-  {totalScore}
-</Text>
+<MaskedView
+  maskElement={
+    <Text style={styles.heroScore}>
+      {totalScore}
+    </Text>
+  }
+>
+  <LinearGradient
+    colors={[
+      '#FFF8D6',
+      '#FFE95B',
+      '#FFC107',
+      '#FF9800',
+    ]}
+    locations={[
+      0,
+      0.35,
+      0.75,
+      1,
+    ]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+  >
+    <Text
+      style={[
+        styles.heroScore,
+        { opacity: 0 },
+      ]}
+    >
+      {totalScore}
+    </Text>
+  </LinearGradient>
+</MaskedView>
  <Image
   source={require(
     '@/assets/images/medal.png'
@@ -267,99 +325,111 @@ return (
 
 <View style={styles.heroDivider} />
 
+
+
+
+
+
+
+
 <View style={styles.heroGrid}>
 
-  <View style={styles.heroStatRow}>
-    <Clock3
-      size={rf(34)}
-      color="#A855F7"
-      strokeWidth={2.5}
-    />
-
-    <View>
-      <Text style={styles.heroLabel}>
-        EXPERIMENT TIME
-      </Text>
-
-      <Text style={styles.heroValue}>
-        {formatSeconds(experimentTime)}
-      </Text>
-    </View>
+  <View style={styles.timeCard}>
+    <Clock3 size={rf(30)} color="#ED359D" />
+    <Text style={styles.statValue}>
+      {formatSeconds(experimentTime)}
+    </Text>
+    <Text style={styles.statLabel}>
+      Experiment Time
+    </Text>
   </View>
 
-  <View style={styles.heroStatRow}>
-    <RotateCcw
-      size={rf(34)}
-      color="#60A5FA"
-      strokeWidth={2.5}
-    />
-
-    <View>
-      <Text style={styles.heroLabel}>
-        TOTAL ITERATIONS
-      </Text>
-
-      <Text style={styles.heroValue}>
-        {totalIterations}
-      </Text>
-    </View>
+  <View style={styles.iterationCard}>
+    <RotateCcw size={rf(30)} color="#2B70DD" />
+    <Text style={styles.statValue}>
+      {totalIterations}
+    </Text>
+    <Text style={styles.statLabel}>
+      Total Iterations
+    </Text>
   </View>
 
 </View>
 
+<View style={styles.heroGrid}>
 
-
-
-
-  <View style={styles.heroGrid}>
-<View style={styles.heroStatRow}>
-  <Trophy
-    size={rf(34)}
-    color="#FACC15"
-    strokeWidth={2.5}
-  />
-
-  <View>
-    <Text style={styles.heroLabel}>
-      BEST TIME
-    </Text>
-
-    <Text style={styles.heroValue}>
+  <View style={styles.bestTimeCard}>
+    <Trophy size={rf(30)} color="#FACC15" />
+    <Text style={styles.statValue}>
       {bestResult
-        ? formatSeconds(
-            bestResult.dropTime
-          )
+        ? formatSeconds(bestResult.dropTime)
         : '--'}
     </Text>
-  </View>
-</View>
-
-<View style={styles.heroStatRow}>
-  <Crosshair
-    size={rf(34)}
-    color="#4ADE80"
-    strokeWidth={2.5}
-  />
-
-  <View>
-    <Text style={styles.heroLabel}>
-      AVG ACCURACY
+    <Text style={styles.statLabel}>
+      Best Time
     </Text>
+  </View>
 
-    <Text style={styles.heroValue}>
+  <View style={styles.accuracyCard}>
+    <Crosshair size={rf(30)} color="#259F60" />
+    <Text style={styles.statValue}>
       {accuracy}%
     </Text>
+    <Text style={styles.statLabel}>
+      Avg Accuracy
+    </Text>
   </View>
-</View>
-
 
 </View>
 </LinearGradient>
 <View style={styles.videoCard}>
-
+  <Video
+    size={rf(26)}
+    color="#C86DFF"
+    style={{
+      marginBottom:wp(-6.5),
+      marginLeft:wp(2)
+    }}
+  />
+<View style={styles.videoTitleRow}>
   <Text style={styles.videoTitle}>
-    🎥 EXPERIMENT RECORDING
+    EXPERIMENT RECORDINGS
   </Text>
+
+
+</View>
+
+  <ScrollView
+    horizontal
+    showsHorizontalScrollIndicator={false}
+    contentContainerStyle={styles.videoTabs}
+  >
+    {parsedResults.map(
+      (item, index) => (
+        <TouchableOpacity
+          key={index}
+          onPress={() =>
+            setSelectedVideo(index)
+          }
+          style={[
+            styles.videoTab,
+
+            selectedVideo === index &&
+              styles.activeVideoTab,
+
+          ]}
+        >
+          <Text
+            style={styles.videoTabText}
+          >
+            {bestResult?.stage === item.stage
+              ? `🏆 ${item.stage}`
+              : item.stage}
+          </Text>
+        </TouchableOpacity>
+      )
+    )}
+  </ScrollView>
 
   <TouchableOpacity
     style={styles.videoPlaceholder}
@@ -369,47 +439,73 @@ return (
     </Text>
 
     <Text style={styles.playText}>
-      PLAY VIDEO
+      PLAY {
+        parsedResults[selectedVideo]
+          ?.stage || ''
+      }
     </Text>
   </TouchableOpacity>
 
 </View>
-
-
+<LinearGradient
+  colors={[
+    '#2A0D45',
+    '#351058',
+    '#2B0A3D',
+    '#12031E',
+  ]}
+  locations={[
+    0,
+    0.35,
+    0.7,
+    1,
+  ]}
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 1 }}
+  style={styles.iterationSection}
+>
 <View style={styles.headerRow}>
+
+ <View style={styles.sectionTitleRow}>
+  <ChartNoAxesColumn
+    size={rf(22)}
+    color="#C86DFF"
+  />
 
   <Text style={styles.sectionTitle}>
     ITERATION COMPARISON
   </Text>
+</View>
 
-  <TouchableOpacity
-    style={styles.csvButton}
-    onPress={downloadResultsTable}
-  >
-    <Text style={styles.csvText}>
-      CSV
-    </Text>
-  </TouchableOpacity>
+<TouchableOpacity
+  style={styles.csvButton}
+  onPress={downloadResultsTable}
+>
+  <Download
+    size={rf(15)}
+    color="#FFFFFF"
+  />
+
+  <Text style={styles.csvText}>
+     CSV
+  </Text>
+</TouchableOpacity>
 
 </View>
-    {parsedResults.map(
+{parsedResults.map(
   (
     item: any,
     index: number
   ) => (
-    <View
-      key={index}
-      style={[
-        styles.resultCard,
-
-        bestResult?.stage ===
-          item.stage && {
-          borderWidth: 3,
-          borderColor:
-            '#FFE95B',
-        },
-      ]}
-    >
+<View
+  key={index}
+  style={[
+    styles.resultCard,
+    bestResult?.stage === item.stage &&
+      styles.bestResultCard,
+  ]}
+>
+  <View style={styles.resultCardInner}>
 
 
       <View
@@ -428,13 +524,17 @@ return (
 
           {bestResult?.stage ===
             item.stage && (
-            <Text
-              style={
-                styles.bestResultTag
-              }
-            >
-              ⭐ BEST RESULT
-            </Text>
+        <View style={styles.bestResultTag}>
+<Star
+  size={rf(13)}
+  color="#121127"
+  fill="#121127"
+/>
+
+  <Text style={styles.bestResultTagText}>
+    BEST RESULT
+  </Text>
+</View>
           )}
         </View>
 
@@ -512,9 +612,14 @@ return (
       </View>
 
     </View>
-    
+
+  </View>
+
   )
-)}
+)
+}
+</LinearGradient>
+
 <View style={styles.feedbackCard}>
 
   <Text style={styles.feedbackTitle}>
@@ -558,6 +663,7 @@ return (
 </View>
 </ScrollView>
 </View>
+
 );
 }
 
@@ -565,58 +671,101 @@ return (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  backgroundColor:'#050816',
+  backgroundColor:'#1D0E23',
   },
-
   content: {
-    padding: wp(6),
-    paddingTop: hp(9),
+    padding: wp(4),
+    paddingTop: hp(12),
     paddingBottom: hp(10),
   },
 
   title: {
     color: '#FFFFFF',
-    fontSize: rf(14),
-    fontWeight: 'bold',
+    fontSize: rf(16),
     textAlign: 'center',
-    marginBottom: hp(2),
+    marginBottom: hp(3),
     fontFamily: 'Pixel',
     letterSpacing: 1,
   },
+iterationSection:{
+  borderRadius:rf(18),
 
-heroCard:{
-  borderRadius: rf(28),
+  borderWidth:2,
+  borderColor:'rgba(255,255,255,0.08)',
 
-  padding: rf(24),
+  padding:rf(18),
 
-  marginBottom: hp(3),
+  marginBottom:hp(3),
 
-  shadowColor:'#5A3DFF',
-  shadowOpacity:0.6,
-  shadowRadius:20,
+  shadowColor:'#A855F7',
+  shadowOpacity:0.35,
+  shadowRadius:25,
+
   shadowOffset:{
     width:0,
     height:0,
   },
 
-  elevation:15,
+  elevation:12,
 
   overflow:'hidden',
 },
+heroCard:{
+  borderRadius: rf(18),
+  padding: rf(24),
+  marginBottom: hp(3),
 
+  borderWidth: 2,
+  borderColor: 'rgba(255,255,255,0.08)',
+
+  shadowColor:'#A855F7',
+  shadowOpacity:0.35,
+  shadowRadius:25,
+  shadowOffset:{
+    width:0,
+    height:0,
+  },
+  
+
+
+  elevation:12,
+  overflow:'hidden',
+},
+heroText:{
+  flex:1,
+  
+},
+bestResultCard:{
+  backgroundColor:'#121127',
+
+  borderWidth:2,
+  borderColor:'#FF8C1A',
+
+  shadowColor:'#FF8C1A',
+  shadowOpacity:0.45,
+  shadowRadius:12,
+
+  shadowOffset:{
+    width:0,
+    height:0,
+  },
+
+  elevation:10,
+},
   heroTitle: {
     color: '#D8D8FF',
-    fontSize: rf(18),
+    fontSize: rf(20),
     textAlign: 'center',
     marginBottom: hp(1),
     fontWeight: '700',
+    fontFamily:'PixelBold'
   },
 
   scoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: hp(2),
+    marginBottom: hp(1),
   },
 
   bigMedal: {
@@ -624,25 +773,129 @@ heroCard:{
     height: wp(14),
     resizeMode: 'contain',
   },
+heroGrid:{
+  flexDirection:'row',
+  gap: wp(3),
+  marginBottom: hp(1.5),
+},
 
+timeCard:{
+  flex:1,
+
+  backgroundColor:'rgba(237,53,157,0.12)',
+  borderWidth:1,
+  borderColor:'#ED359D',
+
+  borderRadius:rf(10),
+  padding:rf(14),
+
+  alignItems:'center',
+},
+iterationCard:{
+  flex:1,
+
+  backgroundColor:'rgba(43,112,221,0.12)',
+  borderWidth:1,
+  borderColor:'#2B70DD',
+
+  borderRadius:rf(10),
+  padding:rf(14),
+
+  alignItems:'center',
+},
+bestTimeCard:{
+  flex:1,
+
+  backgroundColor:'rgba(250,204,21,0.12)',
+  borderWidth:1,
+  borderColor:'#FACC15',
+
+  borderRadius:rf(10),
+  padding:rf(14),
+
+  alignItems:'center',
+},
+
+accuracyCard:{
+  flex:1,
+
+  backgroundColor:'rgba(37,159,96,0.12)',
+  borderWidth:1,
+  borderColor:'#259F60',
+
+  borderRadius:rf(10),
+  padding:rf(14),
+
+  alignItems:'center',
+},
+videoTab:{
+  backgroundColor:'#242630',
+
+  borderWidth:1,
+  borderColor:'rgba(255,255,255,0.12)',
+
+  borderRadius:rf(8),
+
+  paddingHorizontal:wp(3),
+  paddingVertical:hp(0.9),
+
+  marginRight:wp(2),
+
+  alignItems:'center',
+  justifyContent:'center',
+},
+
+activeVideoTab:{
+  backgroundColor:'#3A245E',
+
+  borderColor:'#C86DFF',
+
+  shadowColor:'#C86DFF',
+  shadowOpacity:0.4,
+  shadowRadius:8,
+
+  shadowOffset:{
+    width:0,
+    height:0,
+  },
+
+  elevation:6,
+},
+
+videoTabText:{
+  color:'#D5D7E0',
+  fontSize:rf(13),
+  fontFamily:'PixelOperator',
+},
+statValue:{
+  color:'#FFFFFF',
+  fontSize:rf(22),
+  fontFamily:'PixelBold',
+  marginTop:hp(1),
+},
+
+statLabel:{
+  color:'#C6CAD5',
+  fontSize:rf(17),
+  textAlign:'center',
+  marginTop:hp(0.5),
+  fontFamily:'PixelOperator',
+},
   heroScore: {
     color: '#FFFFFF',
-    fontSize: rf(64),
+    fontSize: rf(70),
     fontWeight: '900',
     marginHorizontal: wp(4),
+    fontFamily:'PixelBold'
   },
 
   heroDivider: {
-    height: 1,
-    backgroundColor: '#4A4A7A',
+    height: 2,
+    backgroundColor: '#rgba(255,255,255,0.08)',
     marginVertical: hp(2),
   },
 
-  heroGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: hp(1.5),
-  },
+
 
   heroItem: {
     flex: 1,
@@ -650,11 +903,13 @@ heroCard:{
   },
 
   heroLabel: {
-    color: '#AAB5FF',
-    fontSize: rf(12),
+    color: '#C6CAD5',
+    fontSize: rf(14),
     marginBottom: hp(0.5),
+    fontFamily:'PixelOperator'
   },
 heroStatRow: {
+  flex: 1,
   flexDirection: 'row',
   alignItems: 'center',
   gap: wp(3),
@@ -663,42 +918,76 @@ heroStatRow: {
     color: '#FFFFFF',
     fontSize: rf(24),
     fontWeight: 'bold',
+    fontFamily:'PixelBold'
+  },
+videoTitleRow:{
+  flexDirection:'row',
+  alignItems:'center',
+  justifyContent:'center',
+  gap: wp(1),
+
+},
+videoCard:{
+  backgroundColor:'#0A0A0F',
+
+  borderRadius:rf(16),
+
+  borderWidth:1,
+  borderColor:'#8A8A97',
+
+  padding:rf(18),
+
+  marginBottom:hp(3),
+
+  shadowColor:'#A855F7',
+  shadowOpacity:0.15,
+  shadowRadius:20,
+
+  shadowOffset:{
+    width:0,
+    height:0,
   },
 
-  videoCard: {
-    backgroundColor: '#121127',
-    borderRadius: rf(24),
-    padding: rf(20),
-    marginBottom: hp(3),
-    borderWidth: 2,
-    borderColor: '#30265A',
-  },
+  elevation:12,
+},
 
   videoTitle: {
     color: '#FFFFFF',
-    fontSize: rf(18),
+    fontSize: rf(21),
     fontWeight: 'bold',
     marginBottom: hp(2),
+    fontFamily:'PixelBold'
   },
+videoPlaceholder:{
+  height:hp(24),
 
-  videoPlaceholder: {
-    height: hp(24),
-    borderRadius: rf(20),
-    backgroundColor: '#080A1E',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  backgroundColor:'#242833',
 
+  borderRadius:rf(14),
+
+  borderWidth:1,
+  borderColor:'rgba(255,255,255,0.06)',
+
+  justifyContent:'center',
+  alignItems:'center',
+},
   playIcon: {
-    color: '#9B5DFF',
+    color: '#ffffff',
     fontSize: rf(60),
   },
+  videoTabs:{
+  flexDirection:'row',
+  gap: wp(1),
+  marginBottom: hp(2),
+},
+
 
   playText: {
-    color: '#9B5DFF',
-    fontSize: rf(16),
+    color: '#ffffff',
+    fontSize: rf(12),
     marginTop: hp(1),
     fontWeight: 'bold',
+    fontFamily:'Pixel'
   },
 
 
@@ -708,35 +997,68 @@ heroStatRow: {
     alignItems: 'center',
     marginBottom: hp(2),
   },
+sectionTitle:{
+  color:'#FFFFFF',
+  fontSize:rf(21),
+  fontFamily:'PixelBold',
+  marginLeft:rf(5)
+},
+sectionTitleRow:{
+  flexDirection:'row',
+  alignItems:'center',
+  gap:wp(2),
+},
+csvButton:{
+  flexDirection:'row',
+  alignItems:'center',
+  gap:wp(2),
 
-  sectionTitle: {
-    color: '#FFE95B',
-    fontSize: rf(22),
-    fontWeight: 'bold',
+  backgroundColor:'#7A4DFF',
+
+  borderWidth:1,
+  borderColor:'#B68CFF',
+
+  borderRadius:rf(10),
+
+  paddingHorizontal:wp(2),
+  paddingVertical:hp(0.6),
+
+  shadowColor:'#7A4DFF',
+  shadowOpacity:0.35,
+  shadowRadius:10,
+
+  shadowOffset:{
+    width:0,
+    height:0,
   },
 
-  csvButton: {
-    backgroundColor: '#2D1E6F',
-    borderRadius: rf(12),
-    paddingHorizontal: wp(4),
-    paddingVertical: hp(1),
-  },
+  elevation:8,
+},
 
   csvText: {
     color: '#FFFFFF',
     fontSize: rf(14),
     fontWeight: 'bold',
   },
+resultCard:{
+  backgroundColor:'#565B69',
 
-  resultCard: {
-    backgroundColor: '#121127',
-    borderRadius: rf(22),
-    padding: rf(20),
-    marginBottom: hp(2),
-    borderWidth: 2,
-    borderColor: '#30265A',
-  },
+  borderRadius:rf(18),
 
+  padding:rf(4),
+
+  marginBottom:hp(2.2),
+},
+resultCardInner:{
+  backgroundColor:'#121127',
+
+  borderRadius:rf(18),
+
+  padding:rf(20),
+
+  borderWidth:1,
+  borderColor:'rgba(255,255,255,0.05)',
+},
   resultTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -749,19 +1071,38 @@ heroStatRow: {
     fontSize: rf(20),
     fontWeight: 'bold',
   },
+bestResultTag:{
+  alignSelf:'flex-start',
 
-  bestResultTag: {
-    color: '#FFE95B',
-    fontSize: rf(13),
-    fontWeight: 'bold',
-    marginTop: hp(0.5),
-  },
+  flexDirection:'row',
+  alignItems:'center',
 
-  resultTime: {
-    color: '#FFE95B',
-    fontSize: rf(30),
-    fontWeight: '900',
-  },
+  backgroundColor:'rgba(240,235,204,0.95)',
+
+  paddingHorizontal:wp(2),
+  paddingVertical:hp(0.4),
+
+  borderRadius:rf(6),
+
+  marginTop:hp(0.8),
+
+  gap:wp(1),
+},
+bestResultTagText:{
+  color:'#FBF479',
+  fontSize:rf(10),
+  fontFamily:'PixelBold',
+},
+resultTime:{
+  color:'#FFE95B',
+
+  fontSize:rf(34),
+
+  fontFamily:'PixelBold',
+
+  textShadowColor:'rgba(255,233,91,0.4)',
+  textShadowRadius:10,
+},
 
   resultRow: {
     flexDirection: 'row',
