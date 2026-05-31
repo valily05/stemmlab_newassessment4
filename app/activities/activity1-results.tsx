@@ -622,37 +622,42 @@ return (
 
 <View style={styles.feedbackCard}>
 
-  <Text style={styles.feedbackTitle}>
-    GREAT WORK!
-  </Text>
+  <Image
+    source={require('@/assets/images/teacher.png')}
+    style={styles.teacherImage}
+  />
 
-<Text style={styles.feedbackText}>
-  Great work! Your parachute
   improved significantly across
-  iterations.{' '}
+  <View style={styles.feedbackContent}>
 
-  <Text
-    style={styles.highlightStage}
-  >
-    {bestResult?.stage}
-  </Text>{' '}
+    <Text style={styles.feedbackTitle}>
+      GREAT WORK!
+    </Text>
 
-  achieved the best landing
-  performance with a flight time
-  of{' '}
+    <Text style={styles.feedbackText}>
+      Your parachute improved significantly
+      across iterations.{' '}
 
-  <Text
-    style={styles.highlightTime}
-  >
-    {bestResult
-      ? formatSeconds(
-          bestResult.dropTime
-        )
-      : '--'}
-  </Text>
+      <Text style={styles.highlightStage}>
+        {bestResult?.stage}
+      </Text>{' '}
 
-  .
-</Text>
+      achieved the best landing
+      performance with a flight time of{' '}
+
+      <Text style={styles.highlightTime}>
+        {bestResult
+          ? formatSeconds(
+              bestResult.dropTime
+            )
+          : '--'}
+      </Text>
+      .
+    </Text>
+
+  </View>
+
+</View>
 <TouchableOpacity
   style={styles.saveButton}
 >
@@ -660,7 +665,6 @@ return (
     SAVE & REFLECT
   </Text>
 </TouchableOpacity>
-</View>
 </ScrollView>
 </View>
 
@@ -695,7 +699,7 @@ iterationSection:{
 
   padding:rf(18),
 
-  marginBottom:hp(3),
+  marginBottom:hp(2),
 
   shadowColor:'#A855F7',
   shadowOpacity:0.35,
@@ -1131,26 +1135,43 @@ resultTime:{
     fontFamily:'PixelBold'
   },
 
-  feedbackCard: {
-    backgroundColor: '#121127',
-    borderRadius: rf(24),
-    padding: rf(24),
-    marginTop: hp(2),
-    borderWidth: 2,
-    borderColor: '#30265A',
-  },
+feedbackCard: {
+  backgroundColor: '#2B0A3D',
+  borderRadius: rf(16),
 
+  padding: rf(12),
+
+  borderWidth: 2,
+  borderColor: 'rgba(255,255,255,0.08)',
+
+  flexDirection: 'row',
+  alignItems: 'center',
+},
+teacherImage: {
+  width: wp(30),
+  height: wp(30),
+  resizeMode: 'contain',
+
+},
+
+feedbackContent: {
+  flex: 1,
+},
   feedbackTitle: {
     color: '#FFE95B',
-    fontSize: rf(22),
+    fontSize: rf(14),
     fontWeight: 'bold',
-    marginBottom: hp(1),
+    marginTop: hp(1),
+    fontFamily:'Pixel',
+    marginBottom:hp(2)
   },
 
   feedbackText: {
-    color: '#D6D8FF',
-    fontSize: rf(16),
-    lineHeight: rf(24),
+    
+    color: '#ffffff',
+    fontSize: rf(13),
+    lineHeight: rf(17),
+    fontFamily:'PixelOperator'
   },
 
   highlightStage: {
@@ -1174,6 +1195,6 @@ resultTime:{
   saveButtonText: {
     color: '#FFFFFF',
     fontSize: rf(22),
-    fontWeight: '900',
+    fontFamily:'PixelBold'
   },
 });
