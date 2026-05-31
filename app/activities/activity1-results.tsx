@@ -627,7 +627,6 @@ return (
     style={styles.teacherImage}
   />
 
-  improved significantly across
   <View style={styles.feedbackContent}>
 
     <Text style={styles.feedbackTitle}>
