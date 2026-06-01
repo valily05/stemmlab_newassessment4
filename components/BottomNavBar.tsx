@@ -1,3 +1,5 @@
+import { BlurView } from 'expo-blur';
+import { router, usePathname } from 'expo-router';
 import {
   Dimensions,
   Image,
@@ -7,8 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-import { router, usePathname } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
@@ -48,9 +48,15 @@ export default function BottomNavbar() {
   const isTeam =
     pathname.includes('/team');
 
-  return (
+return (
 
-    <View style={styles.container}>
+  <View style={styles.container}>
+
+    <BlurView
+      intensity={100}
+      tint="dark"
+      style={StyleSheet.absoluteFillObject}
+    />
 
       {/* HOME */}
       <TouchableOpacity
@@ -200,16 +206,20 @@ const styles = StyleSheet.create({
 container: {
   position: 'absolute',
 
-  bottom: hp(0),
+  bottom: 0,
+borderWidth: 1.5,
 
+borderColor:
+'rgba(255,255,255,0.12)',
   alignSelf: 'center',
 
-  width: '100%',
+ width:'92%',
+bottom:hp(1.5),
 
+borderRadius:rf(24),
   height: hp(10),
 
   paddingHorizontal: wp(3),
-
 
   flexDirection: 'row',
 
@@ -217,13 +227,19 @@ container: {
 
   alignItems: 'center',
 
-backgroundColor: 'rgba(18, 12, 46, 0.75)',
-borderTopWidth: 1.5,
-borderTopColor: 'rgba(255,255,255,0.12)',
+  overflow: 'hidden',
+
+backgroundColor:
+  'rgba(18,12,46,0.35)',
+
+  borderTopWidth: 1,
+
+  borderTopColor:
+    'rgba(255,255,255,0.08)',
 
   shadowColor: '#000',
 
-  shadowOpacity: 0.35,
+  shadowOpacity: 0.25,
 
   shadowRadius: 20,
 
