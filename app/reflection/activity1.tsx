@@ -1,8 +1,9 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+    Animated,
     Dimensions,
     PixelRatio,
     ScrollView,
@@ -10,7 +11,7 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View
+    View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -44,7 +45,103 @@ export default function Activity1Reflection() {
 
   const [improvement, setImprovement] =
     useState('');
+const meteor1X = useRef(
+  new Animated.Value(-300)
+).current;
 
+const meteor2X = useRef(
+  new Animated.Value(-600)
+).current;
+
+const meteor3X = useRef(
+  new Animated.Value(-900)
+).current;
+const meteor4X = useRef(
+  new Animated.Value(-1200)
+).current;
+
+const meteor5X = useRef(
+  new Animated.Value(-1500)
+).current;
+
+const meteor6X = useRef(
+  new Animated.Value(-1800)
+).current;
+const meteor7X = useRef(
+  new Animated.Value(-2100)
+).current;
+
+const meteor8X = useRef(
+  new Animated.Value(-2400)
+).current;
+useEffect(() => {
+
+  Animated.loop(
+    Animated.timing(
+      meteor1X,
+      {
+        toValue: width + 300,
+        duration: 3800,
+        useNativeDriver: true,
+      }
+    )
+  ).start();
+
+  Animated.loop(
+    Animated.timing(
+      meteor2X,
+      {
+        toValue: width + 300,
+        duration: 5100,
+        useNativeDriver: true,
+      }
+    )
+  ).start();
+
+  Animated.loop(
+    Animated.timing(
+      meteor3X,
+      {
+        toValue: width + 300,
+        duration: 7600,
+        useNativeDriver: true,
+      }
+    )
+  ).start();
+  Animated.loop(
+  Animated.timing(
+    meteor4X,
+    {
+      toValue: width + 300,
+      duration: 4900,
+      useNativeDriver: true,
+    }
+  )
+).start();
+
+Animated.loop(
+  Animated.timing(
+    meteor5X,
+    {
+      toValue: width + 300,
+      duration: 6500,
+      useNativeDriver: true,
+    }
+  )
+).start();
+
+Animated.loop(
+  Animated.timing(
+    meteor6X,
+    {
+      toValue: width + 300,
+      duration: 8500,
+      useNativeDriver: true,
+    }
+  )
+).start();
+
+}, []);
   return (
 
 <LinearGradient
@@ -88,7 +185,24 @@ export default function Activity1Reflection() {
   <View style={[styles.star, styles.star18]} />
   <View style={[styles.star, styles.star19]} />
   <View style={[styles.star, styles.star20]} />
-<View style={styles.meteor1}>
+<Animated.View
+  style={[
+    styles.meteor1,
+    {
+      transform:[
+        {
+          translateX: meteor1X
+        },
+        {
+          translateY: meteor1X
+        },
+        {
+          rotate:'45deg'
+        }
+      ]
+    }
+  ]}
+>
   <LinearGradient
     colors={[
       'rgba(255,255,255,0)',
@@ -99,22 +213,172 @@ export default function Activity1Reflection() {
     end={{ x: 1, y: 0 }}
     style={styles.meteorTail}
   />
-</View>
+</Animated.View>
 
-<View style={styles.meteor2}>
+<Animated.View
+  style={[
+    styles.meteor2,
+    {
+      transform:[
+        {
+          translateX: meteor2X
+        },
+        {
+          translateY: meteor2X
+        },
+        {
+          rotate:'45deg'
+        }
+      ]
+    }
+  ]}
+>
   <LinearGradient
-    colors={[
-      'rgba(255,255,255,0)',
-      'rgba(255,255,255,0.4)',
-      '#FFFFFF',
-    ]}
+colors={[
+  'rgba(255,214,51,0)',
+  'rgba(255,214,51,0.4)',
+  '#FFD633',
+]}
     start={{ x: 0, y: 0 }}
     end={{ x: 1, y: 0 }}
     style={styles.meteorTail}
   />
-</View>
+</Animated.View>
 
-<View style={styles.meteor3}>
+<Animated.View
+  style={[
+    styles.meteor3,
+    {
+      transform:[
+        {
+          translateX: meteor3X
+        },
+        {
+          translateY: meteor3X
+        },
+        {
+          rotate:'45deg'
+        }
+      ]
+    }
+  ]}
+>
+  <LinearGradient
+colors={[
+  'rgba(200,109,255,0)',
+  'rgba(200,109,255,0.4)',
+  '#C86DFF',
+]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.meteorTail}
+  />
+</Animated.View>
+<Animated.View
+  style={[
+    styles.meteor4,
+    {
+      transform:[
+        {
+          translateX: meteor4X
+        },
+        {
+          translateY: meteor4X
+        },
+        {
+          rotate:'45deg'
+        }
+      ]
+    }
+  ]}
+>
+  <LinearGradient
+colors={[
+  'rgba(125,249,255,0)',
+  'rgba(125,249,255,0.4)',
+  '#7DF9FF',
+]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.meteorTail}
+  />
+</Animated.View>
+<Animated.View
+  style={[
+    styles.meteor5,
+    {
+      transform:[
+        {
+          translateX: meteor5X
+        },
+        {
+          translateY: meteor5X
+        },
+        {
+          rotate:'45deg'
+        }
+      ]
+    }
+  ]}
+>
+  <LinearGradient
+colors={[
+  'rgba(255,130,200,0)',
+  'rgba(255,130,200,0.4)',
+  '#FF82C8',
+]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.meteorTail}
+  />
+</Animated.View>
+<Animated.View
+  style={[
+    styles.meteor6,
+    {
+      transform:[
+        {
+          translateX: meteor6X
+        },
+        {
+          translateY: meteor6X
+        },
+        {
+          rotate:'45deg'
+        }
+      ]
+    }
+  ]}
+>
+  <LinearGradient
+colors={[
+  'rgba(255,170,0,0)',
+  'rgba(255,170,0,0.4)',
+  '#FFAA00',
+]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.meteorTail}
+  />
+</Animated.View>
+<Animated.View
+  style={[
+    styles.meteor7,
+    {
+      transform:[
+        {
+          translateX: meteor7X
+        },
+        {
+          translateY: meteor7X
+        },
+        {
+          rotate:'45deg'
+        }
+      ]
+    }
+  ]}
+>
   <LinearGradient
     colors={[
       'rgba(255,255,255,0)',
@@ -125,7 +389,36 @@ export default function Activity1Reflection() {
     end={{ x: 1, y: 0 }}
     style={styles.meteorTail}
   />
-</View>
+</Animated.View>
+<Animated.View
+  style={[
+    styles.meteor8,
+    {
+      transform:[
+        {
+          translateX: meteor8X
+        },
+        {
+          translateY: meteor8X
+        },
+        {
+          rotate:'45deg'
+        }
+      ]
+    }
+  ]}
+>
+  <LinearGradient
+    colors={[
+      'rgba(255,214,51,0)',
+      'rgba(255,214,51,0.4)',
+      '#FFD633',
+    ]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.meteorTail}
+  />
+</Animated.View>
 </View>
 <View style={styles.header}>
 
@@ -318,7 +611,7 @@ heroCard:{
 
 heroTitle:{
   color:'#FFE95B',
-  fontSize:rf(24),
+  fontSize:rf(28),
   fontFamily:'PixelBold',
 
   marginTop:hp(1),
@@ -332,9 +625,8 @@ heroText:{
 
   fontFamily:'PixelOperator',
 },
-
 card:{
-  backgroundColor:'#121127',
+  backgroundColor:'rgba(255,255,255,0.04)',
 
   borderRadius:rf(18),
 
@@ -348,7 +640,7 @@ card:{
 
 cardTitle:{
   color:'#FFFFFF',
-  fontSize:rf(16),
+  fontSize:rf(18),
   fontFamily:'PixelBold',
 
   marginBottom:hp(2),
@@ -372,7 +664,7 @@ input:{
   padding:rf(14),
 
   color:'#FFFFFF',
-
+fontSize:rf(16),
   textAlignVertical:'top',
 
   fontFamily:'PixelOperator',
@@ -593,40 +885,88 @@ star20:{
   opacity:0.9,
 },
 meteorTail:{
-  width:rf(90),
-  height:2,
+  width:rf(180),
+  height:3,
 },
 
 meteor1:{
   position:'absolute',
 
-  top:'12%',
-  left:'70%',
+  top:'8%',
+  left:'75%',
 
-  transform:[
-    { rotate:'45deg' }
-  ],
+  shadowColor:'#FFFFFF',
+  shadowOpacity:1,
+  shadowRadius:10,
 },
-
 meteor2:{
   position:'absolute',
 
-  top:'48%',
-  left:'15%',
+  top:'22%',
+  left:'10%',
 
-  transform:[
-    { rotate:'45deg' }
-  ],
+  shadowColor:'#FFD633',
+  shadowOpacity:1,
+  shadowRadius:10,
 },
-
 meteor3:{
   position:'absolute',
 
-  top:'78%',
-  left:'72%',
+  top:'38%',
+  left:'85%',
 
-  transform:[
-    { rotate:'45deg' }
-  ],
+  shadowColor:'#C86DFF',
+  shadowOpacity:1,
+  shadowRadius:10,
+},
+meteor4:{
+  position:'absolute',
+
+  top:'55%',
+  left:'5%',
+
+  shadowColor:'#7DF9FF',
+  shadowOpacity:1,
+  shadowRadius:10,
+},
+meteor5:{
+  position:'absolute',
+
+  top:'72%',
+  left:'78%',
+
+  shadowColor:'#FF82C8',
+  shadowOpacity:1,
+  shadowRadius:10,
+},
+meteor6:{
+  position:'absolute',
+
+  top:'88%',
+  left:'25%',
+
+  shadowColor:'#FFAA00',
+  shadowOpacity:1,
+  shadowRadius:10,
+},
+meteor7:{
+  position:'absolute',
+
+  top:'94%',
+  left:'70%',
+
+  shadowColor:'#FFFFFF',
+  shadowOpacity:1,
+  shadowRadius:10,
+},
+meteor8:{
+  position:'absolute',
+
+  top:'98%',
+  left:'5%',
+
+  shadowColor:'#FFD633',
+  shadowOpacity:1,
+  shadowRadius:10,
 },
 });
