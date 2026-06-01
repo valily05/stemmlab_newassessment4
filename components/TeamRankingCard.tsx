@@ -141,6 +141,9 @@ setUserRank(index >= 0 ? index + 1 : null);
       </Text>
     </View>
 
+
+
+
   </View>
 ))}
 
@@ -196,12 +199,12 @@ const styles = StyleSheet.create({
 card: {
   marginTop: hp(2),
 
-  backgroundColor: '#180B46',
+  backgroundColor: '#120C2E',
 
   borderRadius: fp(14),
 
   borderWidth: 1,
-  borderColor: '#5E47E0',
+  borderColor: '#2B1B59',
 
   paddingHorizontal: wp(3),
   paddingVertical: hp(1.3),

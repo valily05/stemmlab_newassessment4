@@ -9,12 +9,39 @@ import {
   View,
 } from 'react-native';
 
-const { width } = Dimensions.get('window');
-
+const { width, height } = Dimensions.get('window');
 // responsive scale
 const scale = (size: number) => {
   const baseWidth = 390;
   return PixelRatio.roundToNearestPixel((width / baseWidth) * size);
+};
+/* RESPONSIVE HELPERS */
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
+};
+const rf = (size: number) => {
+
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+
+};
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
+};
+
+const fp = (size: number) => {
+  return PixelRatio.roundToNearestPixel(
+    (width / 430) * size
+  );
 };
 
 export default function Banner() {
@@ -56,12 +83,12 @@ export default function Banner() {
 const styles = StyleSheet.create({
 
   container: {
-    marginTop: scale(20),
 
     borderRadius: scale(14),
 
     overflow: 'hidden',
-    width:'110%',
+    width:'112%',
+    marginTop:rf(-16)
   },
 
   bg: {
