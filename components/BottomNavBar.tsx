@@ -18,7 +18,17 @@ const wp = (percentage: number) => {
     (width * percentage) / 100
   );
 };
+const rf = (size: number) => {
 
+  const scale = width / 390;
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
+
+};
 const hp = (percentage: number) => {
   return PixelRatio.roundToNearestPixel(
     (height * percentage) / 100
@@ -53,8 +63,8 @@ return (
   <View style={styles.container}>
 
     <BlurView
-      intensity={100}
-      tint="dark"
+      intensity={20}
+      tint="prominent"
       style={StyleSheet.absoluteFillObject}
     />
 
@@ -207,16 +217,9 @@ container: {
   position: 'absolute',
 
   bottom: 0,
-borderWidth: 1.5,
 
-borderColor:
-'rgba(255,255,255,0.12)',
-  alignSelf: 'center',
+ width:'100%',
 
- width:'92%',
-bottom:hp(1.5),
-
-borderRadius:rf(24),
   height: hp(10),
 
   paddingHorizontal: wp(3),
@@ -229,13 +232,11 @@ borderRadius:rf(24),
 
   overflow: 'hidden',
 
-backgroundColor:
-  'rgba(18,12,46,0.35)',
+backgroundColor: 'rgba(18, 12, 46, 0.75)',
 
-  borderTopWidth: 1,
+borderTopWidth: 1.5,
 
-  borderTopColor:
-    'rgba(255,255,255,0.08)',
+borderTopColor: 'rgba(255,255,255,0.12)',
 
   shadowColor: '#000',
 
