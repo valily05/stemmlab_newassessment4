@@ -9,6 +9,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
+import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from '@/context/LanguageContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -17,23 +18,23 @@ export default function RootLayout() {
 
   return (
     <LanguageProvider>
-      <ThemeProvider
-        value={
-          colorScheme === 'dark'
-            ? DarkTheme
-            : DefaultTheme
-        }
-      >
+      <AuthProvider>
+        <ThemeProvider
+          value={
+            colorScheme === 'dark'
+              ? DarkTheme
+              : DefaultTheme
+          }
+        >
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          ></Stack>
 
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        ></Stack>
-
-        <StatusBar style="auto" />
-
-      </ThemeProvider>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </AuthProvider>
     </LanguageProvider>
   );
 }

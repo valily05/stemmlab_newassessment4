@@ -2,12 +2,17 @@ import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { FactCarousel, PixelProgressBar } from '../components/loadingelements';
-import { COLORS, FACTS, LAYOUT } from '../constants/layout';
-import { useLanguage } from '../context/LanguageContext';
+
+import { FactCarousel, PixelProgressBar } from '@/components/loadingelements';
+import { COLORS, FACTS, LAYOUT } from '@/constants/layout';
+import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function LoadingScreen() {
   const router = useRouter();
+
+  const { user, loading } = useAuth();
+
   const [dots, setDots] = useState<string>('');
   const [progress, setProgress] = useState<number>(0);
 
@@ -26,7 +31,7 @@ export default function LoadingScreen() {
   });
 
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || loading) return;
 
     const dotInterval = setInterval(() => {
       setDots((p) => (p.length >= 3 ? '' : p + '.'));
@@ -37,7 +42,12 @@ export default function LoadingScreen() {
     }, 130);
 
     const navTimer = setTimeout(() => {
-      router.replace('/(auth)/login');
+      if(user) {
+        router.replace('/(tabs)/homescreen');
+      } else {
+        router.replace('/(auth)/login');
+      }
+      
     }, 6800);
 
     return () => {
@@ -45,7 +55,7 @@ export default function LoadingScreen() {
       clearInterval(progInterval);
       clearTimeout(navTimer);
     };
-  }, [loaded, router]);
+  }, [loaded, loading, user, router]);
 
   if (!loaded) return null;
 
