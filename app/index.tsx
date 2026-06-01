@@ -37,7 +37,7 @@ export default function LoadingScreen() {
     }, 130);
 
     const navTimer = setTimeout(() => {
-router.replace('/(tabs)/homescreen');
+      router.replace('/(auth)/login');
     }, 6800);
 
     return () => {
@@ -53,10 +53,10 @@ router.replace('/(tabs)/homescreen');
     <View style={styles.container}>
       {/* Background */}
      <Image
-  source={require('../assets/images/bg1.png')}
-  style={styles.background}
-  resizeMode="cover"
-/>
+        source={require('../assets/images/bg1.png')}
+        style={styles.background}
+        resizeMode="cover"
+      />
 
       {/* Logo */}
       <Image
@@ -190,11 +190,13 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: COLORS.white,
     opacity: 0.6,
-  },background: {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-},
+  },
+  
+  background: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+  },
 });

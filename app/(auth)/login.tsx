@@ -62,10 +62,12 @@ export default function LoginScreen() {
     try {
       await login(email, password);
 
-      Alert.alert(
-        "Success",
-        "Logged in!"
-      );
+      router.replace('/(tabs)/homescreen');
+
+      // Alert.alert(
+      //   "Success",
+      //   "Logged in!"
+      // );
     } catch(error: any) {
       Alert.alert(
         "Error",
