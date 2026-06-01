@@ -7,33 +7,41 @@
     "icon": "./assets/images/icon.png",
     "scheme": "stemmlabnew",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+
     "ios": {
       "supportsTablet": true
     },
+
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#E6F4FE"
       },
-      "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.stemmlab_new"
+      "predictiveBackGestureEnabled": false
     },
+
     "web": {
       "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "output": "static"
     },
-    "plugins": [
-      "expo-router",
-      "expo-image"
-    ],
+
+"plugins": [
+  "expo-router",
+
+  [
+    "expo-camera",
+    {
+      "cameraPermission": "Allow STEMM Lab to access your camera."
+    }
+  ],
+
+  [
+    "expo-media-library",
+    {
+      "photosPermission": "Allow STEMM Lab to save experiment videos."
+    }
+  ]
+],
+
     "experiments": {
       "typedRoutes": true
     }

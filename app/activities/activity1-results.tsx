@@ -1,8 +1,12 @@
 import MaskedView from '@react-native-masked-view/masked-view';
 import * as FileSystem from 'expo-file-system/legacy';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as Sharing from 'expo-sharing';
+import {
+  VideoView,
+  useVideoPlayer,
+} from 'expo-video';
 import {
   ChartNoAxesColumn,
   Clock3,
@@ -24,6 +28,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+
 const { width, height } = Dimensions.get('window');
 
 const wp = (percentage: number) =>
@@ -54,6 +59,10 @@ export default function Activity1Results() {
       parsedResults = JSON.parse(
         params.results as string
       );
+      console.log(
+  'PARSED RESULTS',
+  parsedResults
+);
     }
   } catch (error) {
     console.log(
@@ -63,6 +72,14 @@ export default function Activity1Results() {
   }
 const [selectedVideo, setSelectedVideo] =
   useState(0);
+  const currentVideo =
+  parsedResults[selectedVideo]?.videoUri;
+const player = useVideoPlayer(
+  currentVideo || '',
+  (player: any) => {
+    player.loop = false;
+  }
+);
   const totalIterations =
     parsedResults.length;
 
@@ -431,20 +448,30 @@ return (
     )}
   </ScrollView>
 
-  <TouchableOpacity
-    style={styles.videoPlaceholder}
-  >
-    <Text style={styles.playIcon}>
-      ▶
-    </Text>
+<View style={styles.videoPlaceholder}>
+  {currentVideo ? (
+    <VideoView
+      player={player}
+      style={{
+        width: '100%',
+        height: '100%',
+        borderRadius: rf(14),
+      }}
+      allowsFullscreen
+      allowsPictureInPicture
+    />
+  ) : (
+    <>
+      <Text style={styles.playIcon}>
+        ▶
+      </Text>
 
-    <Text style={styles.playText}>
-      PLAY {
-        parsedResults[selectedVideo]
-          ?.stage || ''
-      }
-    </Text>
-  </TouchableOpacity>
+      <Text style={styles.playText}>
+        No Video Available
+      </Text>
+    </>
+  )}
+</View>
 
 </View>
 <LinearGradient
@@ -659,6 +686,7 @@ return (
 </View>
 <TouchableOpacity
   style={styles.saveButton}
+  onPress={() => router.push('/reflection/activity1')}
 >
   <Text style={styles.saveButtonText}>
     SAVE & REFLECT
@@ -962,7 +990,7 @@ videoCard:{
     fontFamily:'PixelBold'
   },
 videoPlaceholder:{
-  height:hp(24),
+  height:hp(44),
 
   backgroundColor:'#242833',
 
@@ -1147,8 +1175,8 @@ feedbackCard: {
   alignItems: 'center',
 },
 teacherImage: {
-  width: wp(30),
-  height: wp(30),
+  width: wp(23),
+  height: wp(23),
   resizeMode: 'contain',
 
 },
@@ -1158,17 +1186,16 @@ feedbackContent: {
 },
   feedbackTitle: {
     color: '#FFE95B',
-    fontSize: rf(14),
+    fontSize: rf(24),
     fontWeight: 'bold',
     marginTop: hp(1),
-    fontFamily:'Pixel',
-    marginBottom:hp(2)
+    fontFamily:'PixelBold',
   },
 
   feedbackText: {
     
     color: '#ffffff',
-    fontSize: rf(13),
+    fontSize: rf(15),
     lineHeight: rf(17),
     fontFamily:'PixelOperator'
   },
