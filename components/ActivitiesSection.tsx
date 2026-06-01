@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -7,7 +8,6 @@ import {
   Text,
   View,
 } from 'react-native';
-
 import ActivityCard from './ActivityCard';
 
 import { activities } from '../data/activities';
@@ -41,7 +41,8 @@ const fp = (size: number) => {
 export default function ActivitiesSection({
   userPoints,
 }: Props) {
-
+const [hasScrolled, setHasScrolled] =
+  useState(false);
   // ADD LOCK STATE DYNAMICALLY
   const activitiesWithLock = activities.map(activity => ({
     ...activity,
@@ -76,21 +77,37 @@ export default function ActivitiesSection({
       </View>
 
       {/* CARDS */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
+     <View style={styles.scrollWrapper}>
 
-        {activitiesWithLock.map((item) => (
+  <ScrollView
+    horizontal
+    showsHorizontalScrollIndicator={false}
+onScroll={(event) => {
+  const x = event.nativeEvent.contentOffset.x;
 
-          <ActivityCard
-            key={item.id}
-            item={item}
-          />
+  setHasScrolled(x > 20);
+}}
+scrollEventThrottle={16}
+  >
 
-        ))}
+    {activitiesWithLock.map((item) => (
 
-      </ScrollView>
+      <ActivityCard
+        key={item.id}
+        item={item}
+      />
+
+    ))}
+
+  </ScrollView>
+
+  {!hasScrolled && (
+    <View style={styles.swipeHint}>
+<Text style={styles.swipeArrow}>»</Text>
+    </View>
+  )}
+
+</View>
 
     </View>
   );
@@ -143,5 +160,48 @@ const styles = StyleSheet.create({
 
     fontFamily: 'PixelOperator',
   },
+scrollWrapper:{
+  position:'relative',
+},
 
+swipeHint:{
+  position:'absolute',
+
+  right:wp(-4),
+
+  top:'40%',
+
+  width:fp(34),
+
+  height:fp(34),
+
+  borderRadius:fp(17),
+
+  backgroundColor:'rgba(255,255,255,0.85)',
+
+  justifyContent:'center',
+
+  alignItems:'center',
+
+  elevation:6,
+
+  shadowColor:'#000',
+
+  shadowOffset:{
+    width:0,
+    height:2,
+  },
+
+  shadowOpacity:0.15,
+
+  shadowRadius:4,
+},
+
+swipeArrow:{
+  color:'#894FD9',
+
+  fontSize:fp(26),
+
+  fontFamily:'PixelOperator',
+},
 });

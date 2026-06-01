@@ -1,21 +1,30 @@
 export const activities = [
+
   {
-    id: 1,
-    title: 'PARACHUTE DROP CHALLENGE',
-    image: require('../assets/images/parachuteimg.png'),
-    tags: ['Engineering', 'Physics'],
-    pointsRequired: 0,
-    route: '/activities/parachute-drop-challenge',
+    id:'1',
+    image:require(
+      '../assets/images/Group 227.png'
+    ),
+    route:'/activities/activity1',
   },
 
   {
-    id: 2,
-    title: 'SOUND POLLUTION HUNTER',
-    image: require('../assets/images/sound.png'),
-    tags: ['Environmental Science'],
-    pointsRequired: 150,
-    route: '/activities/sound-pollution-hunter',
+    id:'2',
+    image:require(
+      '../assets/images/Group 228.png'
+    ),
+    route:'/activities/activity2',
   },
+
+  {
+    id:'3',
+    image:require(
+      '../assets/images/Group 229.png'
+    ),
+    route:'/activities/activity3',
+  },
+
+];
 
   // {
   //   id: 3,
@@ -61,4 +70,3 @@ export const activities = [
   //   pointsRequired: 1000,
   //   route: '/activities/breathing-pace-trainer',
   // },
-];
