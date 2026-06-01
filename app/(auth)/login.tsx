@@ -1,22 +1,25 @@
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
-    Animated,
-    Image,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
+  Alert,
+  Animated,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 
-import { AuthButton, AuthInput } from '../../components/AuthElements';
-import { LAYOUT } from '../../constants/layout';
-import { useLanguage } from '../../context/LanguageContext';
+import { AuthButton, AuthInput } from '@/components/AuthElements';
+import { LAYOUT } from '@/constants/layout';
+import { useLanguage } from '@/context/LanguageContext';
+
+import { login } from "@/services/firebase/authService";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -55,6 +58,24 @@ export default function LoginScreen() {
     });
   }, []);
 
+  async function handleLogin() {
+    try {
+      await login(email, password);
+
+      router.replace('/(tabs)/homescreen');
+
+      // Alert.alert(
+      //   "Success",
+      //   "Logged in!"
+      // );
+    } catch(error: any) {
+      Alert.alert(
+        "Error",
+        error.message
+      );
+    }
+  }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1, backgroundColor: '#020617' }}>
@@ -88,7 +109,7 @@ export default function LoginScreen() {
             <TouchableOpacity style={styles.langContainer}>
               <Image source={require('../../assets/images/globe.png')} style={styles.langIcon}/>
               <Text style={styles.langText}>{language}</Text>
-                <Text style={styles.langArrow}>▼</Text>
+              <Text style={styles.langArrow}>▼</Text>
             </TouchableOpacity>
 
             <Image source={require('../../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
@@ -129,7 +150,10 @@ export default function LoginScreen() {
               </View>
 
               {/*  LOGIN BUTTON */}
-              <AuthButton title={t.login || "LOGIN"} onPress={() => {}}/>
+              <AuthButton 
+                title={t.login || "LOGIN"} 
+                onPress={handleLogin}
+              />
 
               <Text style={styles.or}>OR</Text>
 
@@ -161,22 +185,25 @@ export default function LoginScreen() {
                   </View>
                 </TouchableOpacity>
               </View>
-
             </View>
-
           </ScrollView>
         </KeyboardAvoidingView>
-
       </View>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  logo: { width: LAYOUT.width * 0.9, height: 120, alignSelf: 'center', marginTop: LAYOUT.height * 0.03 },
+  logo: { 
+    width: LAYOUT.width * 0.9, 
+    height: 120, 
+    alignSelf: 'center', 
+    marginTop: LAYOUT.height * 0.03 
+  },
 
-
-  content:{ paddingHorizontal:20 },
+  content:{ 
+    paddingHorizontal:20 
+  },
 
   title:{
     color:'white',
@@ -184,7 +211,11 @@ const styles = StyleSheet.create({
     fontFamily:'Pixel',
     fontSize:18
   },
-  langArrow: { fontSize: 10, color: '#899AF7' },
+
+  langArrow: { 
+    fontSize: 10, 
+    color: '#899AF7' 
+  },
 
   subtitle:{
     color:'#FACC15',
@@ -244,15 +275,34 @@ const styles = StyleSheet.create({
     marginTop:3,
   },
 
- langContainer: {
-    position: 'absolute', top: LAYOUT.height * 0.08, right: LAYOUT.width * 0.05,
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8,
-    backgroundColor: 'rgba(0,0,0,0.9)', borderRadius: 20, borderWidth: 1.5,
-    borderColor: '#899AF7', shadowColor: '#899AF7', shadowOpacity: 0.6, shadowRadius: 6, elevation: 5
+  langContainer: {
+    position: 'absolute', 
+    top: LAYOUT.height * 0.08, 
+    right: LAYOUT.width * 0.05,
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingHorizontal: 12, 
+    paddingVertical: 8,
+    backgroundColor: 'rgba(0,0,0,0.9)', 
+    borderRadius: 20, 
+    borderWidth: 1.5,
+    borderColor: '#899AF7', 
+    shadowColor: '#899AF7', 
+    shadowOpacity: 0.6, 
+    shadowRadius: 6, 
+    elevation: 5
   },
-  langIcon:{ width:18, height:18, marginRight:6 },
 
-  langText: { color: '#E6E6FA', marginRight: 8 },
+  langIcon:{ 
+    width:18, 
+    height:18, 
+    marginRight:6 
+  },
+
+  langText: { 
+    color: '#E6E6FA', 
+    marginRight: 8 
+  },
 
   googleBtn:{
     marginTop:15,

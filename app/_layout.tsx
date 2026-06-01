@@ -5,25 +5,18 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
-
 import { Stack } from 'expo-router';
-
 import { StatusBar } from 'expo-status-bar';
-
 import 'react-native-reanimated';
 
 import { LanguageProvider } from '@/context/LanguageContext';
-
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function RootLayout() {
-
   const colorScheme = useColorScheme();
 
   return (
-
     <LanguageProvider>
-
       <ThemeProvider
         value={
           colorScheme === 'dark'
@@ -33,35 +26,14 @@ export default function RootLayout() {
       >
 
         <Stack
-
           screenOptions={{
             headerShown: false,
           }}
-
-        >
-
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerShown: false,
-            }}
-          />
-
-          <Stack.Screen
-            name="activities"
-            options={{
-              headerShown: false,
-            }}
-          />
-
-        </Stack>
+        ></Stack>
 
         <StatusBar style="auto" />
 
       </ThemeProvider>
-
     </LanguageProvider>
-
   );
-
 }
