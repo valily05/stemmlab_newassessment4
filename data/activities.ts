@@ -1,19 +1,110 @@
 export const activities = [
-
   {
-    id:'1',
-    image:require(
-      '../assets/images/Group 227.png'
-    ),
-    route:'/activities/activity1',
+    id: 1,
+    title: "Parachute Drop Challenge",
+    image: require('../assets/images/Group 227.png'),
+    route: '/activities/activity1',
+
+    category: [
+        "Engineering",
+        "Physics"
+    ],
+
+    overview: "",
+    
+    mission: "",
+    duration: "20 mins",
+    difficulty: "Easy",
+
+    materials: [
+      {
+        name: "STEMM LAB ON MOBILE PHONE",
+        quantity: 1
+      },
+      {
+        name: "SMALL TOY / FIGURE",
+        quantity: 1
+      },
+      {
+        name: "TABLES / ELEVATED SURFACE",
+        quantity: 1
+      },
+      {
+        name: "PLASTIC BAG",
+        quantity: 2
+      },
+      {
+        name: "STRING",
+        quantity: 4
+      },
+      {
+        name: "TAPE",
+        quantity: 1
+      },
+      {
+        name: "SCISSORS",
+        quantity: 1
+      }
+    ],
+
+    instructions: [
+      "a",
+      "b",
+    ],
+
+    referencePhoto: require(''),
+
+    safetyNotes: [
+      "a",
+      "b",
+      "c"
+    ],
+
+    bunnyTip: [
+      "Use a ruler in frame for scale",
+      "Identify first contact for contact time",
+      "Identify when the object leaves the surface for bounce calculation"
+    ],
   },
 
   {
-    id:'2',
-    image:require(
-      '../assets/images/Group 228.png'
-    ),
+    id: 2,
+    title: "Sound Pollution Hunter",
+    image:require('../assets/images/Group 228.png'),
     route:'/activities/activity2',
+
+    category: [
+        "Environmental Science",
+    ],
+
+    overview: "",
+
+    mission: "",
+    duration: "20 mins",
+    difficulty: "",
+
+    materials: [
+      
+    ],
+
+    instructions: [
+      "a",
+      "b",
+    ],
+
+    referencePhoto: require(''),
+
+    safetyNotes: [
+      "a",
+      "b",
+      "c"
+    ],
+
+    bunnyTip: [
+      "a",
+      "b",
+      "c"
+    ],
   },
 
   {
