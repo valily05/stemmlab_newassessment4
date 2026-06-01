@@ -15,7 +15,7 @@ import Header from '../../components/Header';
 import Hero from '../../components/Hero';
 import SearchBar from '../../components/SearchBar';
 import SearchResults from '../../components/SearchResults';
-
+import TeamRankingCard from '../../components/TeamRankingCard';
 export default function HomeScreen() {
 
   const [search, setSearch] = useState('');
@@ -84,6 +84,7 @@ export default function HomeScreen() {
 
           <Banner />
 
+<TeamRankingCard />
         </View>
 
       </ScrollView>
@@ -140,3 +141,4 @@ const styles = StyleSheet.create({
   },
 
 });
+

@@ -2,17 +2,17 @@ import { Filter } from 'bad-words';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
-    Animated,
-    Image,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
+  Animated,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 
 import { AuthButton, AuthInput } from '@/components/AuthElements';
@@ -30,13 +30,11 @@ export default function RegisterScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const confirmRef = useRef(null);
 
-  // ✅ STATES (must come BEFORE logic)
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // ✅ NEW: common password list
   const commonPasswords = ['123456', 'password', 'qwerty', '111111', 'abc123', 'letmein'];
   const isCommonPassword = commonPasswords.includes(password.toLowerCase());
 
@@ -85,7 +83,6 @@ export default function RegisterScreen() {
     ? filter.isProfane(cleanedPassword)
     : false;
 
-  // 🔥 EXTRA: catch bypass patterns
   const bypassPatterns = [
     /f+u*c*k+/,
     /f+c*k+/,
@@ -221,7 +218,6 @@ export default function RegisterScreen() {
         ])
       );
 
-      // stagger start so stars don't all sync up
       setTimeout(() => twinkle.start(), Math.random() * 3000);
 
       if (star.isSpecial) {
