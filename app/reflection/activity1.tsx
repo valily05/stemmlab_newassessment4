@@ -1,18 +1,23 @@
+import MaskedView from '@react-native-masked-view/masked-view';
+import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    PixelRatio,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  KeyboardAvoidingView,
+  PixelRatio,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,7 +41,7 @@ const rf = (size:number) => {
 };
 
 export default function Activity1Reflection() {
-
+const scrollRef = useRef<ScrollView>(null);
   const [rating, setRating] =
     useState(0);
 
@@ -142,6 +147,65 @@ Animated.loop(
 ).start();
 
 }, []);
+const normalizeText = (text:string) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z]/g,'');
+
+const containsBadWords = (text:string) => {
+
+  const cleaned = normalizeText(text);
+
+  const offensiveRoots = [
+    'fuck','fck','fk','fak',
+    'shit',
+    'bitch',
+    'gay',
+  ];
+
+  const containsOffensiveRoot =
+    offensiveRoots.some(word =>
+      cleaned.includes(word)
+    );
+
+  const bypassPatterns = [
+    /f+u*c*k+/,
+    /f+c*k+/,
+    /f+x+c*k+/,
+    /f+k+/,
+    /s+h+i+t+/,
+    /b+i+t+c+h+/,
+  ];
+
+  const containsBypass =
+    bypassPatterns.some(pattern =>
+      pattern.test(cleaned)
+    );
+
+  return (
+    containsOffensiveRoot ||
+    containsBypass
+  );
+};
+const learnedWords =
+  learned.trim()
+    ? learned.trim().split(/\s+/).length
+    : 0;
+
+const improvementWords =
+  improvement.trim()
+    ? improvement.trim().split(/\s+/).length
+    : 0;
+
+const hasBadLanguage =
+  containsBadWords(learned) ||
+  containsBadWords(improvement);
+
+const canSubmit =
+  learnedWords >= 10 &&
+  improvementWords >= 10 &&
+  !hasBadLanguage &&
+  rating > 0;
   return (
 
 <LinearGradient
@@ -440,8 +504,17 @@ colors={[
   />
 
 </View>
-
+<KeyboardAvoidingView
+  style={{ flex: 1 }}
+  behavior={
+    Platform.OS === 'ios'
+      ? 'padding'
+      : 'height'
+  }
+>
 <ScrollView
+  ref={scrollRef}
+  keyboardShouldPersistTaps="handled"
   contentContainerStyle={
     styles.content
   }
@@ -449,14 +522,40 @@ colors={[
 
 <View style={styles.heroCard}>
 
-  <Rocket
-    size={rf(45)}
-    color="#FFE95B"
-  />
+  <View style={styles.rocketCircle}>
+    <Rocket
+      size={rf(45)}
+      color="#FFD91C"
+    />
+  </View>
 
-  <Text style={styles.heroTitle}>
-    ACTIVITY COMPLETE
-  </Text>
+  <MaskedView
+    maskElement={
+      <Text style={styles.heroTitle}>
+        ACTIVITY COMPLETE
+      </Text>
+    }
+  >
+    <LinearGradient
+      colors={[
+        '#FFF8D6',
+        '#FFD700',
+        '#F4B400',
+        '#FFF1A8',
+      ]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+    >
+      <Text
+        style={[
+          styles.heroTitle,
+          { opacity: 0 }
+        ]}
+      >
+        ACTIVITY COMPLETE
+      </Text>
+    </LinearGradient>
+  </MaskedView>
 
   <Text style={styles.heroText}>
     Great job completing the
@@ -464,6 +563,8 @@ colors={[
   </Text>
 
 </View>
+
+
 
 <View style={styles.card}>
 
@@ -504,43 +605,99 @@ colors={[
 
 <View style={styles.card}>
 
-<Text style={styles.cardTitle}>
-  WHAT DID YOU LEARN?
+<View style={styles.questionRow}>
+  <Text style={styles.cardTitle}>
+    WHAT DID YOU LEARN?
+  </Text>
+
+<Text
+  style={[
+    styles.wordCounter,
+    learnedWords >= 10 && {
+      color:'#7DFFAE',
+    },
+  ]}
+>
+  {learnedWords}/10
 </Text>
-
-<TextInput
-  multiline
-  value={learned}
-  onChangeText={setLearned}
-  placeholder="Describe what you discovered during this experiment..."
-  placeholderTextColor="#9AA3D8"
-  style={styles.input}
-/>
-
 </View>
-
+<BlurView
+  intensity={25}
+  tint="dark"
+  style={styles.glassInput}
+>
+  <TextInput
+    multiline
+    value={learned}
+    onChangeText={setLearned}
+    placeholder="Describe what you discovered during this experiment..."
+    placeholderTextColor="#C7C9E8"
+    style={styles.input}
+onFocus={() => {
+  setTimeout(() => {
+    scrollRef.current?.scrollTo({
+      y: 200,
+      animated: true,
+    });
+  }, 250);
+}}
+  />
+</BlurView>
+</View>
 <View style={styles.card}>
 
-<Text style={styles.cardTitle}>
-  WHAT WOULD YOU IMPROVE?
-</Text>
+<View style={styles.questionRow}>
+  <Text style={styles.cardTitle}>
+    WHAT WOULD YOU IMPROVE?
+  </Text>
 
-<TextInput
-  multiline
-  value={improvement}
-  onChangeText={
-    setImprovement
-  }
-  placeholder="What changes would you make to your next prototype?"
-  placeholderTextColor="#9AA3D8"
-  style={styles.input}
-/>
+<Text
+  style={[
+    styles.wordCounter,
+    improvementWords >= 10 && {
+      color:'#7DFFAE',
+    },
+  ]}
+>
+  {improvementWords}/10
+</Text>
+</View>
+  <BlurView
+    intensity={25}
+    tint="dark"
+    style={styles.glassInput}
+  >
+    <TextInput
+      multiline
+      value={improvement}
+      onChangeText={setImprovement}
+      placeholder="What changes would you make to your next prototype?"
+      placeholderTextColor="#C7C9E8"
+      style={styles.input}
+onFocus={() => {
+  setTimeout(() => {
+    scrollRef.current?.scrollTo({
+      y: 420,
+      animated: true,
+    });
+  }, 250);
+}}
+    />
+  </BlurView>
 
 </View>
-
+{hasBadLanguage && (
+  <Text style={styles.errorText}>
+Please remove inappropriate language before submitting.
+  </Text>
+)}
 <TouchableOpacity
-  style={styles.submitButton}
+  disabled={!canSubmit}
   onPress={() => {
+
+    if(!canSubmit){
+      return;
+    }
 
     console.log({
       rating,
@@ -552,6 +709,12 @@ colors={[
       '/(tabs)/homescreen'
     );
   }}
+  style={[
+    styles.submitButton,
+    !canSubmit && {
+      opacity:0.45,
+    },
+  ]}
 >
 
 <Text style={styles.submitText}>
@@ -560,8 +723,9 @@ colors={[
 
 </TouchableOpacity>
 
-</ScrollView>
 
+</ScrollView>
+</KeyboardAvoidingView>
 </LinearGradient>
 
   );
@@ -595,40 +759,51 @@ content:{
 },
 
 heroCard:{
-  backgroundColor:'rgba(42,13,69,0.9)',
+  borderRadius:rf(16),
 
-  borderRadius:rf(20),
 
-  borderWidth:2,
-  borderColor:'#C86DFF',
 
   padding:rf(24),
 
   alignItems:'center',
 
-  marginBottom:hp(3),
+  marginBottom:rf(20)
 },
 
 heroTitle:{
-  color:'#FFE95B',
-  fontSize:rf(28),
-  fontFamily:'PixelBold',
+  color:'#FFD91C',
+  fontSize:rf(19),
+  fontFamily:'Pixel',
+width:rf(330),
+  marginTop:hp(2),
+},
+questionRow:{
+  flexDirection:'row',
+  justifyContent:'space-between',
+  alignItems:'center',
 
-  marginTop:hp(1),
+  marginBottom:hp(2),
 },
 
+wordCounter:{
+  color:'#AEB8FF',
+
+  fontSize:rf(13),
+
+  fontFamily:'PixelOperator',
+},
 heroText:{
   color:'#D8D8FF',
   textAlign:'center',
 
-  marginTop:hp(1),
-
+  marginTop:rf(14),
+fontSize:rf(15),
   fontFamily:'PixelOperator',
 },
 card:{
   backgroundColor:'rgba(255,255,255,0.04)',
 
-  borderRadius:rf(18),
+  borderRadius:rf(16),
 
   borderWidth:1,
   borderColor:'rgba(255,255,255,0.08)',
@@ -650,26 +825,35 @@ starRow:{
   flexDirection:'row',
   justifyContent:'space-between',
 },
+errorText:{
+  color:'#FF8080',
+  fontSize:rf(13),
+  fontFamily:'PixelOperator',
+  textAlign:'center',
+  marginBottom:hp(1),
+},
+glassInput:{
+  height:hp(16),
+  borderWidth:1.5,
+  borderColor:'rgba(255,255,255,0.12)',
+
+  backgroundColor:'rgba(255,255,255,0.05)',
+},
 
 input:{
-  height:hp(16),
+  flex:1,
 
-  backgroundColor:'#1B1A33',
-
-  borderWidth:1,
-  borderColor:'#7A4DFF',
-
-  borderRadius:rf(14),
-
-  padding:rf(14),
+  padding:rf(16),
 
   color:'#FFFFFF',
-fontSize:rf(16),
+  fontSize:rf(16),
+
   textAlignVertical:'top',
 
   fontFamily:'PixelOperator',
-},
 
+  backgroundColor:'transparent',
+},
 submitButton:{
   backgroundColor:'#7A4DFF',
 
@@ -768,7 +952,18 @@ star7:{
   left:'65%',
   opacity:0.5,
 },
+rocketCircle: {
+  width: rf(89),
+  height: rf(89),
+  borderRadius: rf(99),
 
+  backgroundColor: 'rgba(255, 217, 28, 0.15)',
+
+  justifyContent: 'center',
+  alignItems: 'center',
+
+
+},
 star8:{
   width:4,
   height:4,
