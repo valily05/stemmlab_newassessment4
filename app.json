@@ -24,23 +24,23 @@
       "output": "static"
     },
 
-"plugins": [
-  "expo-router",
+    "plugins": [
+      "expo-router",
 
-  [
-    "expo-camera",
-    {
-      "cameraPermission": "Allow STEMM Lab to access your camera."
-    }
-  ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow STEMM Lab to access your camera."
+        }
+      ],
 
-  [
-    "expo-media-library",
-    {
-      "photosPermission": "Allow STEMM Lab to save experiment videos."
-    }
-  ]
-],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow STEMM Lab to save experiment videos."
+        }
+      ]
+    ],
 
     "experiments": {
       "typedRoutes": true

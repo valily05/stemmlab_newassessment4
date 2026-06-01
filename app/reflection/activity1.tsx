@@ -88,7 +88,44 @@ export default function Activity1Reflection() {
   <View style={[styles.star, styles.star18]} />
   <View style={[styles.star, styles.star19]} />
   <View style={[styles.star, styles.star20]} />
+<View style={styles.meteor1}>
+  <LinearGradient
+    colors={[
+      'rgba(255,255,255,0)',
+      'rgba(255,255,255,0.4)',
+      '#FFFFFF',
+    ]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.meteorTail}
+  />
+</View>
 
+<View style={styles.meteor2}>
+  <LinearGradient
+    colors={[
+      'rgba(255,255,255,0)',
+      'rgba(255,255,255,0.4)',
+      '#FFFFFF',
+    ]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.meteorTail}
+  />
+</View>
+
+<View style={styles.meteor3}>
+  <LinearGradient
+    colors={[
+      'rgba(255,255,255,0)',
+      'rgba(255,255,255,0.4)',
+      '#FFFFFF',
+    ]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.meteorTail}
+  />
+</View>
 </View>
 <View style={styles.header}>
 
@@ -265,7 +302,7 @@ content:{
 },
 
 heroCard:{
-  backgroundColor:'#2A0D45',
+  backgroundColor:'rgba(42,13,69,0.9)',
 
   borderRadius:rf(20),
 
@@ -369,7 +406,12 @@ starsContainer:{
 
 star:{
   position:'absolute',
+
   backgroundColor:'#FFFFFF',
+
+  shadowColor:'#FFFFFF',
+  shadowOpacity:1,
+  shadowRadius:4,
 },
 
 star1:{
@@ -549,5 +591,42 @@ star20:{
   top:'88%',
   left:'20%',
   opacity:0.9,
+},
+meteorTail:{
+  width:rf(90),
+  height:2,
+},
+
+meteor1:{
+  position:'absolute',
+
+  top:'12%',
+  left:'70%',
+
+  transform:[
+    { rotate:'45deg' }
+  ],
+},
+
+meteor2:{
+  position:'absolute',
+
+  top:'48%',
+  left:'15%',
+
+  transform:[
+    { rotate:'45deg' }
+  ],
+},
+
+meteor3:{
+  position:'absolute',
+
+  top:'78%',
+  left:'72%',
+
+  transform:[
+    { rotate:'45deg' }
+  ],
 },
 });
