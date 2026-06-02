@@ -1,4 +1,3 @@
-import { Filter } from 'bad-words';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
@@ -24,6 +23,9 @@ import { useLanguage } from '@/context/LanguageContext';
 import { signUp } from "@/services/firebase/authService";
 import { createUserProfile } from '@/services/firebase/userService';
 
+import { validatePassword } from '@/utils/passwordValidation';
+import { containsOffensiveContent } from '@/utils/profanityFilter';
+
 export default function RegisterScreen() {
   const router = useRouter();
   const FONT = LAYOUT.width * 0.035;
@@ -35,68 +37,6 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const commonPasswords = ['123456', 'password', 'qwerty', '111111', 'abc123', 'letmein'];
-  const isCommonPassword = commonPasswords.includes(password.toLowerCase());
-
-  const filter = React.useMemo(() => new Filter(), []);
-
-  const normalizePassword = (text: string) => {
-    return text
-      .toLowerCase()
-      .replace(/[@4]/g, 'a')
-      .replace(/[0]/g, 'o')
-      .replace(/[1!]/g, 'i')
-      .replace(/[3]/g, 'e')
-      .replace(/[5]/g, 's')
-      .replace(/[7]/g, 't')
-      .replace(/[^a-z]/g, '');
-  };
-  const checkOffensive = (text: string) => {
-    const cleaned = normalizePassword(text);
-
-    const containsRoot = offensiveRoots.some(word =>
-      cleaned.includes(word)
-    );
-
-    const hasBad = cleaned
-      ? filter.isProfane(cleaned)
-      : false;
-
-    const matches = bypassPatterns.some(pattern =>
-      pattern.test(cleaned)
-    );
-
-    return hasBad || containsRoot || matches;
-  };
-
-  const cleanedPassword = normalizePassword(password);
-  const offensiveRoots = [
-    'fuck', 'fck', 'fk', 'fak',
-    'shit', 'bitch','gay'
-  ];
-
-  const containsOffensiveRoot = offensiveRoots.some(word =>
-    cleanedPassword.includes(word)
-  );
-  // basic filter
-  const hasBadWord = cleanedPassword
-    ? filter.isProfane(cleanedPassword)
-    : false;
-
-  const bypassPatterns = [
-    /f+u*c*k+/,
-    /f+c*k+/,
-    /f+x+c*k+/,
-    /f+k+/,
-    /s+h+i+t+/,
-    /b+i+t+c+h+/
-  ];
-
-  const matchesBypass = bypassPatterns.some((pattern) =>
-    pattern.test(cleanedPassword)
-  );
-
-  const isOffensive = hasBadWord || matchesBypass || containsOffensiveRoot;
   const shakeAnim = useState(new Animated.Value(0))[0];
 
   const hasTypedConfirm = confirmPassword.length > 0;
@@ -108,15 +48,18 @@ export default function RegisterScreen() {
     : isMismatch
     ? '#ef4444'
     : '#8B7CFF';
-  const isNameOffensive = checkOffensive(fullName);
-  const isEmailOffensive = checkOffensive(email);
-  // ✅ UPDATED VALIDATION
-  const isPasswordValid =
-    password.length >= 8 &&
-    /[a-zA-Z]/.test(password) &&
-    /\d/.test(password) &&
-    !isCommonPassword &&
-    !isOffensive
+
+  // UPDATED VALIDATION
+  const passwordValidation = validatePassword(password);
+
+  const isPasswordValid = passwordValidation.isValid;
+  const isCommonPassword = passwordValidation.isCommonPassword;
+
+  const isNameOffensive = containsOffensiveContent(fullName);
+  const isEmailOffensive = containsOffensiveContent(email);
+
+  const isOffensive = passwordValidation.isOffensive;
+
   const isFormValid =
     fullName.trim().length > 0 &&
     email.trim().length > 0 &&
@@ -125,7 +68,7 @@ export default function RegisterScreen() {
     isMatch &&
     !isNameOffensive &&
     !isEmailOffensive;
-
+  
   const { language, setLanguage, t } = useLanguage();
 
   const scrollTo = (y: number) => {
@@ -256,9 +199,7 @@ export default function RegisterScreen() {
         role: "Student",
       });
 
-      console.log(userCredential.user.uid);
-
-      router.replace('/homescreen');
+      router.replace('/(tabs)/homescreen');
     } catch(error:any) {
       console.error(error);
 
@@ -282,7 +223,7 @@ export default function RegisterScreen() {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    //<TouchableWithoutFeedback onPress={Keyboard.dismiss}> This causes weird scroll behavior
       <View style={{ flex: 1, backgroundColor: '#020617' }}>
 
         {/* ⭐ STAR BACKGROUND */}
@@ -443,8 +384,8 @@ export default function RegisterScreen() {
                 borderColor={borderColor} 
               />
 
-              <PasswordChecklist password={password} t={t} />
-              <PasswordStrength password={password} labelEmpty={t.PS} t={t} />
+              <PasswordChecklist validation={passwordValidation} t={t} />
+              <PasswordStrength password={password} score={passwordValidation.score} labelEmpty={t.PS} t={t} />
               
               {/* PASSWORD WARNINGS */}
               {isCommonPassword && (
@@ -523,7 +464,7 @@ export default function RegisterScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
-    </TouchableWithoutFeedback>
+    //</TouchableWithoutFeedback>
   );
 }
 
@@ -622,5 +563,4 @@ const styles = StyleSheet.create({
     padding: 15, 
     fontFamily: 'Wix' 
   },
-  
 });

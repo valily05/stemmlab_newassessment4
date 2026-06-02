@@ -2,18 +2,20 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
 
+import { PasswordValidationResult } from '@/utils/passwordValidation';
+
 interface Props {
-  password: string;
+  validation: PasswordValidationResult;
   t: any; // translation object
 }
 
-export default function PasswordChecklist({ password, t }: Props) {
+export default function PasswordChecklist({ validation, t }: Props) {
   const rules = [
-    { label: t.strength, valid: password.length >= 8 },
-    { label: t.lowercase || 'Lowercase letter', valid: /[a-z]/.test(password) },
-    { label: t.uppercase || 'Uppercase letter', valid: /[A-Z]/.test(password) },
-    { label: t.number || 'Number', valid: /[0-9]/.test(password) },
-    { label: t.special || 'Special character', valid: /[^A-Za-z0-9]/.test(password) },
+    { label: t.strength, valid: validation.hasMinLength },
+    { label: t.lowercase || 'Lowercase letter', valid: validation.hasLowercase },
+    { label: t.uppercase || 'Uppercase letter', valid: validation.hasUppercase },
+    { label: t.number || 'Number', valid: validation.hasNumber },
+    { label: t.special || 'Special character', valid: validation.hasSpecial },
   ];
 
   return (

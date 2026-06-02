@@ -2,24 +2,26 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 type Props = {
+  score: number;
   password: string;
   labelEmpty?: string;
   t: any;
 };
 
-export default function PasswordStrength({ password, labelEmpty, t }: Props) {
+export default function PasswordStrength({ score, password, labelEmpty, t }: Props) {
 
-const getStrength = (password: string) => {
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[a-z]/.test(password)) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    return strength;
-};
+// const getStrength = (password: string) => {
+//     let strength = 0;
+//     if (password.length >= 8) strength++;
+//     if (/[a-z]/.test(password)) strength++;
+//     if (/[A-Z]/.test(password)) strength++;
+//     if (/[0-9]/.test(password)) strength++;
+//     if (/[^A-Za-z0-9]/.test(password)) strength++;
+//     return strength;
+// };
 
-  const strength = getStrength(password);
+  // const strength = getStrength(password);
+  const strength = score;
 
   const getStrengthLabel = () => {
     switch (strength) {
