@@ -1,7 +1,6 @@
 import { auth } from "@/services/firebase/config";
 import { getAllTeams, getTeam, getTopTeams } from "@/services/firebase/teamService";
 import { getUserProfile } from "@/services/firebase/userService";
-import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from "react";
 import {
@@ -44,35 +43,7 @@ const fp = (size: number) =>
     .slice(0, 2)
     .toUpperCase();
 };
-// PUT IT HERE
-const GradientText = ({ children }: any) => (
-  <MaskedView
-    maskElement={
-      <Text style={styles.gradientText}>
-        {children}
-      </Text>
-    }
-  >
-    <LinearGradient
-      colors={[
-        '#FF9BEF',
-        '#FF69C9',
-        '#FF3DAA',
-      ]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-    >
-      <Text
-        style={[
-          styles.gradientText,
-          { opacity: 0 }
-        ]}
-      >
-        {children}
-      </Text>
-    </LinearGradient>
-  </MaskedView>
-);
+
 
 export default function TeamRankingCard() {
 
@@ -125,11 +96,11 @@ setUserRank(index >= 0 ? index + 1 : null);
   return (
 <LinearGradient
 colors={[
-  '#24114F',
-  '#321A6B',
-  '#4A2792',
-  '#321A6B',
-  '#24114F',
+  '#000000',
+  '#0D031D',
+  '#24104A',
+  '#0D031D',
+  '#000000',
 ]}
   locations={[0, 0.25, 0.5, 0.75, 1]}
   start={{ x: 0, y: 0 }}
@@ -216,24 +187,16 @@ colors={[
       
   
 {!userTeam && (
-<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-  <Text style={styles.userTeamName}>Join a </Text>
-
-<Text style={styles.highlightText}>
-  team
-</Text>
-  <Text style={styles.userTeamName}>
-    {' '}now to compete on the{' '}
-  </Text>
-
-  <GradientText>
-    leaderboard
-  </GradientText>
-
-  <Text style={styles.userTeamName}>!</Text>
-</View>
+  <View style={styles.joinTeamContainer}>
+    <Text style={styles.joinText}>
+      Join a{' '}
+      <Text style={styles.pinkText}>team</Text>
+      {' '}now to compete on the{' '}
+      <Text style={styles.pinkText}>leaderboard</Text>
+      !
+    </Text>
+  </View>
 )}
-
     
 {/* USER TEAM */}
 {userTeam && !isTopThree && (
@@ -284,14 +247,13 @@ card: {
   borderRadius: fp(12),
   overflow: 'hidden',
 
-
+  borderColor: '#2B1459',
 
   paddingHorizontal: wp(4),
   paddingVertical: hp(1.8),
 
 
     borderWidth: 1,
-  borderColor: 'rgba(186, 142, 255, 0.18)',
 
   shadowColor: '#9B6BFF',
   shadowOpacity: 0.28,
@@ -331,18 +293,19 @@ placeBadge: {
   },
 
   viewAll: {
-    color: '#9F8BFF',
+    color: '#020202',
 fontSize: fp(15),
 fontFamily:'PixelOperator'
   },
-highlightText: {
-  color: '#FFB7F1',
+
+pinkText: {
+  color: '#F69AEF',
   fontFamily: 'PixelBold',
-
-  backgroundColor: 'rgba(255,105,201,0.15)',
-
-  paddingHorizontal: wp(1),
-  borderRadius: fp(4),
+},
+joinText: {
+  color: 'white',
+  fontSize: fp(16),
+  fontFamily: 'PixelOperator',
 },
 teamRow: {
   flexDirection: 'row',
@@ -370,15 +333,16 @@ crown: {
 joinTeamContainer: {
   marginTop: hp(1),
 
-  paddingVertical: hp(1.4),
-  paddingHorizontal: wp(3.5),
+  paddingVertical: hp(2),
+  paddingHorizontal: wp(4),
 
   borderRadius: fp(14),
 
-  backgroundColor: 'rgba(122, 95, 255, 0.15)',
+backgroundColor: '#30185F',
+borderColor: '#6f52a7',
 
   borderWidth: 1,
-  borderColor: 'rgba(155, 107, 255, 0.45)',
+
 
   shadowColor: '#9B6BFF',
   shadowOpacity: 0.25,
@@ -386,12 +350,7 @@ joinTeamContainer: {
 
   elevation: 5,
 },
-gradientText: {
-  fontFamily: 'PixelBold',
-  fontSize: fp(16),
 
-  includeFontPadding: false,
-},
 
 joinTitle: {
   color: '#FF8FD8',
@@ -414,8 +373,8 @@ joinSubtitle: {
 
 
 pointsIcon: {
-  width: wp(3.5),
-  height: wp(3.5),
+  width: wp(4),
+  height: wp(4),
 
   marginRight: wp(1),
 },
@@ -424,8 +383,9 @@ teamName: {
 
   color: '#FFF',
 
-  fontSize: fp(12),
+  fontSize: fp(20),
   fontWeight: '500',
+  fontFamily:'PixelOperator'
 },
 teamAvatarText: {
   color: '#FFF',
@@ -479,7 +439,7 @@ teamAvatar: {
 teamSubtext: {
   color: '#B8B4D8',
 
-    fontSize: fp(9),
+    fontSize: fp(10),
   marginTop: hp(0.2),
 },
   rankCircle: {
@@ -497,7 +457,7 @@ teamSubtext: {
 
   rankCircleText: {
     color: 'white',
-  fontSize: fp(10),
+  fontSize: fp(13),
     fontWeight: '700',
   },
 
@@ -511,8 +471,9 @@ teamSubtext: {
 
   userPoints: {
     color: '#FFD15C',
-  fontSize: fp(11),
+  fontSize: fp(12),
   fontWeight: '700',
+
   },
 
 });
