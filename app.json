@@ -7,41 +7,35 @@
     "icon": "./assets/images/icon.png",
     "scheme": "stemmlabnew",
     "userInterfaceStyle": "automatic",
-
     "ios": {
       "supportsTablet": true
     },
-
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE"
       },
       "predictiveBackGestureEnabled": false
     },
-
     "web": {
       "bundler": "metro",
       "output": "static"
     },
-
     "plugins": [
       "expo-router",
-
       [
         "expo-camera",
         {
           "cameraPermission": "Allow STEMM Lab to access your camera."
         }
       ],
-
       [
         "expo-media-library",
         {
           "photosPermission": "Allow STEMM Lab to save experiment videos."
         }
-      ]
+      ],
+      "expo-video"
     ],
-
     "experiments": {
       "typedRoutes": true
     }

@@ -4,29 +4,29 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import {
-  VideoView,
-  useVideoPlayer,
+    VideoView,
+    useVideoPlayer,
 } from 'expo-video';
 import {
-  ChartNoAxesColumn,
-  Clock3,
-  Crosshair,
-  Download,
-  RotateCcw,
-  Star,
-  Trophy,
-  Video
+    ChartNoAxesColumn,
+    Clock3,
+    Crosshair,
+    Download,
+    RotateCcw,
+    Star,
+    Trophy,
+    Video
 } from 'lucide-react-native';
 import { useState } from 'react';
 import {
-  Dimensions,
-  Image,
-  PixelRatio,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Dimensions,
+    Image,
+    PixelRatio,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');

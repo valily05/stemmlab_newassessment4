@@ -3,13 +3,13 @@ import { getAllTeams, getTeam, getTopTeams } from "@/services/firebase/teamServi
 import { getUserProfile } from "@/services/firebase/userService";
 import { useEffect, useState } from "react";
 import {
-    Dimensions,
-    Image,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Dimensions,
+  Image,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -28,6 +28,19 @@ const fp = (size: number) =>
   PixelRatio.roundToNearestPixel(
     (width / 430) * size
   );
+
+  const getTeamInitials = (
+  teamName?: string
+) => {
+  if (!teamName) return '?';
+
+  return teamName
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+};
 
 export default function TeamRankingCard() {
 
@@ -87,10 +100,10 @@ setUserRank(index >= 0 ? index + 1 : null);
     Team Ranking
   </Text>
 
-  <Image
-    source={require('../assets/images/crown.png')}
-    style={styles.crown}
-  />
+<Image
+  source={require('../assets/images/medal-red.png')}
+  style={styles.placeBadge}
+/>
 </View>
 
         <TouchableOpacity>
@@ -118,10 +131,18 @@ setUserRank(index >= 0 ? index + 1 : null);
       style={styles.placeBadge}
     />
 
-    <Image
-      source={{ uri: team.teamPhoto }}
-      style={styles.avatar}
-    />
+{team.teamPhoto ? (
+  <Image
+    source={{ uri: team.teamPhoto }}
+    style={styles.avatar}
+  />
+) : (
+  <View style={styles.teamAvatar}>
+    <Text style={styles.teamAvatarText}>
+      {getTeamInitials(team.teamName)}
+    </Text>
+  </View>
+)}
 
     <Text
       style={styles.teamName}
@@ -169,10 +190,18 @@ setUserRank(index >= 0 ? index + 1 : null);
   </Text>
 </View>
 
-<Image
-  source={{ uri: userTeam?.teamPhoto }}
-  style={styles.avatar}
-/>
+{userTeam?.teamPhoto ? (
+  <Image
+    source={{ uri: userTeam.teamPhoto }}
+    style={styles.avatar}
+  />
+) : (
+  <View style={styles.teamAvatar}>
+    <Text style={styles.teamAvatarText}>
+      {getTeamInitials(userTeam?.teamName)}
+    </Text>
+  </View>
+)}
 
   <View style={{ flex: 1 }}>
     <Text style={styles.userTeamName}>
@@ -294,7 +323,11 @@ teamName: {
   fontSize: fp(12),
   fontWeight: '500',
 },
-
+teamAvatarText: {
+  color: '#FFF',
+  fontWeight: '800',
+  fontSize: fp(10),
+},
   pointsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -326,27 +359,18 @@ points: {
     borderColor: '#7A5FFF',
   },
 teamAvatar: {
-  width: 30,
-  height: 30,
+  width: wp(6),
+  height: wp(6),
 
-  borderRadius: 15,
+  borderRadius: wp(3),
 
-  backgroundColor: '#FFB6D9',
+  backgroundColor: '#7A5FFF',
 
   justifyContent: 'center',
   alignItems: 'center',
 
-  marginRight: 10,
+  marginRight: wp(2),
 },
-
-teamAvatarText: {
-  color: '#5D235F',
-
-  fontWeight: '800',
-
-  fontSize: 11,
-},
-
 teamSubtext: {
   color: '#B8B4D8',
 
