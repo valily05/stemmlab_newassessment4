@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import MaskedView from '@react-native-masked-view/masked-view';
 
+import { auth } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
-
 import {
   Dimensions,
   ImageBackground,
@@ -19,7 +19,7 @@ import BottomNavbar from '../../components/BottomNavBar';
 import CategoryTabs from '../../components/CategoryTabs';
 import Header from '../../components/Header';
 import SearchBar from '../../components/SearchBar';
-
+import { getAvatarSource } from '../../data/avatarData';
 const { width, height } = Dimensions.get('window');
 
 /* RESPONSIVE HELPERS */
@@ -72,7 +72,12 @@ export default function Activities() {
           <View style={styles.overlay}>
 
             {/* HEADER */}
-            <Header />
+         <Header
+           avatarSource={getAvatarSource(
+             auth.currentUser?.photoURL,
+             auth.currentUser?.uid
+           )}
+         />
 
             {/* TITLE SECTION */}
             <View style={styles.titleContainer}>

@@ -82,15 +82,26 @@ export default function Banner() {
 
 const styles = StyleSheet.create({
 
-  container: {
+container: {
+  borderRadius: scale(12),
 
-    borderRadius: scale(14),
+  overflow: 'visible',
 
-    overflow: 'hidden',
-    width:'112%',
-    marginTop:rf(-16)
+  width: '112%',
+
+  marginTop: rf(-16),
+
+  shadowColor: '#8B5CF6',
+  shadowOpacity: 0.35,
+  shadowRadius: scale(14),
+
+  shadowOffset: {
+    width: 0,
+    height: 0,
   },
 
+  elevation: 12,
+},
   bg: {
     width: '100%',
 
@@ -105,12 +116,10 @@ const styles = StyleSheet.create({
   },
 
   bgImage: {
-    borderRadius: scale(14),
+    borderRadius: scale(12),
 
     resizeMode: 'stretch',
     
-    borderWidth:scale(2),
-    borderColor:'#2B1B59',
   },
 
   right: {

@@ -29,16 +29,29 @@ export default function Streak({
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 if (!hasTeam) {
   return (
-    <LinearGradient
-      colors={['#0B0620', '#14052E', '#0B0620']}
-      start={{ x: 0, y: 0.5 }}
-      end={{ x: 1, y: 0.5 }}
-      style={styles.container}
-    >
+<LinearGradient
+  colors={[
+    '#0A041D',
+    '#160734',
+    '#220A4D',
+    '#160734',
+    '#0A041D',
+  ]}
+  locations={[
+    0,
+    0.25,
+    0.5,
+    0.75,
+    1,
+  ]}
+  start={{ x: 0, y: 0.5 }}
+  end={{ x: 1, y: 0.8 }}
+  style={styles.container}
+>
       <View style={styles.lockedContent}>
         <View style={styles.lockIconContainer}>
           <Ionicons
-            name="lock-closed"
+            name="people"
             size={28}
             color="#B882FF"
           />
@@ -48,10 +61,21 @@ if (!hasTeam) {
           TEAM STREAK LOCKED
         </Text>
 
-        <Text style={styles.footerText}>
-          Join a team to unlock streaks, rewards,
-          and leaderboard progress.
-        </Text>
+<Text style={styles.footerText1}>
+  Join a team to unlock{' '}
+  <Text style={styles.streakText}>
+    streaks
+  </Text>
+  , earn{' '}
+  <Text style={styles.rewardText}>
+    points
+  </Text>
+  , and climb the{' '}
+  <Text style={styles.leaderboardText}>
+    leaderboard
+  </Text>
+  .
+</Text>
       </View>
     </LinearGradient>
   );
@@ -235,33 +259,41 @@ lockedContent: {
   alignItems: 'center',
   justifyContent: 'center',
 },
+streakText: {
+  color: '#FF8A65',
+  fontFamily: 'PixelBold',
+},
 
+leaderboardText: {
+  color: '#69D2FF',
+  fontFamily: 'PixelBold',
+},
+
+rewardText: {
+  color: '#FFD84D',
+  fontFamily: 'PixelBold',
+},
 lockIconContainer: {
-  width: rf(56),
-  height: rf(56),
-  borderRadius: rf(28),
+  width: rf(60),
+  height: rf(60),
+  borderRadius: rf(30),
 
   justifyContent: 'center',
   alignItems: 'center',
 
   marginBottom: rf(14),
 
-  backgroundColor: 'rgba(184,130,255,0.12)',
+  backgroundColor: 'rgba(122,45,255,0.15)',
 
   borderWidth: 1,
-  borderColor: 'rgba(184,130,255,0.35)',
+  borderColor: 'rgba(170,120,255,0.45)',
+
+  shadowColor: '#7A2DFF',
+  shadowOpacity: 0.4,
+  shadowRadius: 8,
+
+  elevation: 6,
 },
-star: {
-  width: rf(27),
-  height: rf(27),
-  marginRight: rf(6),
-},
-  points: {
-    color: '#FFFFFF',
-    fontSize: rf(22),
-    fontFamily: 'PixelBold',
-    lineHeight: rf(20),
-  },
 
   pointsLabel: {
     color: '#D7C7FF',
@@ -280,6 +312,18 @@ marginLeft:rf(6)
 dayWrapper: {
   width: rf(67),
   alignItems: 'center',
+},
+star: {
+  width: rf(27),
+  height: rf(27),
+  marginRight: rf(6),
+},
+
+points: {
+  color: '#FFFFFF',
+  fontSize: rf(22),
+  fontFamily: 'PixelBold',
+  lineHeight: rf(20),
 },
 row: {
   flexDirection: 'row',
@@ -312,10 +356,7 @@ flameWrapper: {
 
     backgroundColor: '#190038',
   },
-rewardText: {
-  color: '#FFD84D',
-  fontFamily: 'PixelBold',
-},
+
   completedCircle: {
     backgroundColor: '#8426FF',
     borderColor: '#A65CFF',
@@ -348,5 +389,14 @@ line: {
     fontSize: rf(16),
     fontFamily: 'PixelOperator',
     marginLeft:rf(7)
+  },
+
+    footerText1: {
+    marginTop: rf(5),
+    color: '#FFFFFF',
+    fontSize: rf(16),
+    fontFamily: 'PixelOperator',
+    marginLeft:rf(7),
+    textAlign:'center'
   },
 });

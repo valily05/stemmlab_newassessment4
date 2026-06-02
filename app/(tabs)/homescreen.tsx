@@ -24,7 +24,7 @@ export default function HomeScreen() {
   const [search, setSearch] = useState('');
 
   const userPoints = 500;
-const hasTeam = true;
+const hasTeam = false;
   return (
 
     <View style={styles.container}>
