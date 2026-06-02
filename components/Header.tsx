@@ -31,23 +31,17 @@ const fp = (size: number) => {
   );
 };
 
-export default function Header() {
+type HeaderProps = {
+  points: number;
+};
 
+export default function Header({ points }: HeaderProps) {
   // CHANGE THIS
   const hasNotification = false;
 
   return (
 
     <View style={styles.header}>
-
-      {/* MENU BUTTON */}
-      <TouchableOpacity style={styles.circleBtn}>
-
-        <Text style={styles.menu}>
-          ☰
-        </Text>
-
-      </TouchableOpacity>
 
       {/* CENTER */}
       <View style={styles.center}>
@@ -94,7 +88,23 @@ export default function Header() {
           )}
 
         </TouchableOpacity>
+  {/* POINTS */}
+  <View style={styles.pointsContainer}>
+    <Image
+      source={require('../assets/images/starcoin.png')}
+      style={styles.coin}
+    />
+<Text style={styles.pointsText}>
+  {points.toLocaleString()}
+</Text>
+  </View>
 
+  <Image
+    source={require('../assets/images/miffy.png')}
+    style={styles.avatar}
+  />
+
+</View>
         {/* PROFILE */}
         <Image
           source={require('../assets/images/miffy.png')}
@@ -103,7 +113,6 @@ export default function Header() {
 
       </View>
 
-    </View>
 
   );
 }
@@ -139,10 +148,7 @@ const styles = StyleSheet.create({
     borderColor: '#301E6A',
   },
 
-  menu: {
-    color: '#8C4CD8',
-    fontSize: fp(29),
-  },
+
 
   logo: {
     color: '#fff',
@@ -192,7 +198,34 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#301E6A',
   },
+pointsContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
 
+  backgroundColor: '#130C36',
+
+  borderWidth: 1.5,
+  borderColor: '#3B2A77',
+
+  borderRadius: wp(6),
+
+  paddingHorizontal: wp(2.5),
+  height: wp(11),
+
+  gap: wp(1.2),
+},
+
+coin: {
+  width: wp(4.8),
+  height: wp(4.8),
+  resizeMode: 'contain',
+},
+
+pointsText: {
+  color: '#FFD76A',
+  fontFamily: 'Pixel',
+  fontSize: fp(12),
+},
   /* RED NOTIFICATION DOT */
   dot: {
     position: 'absolute',

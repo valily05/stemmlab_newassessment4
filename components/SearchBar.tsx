@@ -43,7 +43,7 @@ export default function SearchBar({
   return (
     <View style={styles.container}>
       <Image
-        source={require('../assets/images/Group 72.png')}
+        source={require('../assets/images/Search.png')}
         style={styles.searchIcon}
       />
 

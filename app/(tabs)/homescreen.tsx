@@ -20,10 +20,7 @@ export default function HomeScreen() {
 
   const [search, setSearch] = useState('');
 
-  // USER DATA
   const userPoints = 500;
-
-  const userLevel = 3;
 
   return (
 
@@ -46,7 +43,7 @@ export default function HomeScreen() {
           {/* DARK OVERLAY */}
           <View style={styles.overlay}>
 
-            <Header />
+<Header points={userPoints} />
 
             <Hero />
 
