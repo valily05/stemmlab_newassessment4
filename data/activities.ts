@@ -52,8 +52,7 @@ export const activities = [
       "b",
     ],
 
-    referencePhoto: require(''),
-
+referencePhoto: require('../assets/images/referenceSetup.png'),
     safetyNotes: [
       "a",
       "b",
@@ -92,8 +91,7 @@ export const activities = [
       "b",
     ],
 
-    referencePhoto: require(''),
-
+referencePhoto: require('../assets/images/referenceSetup.png'),
     safetyNotes: [
       "a",
       "b",
