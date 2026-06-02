@@ -12,6 +12,7 @@ import {
   View
 } from 'react-native';
 
+import WarningMessage from '@/components/auth/WarningMessage';
 import { AuthButton, AuthInput } from '@/components/AuthElements';
 import PasswordChecklist from '@/components/PasswordChecklist';
 import PasswordStrength from '@/components/PasswordStrength';
@@ -162,21 +163,9 @@ export default function RegisterScreen() {
               />
 
               {isNameOffensive && (
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 4, marginBottom: 9, marginTop: -2 }}>
-                  <Image
-                    source={require('../../assets/images/warning.png')}
-                    style={{ width: 16, height: 16, marginRight: 7 }}
-                  />
-                  <Text style={{
-                    color: '#ef4444',
-                    fontSize: 11,
-                    fontFamily: 'LEMONMILK',
-                    backgroundColor: 'rgba(0,0,0,0.9)'
-                  }}>
-                    {t.warningName}
-                  </Text>
-                </View>
+                <WarningMessage message={t.warningName} />
               )}
+
               <AuthInput
                 label={t.email} 
                 image={require('../../assets/images/Letter.png')}
@@ -186,21 +175,9 @@ export default function RegisterScreen() {
               />
 
               {isEmailOffensive && (
-                <View style={{ flexDirection: 'row', alignItems: 'center',marginLeft: 4,marginBottom:9,marginTop:-2 }}>
-                  <Image
-                    source={require('../../assets/images/warning.png')}
-                    style={{ width: 16, height: 16, marginRight: 7 }}
-                  />
-                  <Text style={{
-                    color: '#ef4444',
-                    fontSize: 11,
-                    fontFamily: 'LEMONMILK',
-                    backgroundColor: 'rgba(0,0,0,0.9)'
-                  }}>
-                    {t.warningEmail}
-                  </Text>
-                </View>
+                <WarningMessage message={t.warningEmail} />
               )}
+
               <AuthInput 
                 label={t.password} 
                 image={require('../../assets/images/Lock.png')} 
@@ -213,41 +190,15 @@ export default function RegisterScreen() {
 
               <PasswordChecklist validation={passwordValidation} t={t} />
               <PasswordStrength password={password} score={passwordValidation.score} labelEmpty={t.PS} t={t} />
-              
               {/* PASSWORD WARNINGS */}
               {isCommonPassword && (
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 4, marginTop: 4 }}>
-                  <Image
-                    source={require('../../assets/images/warning.png')}
-                    style={{ width: 16, height: 16, marginRight: 7 }}
-                  />
-                  <Text style={{
-                    color: '#ef4444',
-                    fontSize: 11,
-                    fontFamily: 'LEMONMILK',
-                    backgroundColor: 'rgba(0,0,0,0.9)'
-                  }}>
-                    Avoid common passwords
-                  </Text>
-                </View>
+                <WarningMessage message="Avoid common passwords" />
               )}
 
               {isOffensive && (
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 4, marginTop: 4,marginBottom:9, }}>
-                  <Image
-                    source={require('../../assets/images/warning.png')}
-                    style={{ width: 16, height: 16, marginRight: 7 }}
-                  />
-                  <Text style={{
-                    color: '#ef4444',
-                    fontSize: 11,
-                    fontFamily: 'LEMONMILK',
-                    backgroundColor: 'rgba(0,0,0,0.9)'
-                  }}>
-                    {t.warningOffensive}    
-                  </Text>
-                </View>
+                <WarningMessage message={t.warningOffensive} />
               )}
+
               <View ref={confirmRef}>
                 <AuthInput 
                   label={t.confirmPassword} 
