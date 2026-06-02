@@ -1,5 +1,7 @@
+import { auth } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
+import { getAvatarSource } from '../../data/avatarData';
 
 import {
   ImageBackground,
@@ -16,12 +18,13 @@ import Hero from '../../components/Hero';
 import SearchBar from '../../components/SearchBar';
 import SearchResults from '../../components/SearchResults';
 import TeamRankingCard from '../../components/TeamRankingCard';
+import Streak from '../../components/streak';
 export default function HomeScreen() {
 
   const [search, setSearch] = useState('');
 
   const userPoints = 500;
-
+const hasTeam = true;
   return (
 
     <View style={styles.container}>
@@ -43,8 +46,12 @@ export default function HomeScreen() {
           {/* DARK OVERLAY */}
           <View style={styles.overlay}>
 
-<Header points={userPoints} />
-
+<Header
+  avatarSource={getAvatarSource(
+    auth.currentUser?.photoURL,
+    auth.currentUser?.uid
+  )}
+/>
             <Hero />
 
             {/* POINTS CARD HIDDEN */}
@@ -78,6 +85,12 @@ export default function HomeScreen() {
 
           {/* ACTIVITIES */}
           <ActivitiesSection userPoints={userPoints} />
+
+<Streak
+  hasTeam={hasTeam}
+  streak={4}
+  points={250}
+/>
 
           <Banner />
 

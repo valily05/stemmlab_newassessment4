@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import {
   Dimensions,
   Image,
@@ -7,8 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -31,17 +30,29 @@ const fp = (size: number) => {
   );
 };
 
+import { ImageSourcePropType } from 'react-native';
+
 type HeaderProps = {
-  points: number;
+  avatarSource: ImageSourcePropType;
 };
 
-export default function Header({ points }: HeaderProps) {
+export default function Header({
+  avatarSource,
+}: HeaderProps) {
   // CHANGE THIS
   const hasNotification = false;
 
   return (
 
     <View style={styles.header}>
+{/* HAMBURGER */}
+<TouchableOpacity style={styles.menuBtn}>
+  <Ionicons
+    name="menu"
+    size={fp(24)}
+    color="#C084FC"
+  />
+</TouchableOpacity>
 
       {/* CENTER */}
       <View style={styles.center}>
@@ -88,29 +99,15 @@ export default function Header({ points }: HeaderProps) {
           )}
 
         </TouchableOpacity>
-  {/* POINTS */}
-  <View style={styles.pointsContainer}>
-    <Image
-      source={require('../assets/images/starcoin.png')}
-      style={styles.coin}
-    />
-<Text style={styles.pointsText}>
-  {points.toLocaleString()}
-</Text>
-  </View>
 
-  <Image
-    source={require('../assets/images/miffy.png')}
-    style={styles.avatar}
-  />
+
 
 </View>
-        {/* PROFILE */}
-        <Image
-          source={require('../assets/images/miffy.png')}
-          style={styles.avatar}
-        />
-
+   
+<Image
+  source={avatarSource}
+  style={styles.avatar}
+/>
       </View>
 
 
@@ -132,22 +129,6 @@ const styles = StyleSheet.create({
   center: {
     alignItems: 'center',
   },
-
-  circleBtn: {
-    width: wp(12),
-    height: wp(12),
-
-    borderRadius: wp(6),
-
-    backgroundColor: '#130C36',
-
-    justifyContent: 'center',
-    alignItems: 'center',
-
-    borderWidth: 2,
-    borderColor: '#301E6A',
-  },
-
 
 
   logo: {
@@ -198,34 +179,23 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#301E6A',
   },
-pointsContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-
-  backgroundColor: '#130C36',
-
-  borderWidth: 1.5,
-  borderColor: '#3B2A77',
+menuBtn: {
+  width: wp(11),
+  height: wp(11),
 
   borderRadius: wp(6),
 
-  paddingHorizontal: wp(2.5),
-  height: wp(11),
+  backgroundColor: '#130C36',
 
-  gap: wp(1.2),
+  justifyContent: 'center',
+  alignItems: 'center',
+
+  borderWidth: 2,
+  borderColor: '#301E6A',
+  
 },
 
-coin: {
-  width: wp(4.8),
-  height: wp(4.8),
-  resizeMode: 'contain',
-},
 
-pointsText: {
-  color: '#FFD76A',
-  fontFamily: 'Pixel',
-  fontSize: fp(12),
-},
   /* RED NOTIFICATION DOT */
   dot: {
     position: 'absolute',
@@ -241,11 +211,12 @@ pointsText: {
     backgroundColor: '#FF4D6D',
   },
 
-  avatar: {
-    width: wp(12.5),
-    height: wp(12.5),
+avatar: {
+  width: wp(12.5),
+  height: wp(12.5),
 
-    resizeMode: 'contain',
-  },
+  borderRadius: wp(6.25),
+  resizeMode: 'cover',
+},
 
 });
