@@ -1,6 +1,7 @@
 import { auth } from "@/services/firebase/config";
 import { getAllTeams, getTeam, getTopTeams } from "@/services/firebase/teamService";
 import { getUserProfile } from "@/services/firebase/userService";
+import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from "react";
 import {
@@ -12,6 +13,8 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+
+
 const { width, height } = Dimensions.get('window');
 
 const wp = (percentage: number) =>
@@ -41,6 +44,35 @@ const fp = (size: number) =>
     .slice(0, 2)
     .toUpperCase();
 };
+// PUT IT HERE
+const GradientText = ({ children }: any) => (
+  <MaskedView
+    maskElement={
+      <Text style={styles.gradientText}>
+        {children}
+      </Text>
+    }
+  >
+    <LinearGradient
+      colors={[
+        '#FF9BEF',
+        '#FF69C9',
+        '#FF3DAA',
+      ]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+    >
+      <Text
+        style={[
+          styles.gradientText,
+          { opacity: 0 }
+        ]}
+      >
+        {children}
+      </Text>
+    </LinearGradient>
+  </MaskedView>
+);
 
 export default function TeamRankingCard() {
 
@@ -92,16 +124,16 @@ setUserRank(index >= 0 ? index + 1 : null);
 
   return (
 <LinearGradient
-  colors={[
-    '#0A041D',
-    '#160734',
-    '#220A4D',
-    '#160734',
-    '#0A041D',
-  ]}
+colors={[
+  '#24114F',
+  '#321A6B',
+  '#4A2792',
+  '#321A6B',
+  '#24114F',
+]}
   locations={[0, 0.25, 0.5, 0.75, 1]}
-  start={{ x: 0, y: 0.5 }}
-  end={{ x: 1, y: 0.8 }}
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 1 }}
   style={styles.card}
 >
 
@@ -114,7 +146,7 @@ setUserRank(index >= 0 ? index + 1 : null);
 
 <Image
   source={require('../assets/images/medal-red.png')}
-  style={styles.placeBadge}
+  style={styles.medal}
 />
 </View>
 
@@ -183,14 +215,24 @@ setUserRank(index >= 0 ? index + 1 : null);
         
       
   
-{/* NO TEAM MESSAGE */}
 {!userTeam && (
-  <View style={styles.userTeamContainer}>
-    <Text style={styles.userTeamName}>
-      🚀 Join a team now to compete on the leaderboard!
-    </Text>
-  </View>
-)} 
+<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+  <Text style={styles.userTeamName}>Join a </Text>
+
+<Text style={styles.highlightText}>
+  team
+</Text>
+  <Text style={styles.userTeamName}>
+    {' '}now to compete on the{' '}
+  </Text>
+
+  <GradientText>
+    leaderboard
+  </GradientText>
+
+  <Text style={styles.userTeamName}>!</Text>
+</View>
+)}
 
     
 {/* USER TEAM */}
@@ -239,31 +281,28 @@ setUserRank(index >= 0 ? index + 1 : null);
 const styles = StyleSheet.create({
 card: {
   marginTop: hp(2),
-
   borderRadius: fp(12),
-
   overflow: 'hidden',
 
-  borderWidth: 1,
-  borderColor: 'rgba(170,120,255,0.65)',
 
-  backgroundColor: '#120C2E',
 
   paddingHorizontal: wp(4),
   paddingVertical: hp(1.8),
 
-  shadowColor: '#7058FF',
-  shadowOpacity: 0.25,
-  shadowRadius: fp(8),
 
-  elevation: 8,
+    borderWidth: 1,
+  borderColor: 'rgba(186, 142, 255, 0.18)',
+
+  shadowColor: '#9B6BFF',
+  shadowOpacity: 0.28,
+  shadowRadius: fp(12),
 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    marginBottom: 14,
+   marginBottom: hp(1.5),
   },
 placeBadge: {
   width: wp(12),
@@ -280,22 +319,31 @@ placeBadge: {
 
   title: {
     color: 'white',
-    fontSize: 16,
+     fontSize: fp(25),
     fontWeight: '700',
+    fontFamily:'PixelBold'
   },
 
-  trophy: {
-    width: 18,
-    height: 18,
-
-    marginLeft: 6,
+  medal: {
+    width: wp(4),
+  height: wp(6.8),
+  marginLeft: wp(3),
   },
 
   viewAll: {
     color: '#9F8BFF',
-    fontSize: 11,
+fontSize: fp(15),
+fontFamily:'PixelOperator'
   },
+highlightText: {
+  color: '#FFB7F1',
+  fontFamily: 'PixelBold',
 
+  backgroundColor: 'rgba(255,105,201,0.15)',
+
+  paddingHorizontal: wp(1),
+  borderRadius: fp(4),
+},
 teamRow: {
   flexDirection: 'row',
   alignItems: 'center',
@@ -319,8 +367,50 @@ crown: {
 
   marginLeft: wp(1),
 },
+joinTeamContainer: {
+  marginTop: hp(1),
 
+  paddingVertical: hp(1.4),
+  paddingHorizontal: wp(3.5),
 
+  borderRadius: fp(14),
+
+  backgroundColor: 'rgba(122, 95, 255, 0.15)',
+
+  borderWidth: 1,
+  borderColor: 'rgba(155, 107, 255, 0.45)',
+
+  shadowColor: '#9B6BFF',
+  shadowOpacity: 0.25,
+  shadowRadius: fp(10),
+
+  elevation: 5,
+},
+gradientText: {
+  fontFamily: 'PixelBold',
+  fontSize: fp(16),
+
+  includeFontPadding: false,
+},
+
+joinTitle: {
+  color: '#FF8FD8',
+
+  fontSize: fp(12),
+  fontWeight: '700',
+
+  marginBottom: hp(0.2),
+  fontFamily:'PixelOperator'
+},
+
+joinSubtitle: {
+  color: '#F5EFFF',
+
+  fontSize: fp(10),
+  lineHeight: fp(14),
+    fontFamily:'PixelOperator'
+
+},
 
 
 pointsIcon: {
@@ -360,11 +450,12 @@ points: {
     marginTop: 8,
 
     backgroundColor: '#241758',
+  borderRadius: fp(14),
 
-    borderRadius: 14,
+  paddingVertical: hp(1.2),
+  paddingHorizontal: wp(3),
 
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+   
 
     flexDirection: 'row',
     alignItems: 'center',
@@ -388,40 +479,40 @@ teamAvatar: {
 teamSubtext: {
   color: '#B8B4D8',
 
-  fontSize: 10,
-
-  marginTop: 2,
+    fontSize: fp(9),
+  marginTop: hp(0.2),
 },
   rankCircle: {
-    width: 24,
-    height: 24,
+  width: wp(6),
+  height: wp(6),
 
-    borderRadius: 12,
-
+  borderRadius: wp(3),
     backgroundColor: '#37257F',
 
     justifyContent: 'center',
     alignItems: 'center',
 
-    marginRight: 8,
+  marginRight: wp(2),
   },
 
   rankCircleText: {
     color: 'white',
-    fontSize: 11,
+  fontSize: fp(10),
     fontWeight: '700',
   },
 
   userTeamName: {
     flex: 1,
-
-    color: 'white',
-    fontWeight: '600',
+  color: 'white',
+  fontSize: fp(16),
+  fontWeight: '600',
+  fontFamily:'PixelOperator'
   },
 
   userPoints: {
     color: '#FFD15C',
-    fontWeight: '700',
+  fontSize: fp(11),
+  fontWeight: '700',
   },
 
 });
