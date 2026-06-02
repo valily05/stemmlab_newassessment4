@@ -1,6 +1,7 @@
 import { auth } from "@/services/firebase/config";
 import { getAllTeams, getTeam, getTopTeams } from "@/services/firebase/teamService";
 import { getUserProfile } from "@/services/firebase/userService";
+import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -11,7 +12,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-
 const { width, height } = Dimensions.get('window');
 
 const wp = (percentage: number) =>
@@ -91,7 +91,19 @@ setUserRank(index >= 0 ? index + 1 : null);
   }
 
   return (
-    <View style={styles.card}>
+<LinearGradient
+  colors={[
+    '#0A041D',
+    '#160734',
+    '#220A4D',
+    '#160734',
+    '#0A041D',
+  ]}
+  locations={[0, 0.25, 0.5, 0.75, 1]}
+  start={{ x: 0, y: 0.5 }}
+  end={{ x: 1, y: 0.8 }}
+  style={styles.card}
+>
 
       {/* HEADER */}
       <View style={styles.header}>
@@ -220,7 +232,7 @@ setUserRank(index >= 0 ? index + 1 : null);
  </View>
 )}
 
-</View>
+</LinearGradient>
 );
 }
 
@@ -228,15 +240,17 @@ const styles = StyleSheet.create({
 card: {
   marginTop: hp(2),
 
-  backgroundColor: '#120C2E',
+  borderRadius: fp(12),
 
-  borderRadius: fp(14),
+  overflow: 'hidden',
 
   borderWidth: 1,
-  borderColor: '#2B1B59',
+  borderColor: 'rgba(170,120,255,0.65)',
 
-  paddingHorizontal: wp(3),
-  paddingVertical: hp(1.3),
+  backgroundColor: '#120C2E',
+
+  paddingHorizontal: wp(4),
+  paddingVertical: hp(1.8),
 
   shadowColor: '#7058FF',
   shadowOpacity: 0.25,

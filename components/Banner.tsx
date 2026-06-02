@@ -92,7 +92,7 @@ container: {
   marginTop: rf(-16),
 
   shadowColor: '#8B5CF6',
-  shadowOpacity: 0.35,
+  shadowOpacity: 0.2,
   shadowRadius: scale(14),
 
   shadowOffset: {
