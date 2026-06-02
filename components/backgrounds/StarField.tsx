@@ -1,9 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
 import { LAYOUT } from '@/constants/layout';
 
-export default function StarField() {
+type Props = {
+    variant?: 'simple' | 'full';
+};
+
+export default function StarField({ variant = 'full',}: Props) {
     const STAR_COLORS = [
         '#ffffff',
         '#60A5FA', // blue
@@ -17,8 +21,13 @@ export default function StarField() {
         '#A78BFA', // soft violet
     ];
 
+    const staticStarCount =
+        variant === 'simple'
+            ? 0
+            : 30;
+
     const staticStars = useRef(
-        Array.from({ length: 30 }).map(() => {
+        Array.from({ length: staticStarCount }).map(() => {
             const isSpecial = Math.random() > 0.6; 
 
             return {
@@ -37,7 +46,11 @@ export default function StarField() {
     ).current;
 
     const stars = useRef(
-        Array.from({ length: 90 }).map(() => {
+        Array.from({
+            length: variant === 'simple'
+                ? 60
+                : 90,
+        }).map(() => {
           const isSpecial = Math.random() > 0.7;
     
           return {
@@ -49,9 +62,12 @@ export default function StarField() {
             opacity: new Animated.Value(Math.random()),
             scale: new Animated.Value(1), 
             isSpecial,
-            color: isSpecial
-              ? SPECIAL_COLORS[Math.floor(Math.random() * SPECIAL_COLORS.length)]
-              : STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)],
+            color: 
+                variant === 'simple'
+                    ? '#FFFFFF'
+                    : isSpecial
+                        ? SPECIAL_COLORS[Math.floor(Math.random() * SPECIAL_COLORS.length)]
+                        : STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)],
           };
         })
     ).current;
@@ -83,7 +99,7 @@ export default function StarField() {
     
           setTimeout(() => twinkle.start(), Math.random() * 3000);
     
-          if (star.isSpecial) {
+          if (variant === 'full' && star.isSpecial) {
             Animated.loop(
               Animated.sequence([
                 Animated.timing(star.scale, {
@@ -100,62 +116,62 @@ export default function StarField() {
             ).start();
           }
         });
-    }, []);
+    }, [variant]);
 
     return (
         <>
         {/* ⭐ STAR BACKGROUND */}
         <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
             {/* STATIC STARS */}
-            {staticStars.map((star, index) => (
-            <View
-                key={'static-' + index}
-                style={{
-                position: 'absolute',
-                left: star.x,
-                top: star.y,
-                width: star.size,
-                height: star.size,
-                opacity: star.opacity,
-                alignItems: 'center',
-                justifyContent: 'center',
-                }}
-            >
-                {star.isSparkle ? (
-                <>
-                    {/* vertical */}
-                    <View style={{
+            {variant === 'full' && staticStars.map((star, index) => (
+                <View
+                    key={'static-' + index}
+                    style={{
                     position: 'absolute',
-                    width: 2,
-                    height: star.size * 2,
-                    backgroundColor: star.color,
-                    shadowColor: star.color,
-                    shadowOpacity: 0.6,
-                    shadowRadius: 8,
-                    }} />
-                    {/* horizontal */}
-                    <View style={{
-                    position: 'absolute',
-                    width: star.size * 2,
-                    height: 2,
-                    backgroundColor: star.color,
-                    shadowColor: star.color,
-                    shadowOpacity: 0.6,
-                    shadowRadius: 8,
-                    }} />
-                </>
-                ) : (
-                <View style={{
+                    left: star.x,
+                    top: star.y,
                     width: star.size,
                     height: star.size,
-                    borderRadius: 50,
-                    backgroundColor: star.color,
-                    shadowColor: star.color,
-                    shadowOpacity: 1,
-                    shadowRadius: 6,
-                }} />
-                )}
-            </View>
+                    opacity: star.opacity,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    }}
+                >
+                    {star.isSparkle ? (
+                    <>
+                        {/* vertical */}
+                        <View style={{
+                        position: 'absolute',
+                        width: 2,
+                        height: star.size * 2,
+                        backgroundColor: star.color,
+                        shadowColor: star.color,
+                        shadowOpacity: 0.6,
+                        shadowRadius: 8,
+                        }} />
+                        {/* horizontal */}
+                        <View style={{
+                        position: 'absolute',
+                        width: star.size * 2,
+                        height: 2,
+                        backgroundColor: star.color,
+                        shadowColor: star.color,
+                        shadowOpacity: 0.6,
+                        shadowRadius: 8,
+                        }} />
+                    </>
+                    ) : (
+                    <View style={{
+                        width: star.size,
+                        height: star.size,
+                        borderRadius: 50,
+                        backgroundColor: star.color,
+                        shadowColor: star.color,
+                        shadowOpacity: 1,
+                        shadowRadius: 6,
+                    }} />
+                    )}
+                </View>
             ))}
 
             {/* ANIMATED STARS */}

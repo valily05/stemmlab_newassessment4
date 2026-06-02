@@ -1,8 +1,7 @@
 import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   Alert,
-  Animated,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -15,6 +14,7 @@ import {
   View
 } from 'react-native';
 
+import StarField from '@/components/backgrounds/StarField';
 import { AuthButton, AuthInput } from '@/components/AuthElements';
 import { LAYOUT } from '@/constants/layout';
 import { useLanguage } from '@/context/LanguageContext';
@@ -28,35 +28,6 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
 
   const { language, t } = useLanguage();
-
-  // ⭐ STAR BACKGROUND (same as signup)
-  const stars = useRef(
-    Array.from({ length: 60 }).map(() => ({
-      x: Math.random() * LAYOUT.width,
-      y: Math.random() * LAYOUT.height,
-      size: Math.random() * 2 + 1,
-      opacity: new Animated.Value(Math.random()),
-    }))
-  ).current;
-
-  React.useEffect(() => {
-    stars.forEach((star) => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(star.opacity, {
-            toValue: 0.8,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(star.opacity, {
-            toValue: 0.3,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    });
-  }, []);
 
   async function handleLogin() {
     try {
@@ -80,24 +51,7 @@ export default function LoginScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1, backgroundColor: '#020617' }}>
 
-        {/*  BACKGROUND */}
-        <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
-          {stars.map((star, i) => (
-            <Animated.View
-              key={i}
-              style={{
-                position: 'absolute',
-                left: star.x,
-                top: star.y,
-                width: star.size,
-                height: star.size,
-                borderRadius: 50,
-                backgroundColor: '#fff',
-                opacity: star.opacity,
-              }}
-            />
-          ))}
-        </View>
+        <StarField variant="simple" />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -106,7 +60,7 @@ export default function LoginScreen() {
           <ScrollView contentContainerStyle={{ paddingTop: 60, paddingBottom: 40 }}>
 
             {/* LANGUAGE */}
-            <TouchableOpacity style={styles.langContainer}>
+            <TouchableOpacity style={styles.langContainer} onPress={() => router.push('/language')}>
               <Image source={require('../../assets/images/globe.png')} style={styles.langIcon}/>
               <Text style={styles.langText}>{language}</Text>
               <Text style={styles.langArrow}>▼</Text>

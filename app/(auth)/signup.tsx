@@ -12,12 +12,12 @@ import {
   View
 } from 'react-native';
 
-import PasswordMatchIndicator from '@/components/auth/PasswordMatchIndicator';
-import WarningMessage from '@/components/auth/WarningMessage';
-import { AuthButton, AuthInput } from '@/components/AuthElements';
 import PasswordChecklist from '@/components/auth/PasswordChecklist';
+import PasswordMatchIndicator from '@/components/auth/PasswordMatchIndicator';
 import PasswordStrength from '@/components/auth/PasswordStrength';
+import WarningMessage from '@/components/auth/WarningMessage';
 import StarField from '@/components/backgrounds/StarField';
+import { AuthButton, AuthInput } from '@/components/AuthElements';
 import { LAYOUT } from '@/constants/layout';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -129,7 +129,7 @@ export default function RegisterScreen() {
   return (
     //<TouchableWithoutFeedback onPress={Keyboard.dismiss}> This causes weird scroll behavior
       <View style={{ flex: 1, backgroundColor: '#020617' }}>
-        <StarField />
+        <StarField variant='full'/>
 
         {/* UI stays unchanged below */}
         <KeyboardAvoidingView
