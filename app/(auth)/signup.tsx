@@ -12,6 +12,7 @@ import {
   View
 } from 'react-native';
 
+import PasswordMatchIndicator from '@/components/auth/PasswordMatchIndicator';
 import WarningMessage from '@/components/auth/WarningMessage';
 import { AuthButton, AuthInput } from '@/components/AuthElements';
 import PasswordChecklist from '@/components/PasswordChecklist';
@@ -214,11 +215,11 @@ export default function RegisterScreen() {
                 />
               </View>
 
-              <Animated.View style={{ transform: [{ translateX: shakeAnim }], marginTop: 6, marginLeft: 4, opacity: confirmPassword.length > 0 ? 0.9 : 0 }}>
-                <Text style={{ fontFamily: 'BebasNeue', fontSize: 14, color: isMatch ? '#22c55e' : '#ef4444', top: -13, backgroundColor: 'rgba(0,0,0,0.9)' }}>
-                  {isMatch ? '✓ Passwords match' : '✕ Passwords do not match'}
-                </Text>
-              </Animated.View>
+              <PasswordMatchIndicator
+                isMatch={isMatch}
+                visible={confirmPassword.length>0}
+                shakeAnim={shakeAnim}
+              />
 
               <AuthButton 
                 title={t.register}
