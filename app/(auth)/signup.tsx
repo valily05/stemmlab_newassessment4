@@ -15,8 +15,8 @@ import {
 import PasswordMatchIndicator from '@/components/auth/PasswordMatchIndicator';
 import WarningMessage from '@/components/auth/WarningMessage';
 import { AuthButton, AuthInput } from '@/components/AuthElements';
-import PasswordChecklist from '@/components/PasswordChecklist';
-import PasswordStrength from '@/components/PasswordStrength';
+import PasswordChecklist from '@/components/auth/PasswordChecklist';
+import PasswordStrength from '@/components/auth/PasswordStrength';
 import StarField from '@/components/backgrounds/StarField';
 import { LAYOUT } from '@/constants/layout';
 import { useLanguage } from '@/context/LanguageContext';
