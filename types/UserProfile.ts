@@ -8,6 +8,4 @@ export interface UserProfile {
     //add other info later
     createdAt?: Timestamp;
     lastUpdate?: Timestamp;
-    teamId?: string;
-    isLeader?: boolean;
 }
