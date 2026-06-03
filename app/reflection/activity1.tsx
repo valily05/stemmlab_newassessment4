@@ -607,7 +607,7 @@ colors={[
 
 <View style={styles.questionRow}>
   <Text style={styles.cardTitle}>
-    WHAT DID YOU LEARN?
+    WHAT DID YOU LIKE ABOUT THIS ACTIVITY?
   </Text>
 
 <Text
@@ -630,7 +630,7 @@ colors={[
     multiline
     value={learned}
     onChangeText={setLearned}
-    placeholder="Describe what you discovered during this experiment..."
+    placeholder="Describe which part of the activity you like most..."
     placeholderTextColor="#C7C9E8"
     style={styles.input}
 onFocus={() => {
@@ -648,7 +648,7 @@ onFocus={() => {
 
 <View style={styles.questionRow}>
   <Text style={styles.cardTitle}>
-    WHAT WOULD YOU IMPROVE?
+    WHAT DIFFICULTIES DID YOU EXPERIENCED?
   </Text>
 
 <Text
