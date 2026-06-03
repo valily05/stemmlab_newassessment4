@@ -1,26 +1,38 @@
+import { useState } from 'react';
+
+import MaskedView from '@react-native-masked-view/masked-view';
+
+import { auth } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRef, useState } from 'react';
 import {
-  Animated,
   Dimensions,
+  ImageBackground,
   PixelRatio,
+  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
-
+import BottomNavbar from '../../components/BottomNavBar';
+import Header from '../../components/Header';
+import TeamCard from '../../components/TeamCard';
+import TeamCodeCard from '../../components/TeamCodeCard';
+import TeamMembersCard from '../../components/TeamMembersCard';
+import { getAvatarSource } from '../../data/avatarData';
 const { width, height } = Dimensions.get('window');
 
-const wp = (percentage: number) =>
-  PixelRatio.roundToNearestPixel(
+/* RESPONSIVE HELPERS */
+const wp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
     (width * percentage) / 100
   );
+};
 
-const hp = (percentage: number) =>
-  PixelRatio.roundToNearestPixel(
+const hp = (percentage: number) => {
+  return PixelRatio.roundToNearestPixel(
     (height * percentage) / 100
   );
+};
 
 const rf = (size: number) => {
   const scale = width / 390;
@@ -30,384 +42,438 @@ const rf = (size: number) => {
   );
 };
 
-interface TeamCardProps {
-  teamName: string;
-  teamCode: string;
-  totalPoints: number;
-  rank: number;
-}
+export default function Activities() {
 
-export default function TeamCard({
-  teamName,
-  teamCode,
-  totalPoints,
-  rank,
-}: TeamCardProps) {
-  const [flipped, setFlipped] = useState(false);
+  const [search, setSearch] = useState('');
 
-  const flipAnim = useRef(
-    new Animated.Value(0)
-  ).current;
-
-  const flipCard = () => {
-    Animated.spring(flipAnim, {
-      toValue: flipped ? 0 : 180,
-      friction: 8,
-      tension: 10,
-      useNativeDriver: true,
-    }).start();
-
-    setFlipped(!flipped);
-  };
-
-  const frontInterpolate = flipAnim.interpolate({
-    inputRange: [0, 180],
-    outputRange: ['0deg', '180deg'],
-  });
-
-  const backInterpolate = flipAnim.interpolate({
-    inputRange: [0, 180],
-    outputRange: ['180deg', '360deg'],
-  });
+  const [selectedCategory, setSelectedCategory] =
+    useState('ALL');
 
   return (
-    <TouchableOpacity
-      activeOpacity={1}
-      onPress={flipCard}
-    >
-      <View style={styles.flipContainer}>
 
-        {/* FRONT */}
+    <View style={styles.container}>
 
-        <Animated.View
-          style={[
-            styles.cardFace,
-                      
-            {
-transform: [
-  { perspective: 1000 },
-  { rotateY: frontInterpolate },
-],
-            },
-          ]}
-        >
-          <LinearGradient
-            colors={[
-              '#0A041D',
-              '#160734',
-              '#220A4D',
-              '#160734',
-              '#0A041D',
-            ]}
-            locations={[
-              0,
-              0.25,
-              0.5,
-              0.75,
-              1,
-            ]}
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.8 }}
-            style={styles.container}
-          >
-            <View style={styles.topRow}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: hp(22),
+        }}
+      >
 
-              <View>
-                <Text style={styles.label}>
-                  TEAM
+        {/* HERO SECTION */}
+<ImageBackground
+  source={require('../../assets/images/teambg2.png')}
+  style={styles.topSection}
+  resizeMode="cover"
+  imageStyle={{
+    transform: [
+      { scale: 1.14 },
+      { translateY: -80 }, // move image UP
+    ],
+  }}
+>
+
+          {/* OVERLAY */}
+          <View style={styles.overlay}>
+
+            {/* HEADER */}
+         <Header
+           avatarSource={getAvatarSource(
+             auth.currentUser?.photoURL,
+             auth.currentUser?.uid
+           )}
+         />
+
+            {/* TITLE SECTION */}
+            <View style={styles.titleContainer}>
+
+              {/* TITLE ROW */}
+              <View style={styles.titleRow}>
+
+                {/* GRADIENT TITLE */}
+                <MaskedView
+                  maskElement={
+                    <Text style={styles.title}>
+                      TEAM
+                    </Text>
+                  }
+                >
+
+                  <LinearGradient
+                    colors={[
+                      '#A061F5',
+                      '#8B5CF6',
+                      '#5D398F',
+                    ]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                  >
+
+                    <Text
+                      style={[
+                        styles.title,
+                        styles.hiddenText,
+                      ]}
+                    >
+                      TEAM
+                    </Text>
+
+                  </LinearGradient>
+
+                </MaskedView>
+
+                {/* STAR */}
+                <Text style={styles.star}>
+                  ✦
                 </Text>
 
-                <Text style={styles.teamName}>
-                  {teamName}
-                </Text>
-
-                <Text style={styles.teamCode}>
-                  {teamCode}
-                </Text>
               </View>
 
-              <View style={styles.rankBadge}>
-                <Text style={styles.rankText}>
-                  #{rank}
-                </Text>
-              </View>
+              {/* SUBTITLE */}
+              <Text style={styles.subtitle}>
+                Tiny Explorers , Big Ideas
+              </Text>
 
             </View>
 
-            <View style={styles.divider} />
+          </View>
 
-            <View style={styles.statsRow}>
-
-              <View style={styles.stat}>
-                <Text style={styles.statValue}>
-{(totalPoints ?? 0).toLocaleString()}                </Text>
-
-                <Text style={styles.statLabel}>
-                  Team Points
-                </Text>
-              </View>
-
-              <View style={styles.stat}>
-                <Text style={styles.statValue}>
-                  4
-                </Text>
-
-                <Text style={styles.statLabel}>
-                  Members
-                </Text>
-              </View>
-
-            </View>
-
-            <Text style={styles.flipHint}>
-              Tap to view details
-            </Text>
-
-          </LinearGradient>
-        </Animated.View>
-
-        {/* BACK */}
-
-        <Animated.View
-          style={[
-            styles.cardFace,
-            {
-transform: [
-  { perspective: 1000 },
-  { rotateY: backInterpolate },
-],
-            },
-          ]}
-        >
+          {/* BOTTOM GRADIENT */}
           <LinearGradient
             colors={[
-              '#0A041D',
-              '#160734',
-              '#220A4D',
-              '#160734',
-              '#0A041D',
+              'rgba(4,6,27,0)',
+              'rgba(4,6,27,0.45)',
+              'rgba(4,6,27,0.75)',
+              'rgba(4,6,27,0.99)',
+              '#04061B',
             ]}
-            locations={[
-              0,
-              0.25,
-              0.5,
-              0.75,
-              1,
-            ]}
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.8 }}
-            style={styles.container}
-          >
-            <Text style={styles.backTitle}>
-              TEAM DETAILS
-            </Text>
+            locations={[0, 0.35, 0.6, 0.82, 1]}
+            style={styles.gradient}
+          />
 
-            <Text style={styles.backText}>
-              👑 Leader: Valencia
-            </Text>
+        </ImageBackground>
 
-            <Text style={styles.backText}>
-              🚀 Members: 4 / 4
-            </Text>
+        {/* CONTENT */}
+        <View style={styles.content}>
 
-            <Text style={styles.backText}>
-              🏆 Rank: #{rank}
-            </Text>
+<TeamCard
+  teamName="STEMM LAB"
+  teamCode="STEMM47"
+  totalPoints={12450}
+  rank={1}
+/>
 
-            <Text style={styles.backText}>
-              ⭐ Total Points:
-              {' '}
-{(totalPoints ?? 0).toLocaleString()}            </Text>
+<TeamMembersCard />
 
-            <Text style={styles.backHint}>
-              Tap to flip back
-            </Text>
+<TeamCodeCard />
 
-          </LinearGradient>
-        </Animated.View>
+        </View>
 
-      </View>
-    </TouchableOpacity>
+      </ScrollView>
+
+      {/* NAVBAR */}
+      <BottomNavbar />
+
+    </View>
+
   );
 }
 
 const styles = StyleSheet.create({
+membersContainer: {
+  marginTop: hp(2),
 
-  flipContainer: {
-    height: hp(26),
-  },
+  backgroundColor: '#120522',
 
-  cardFace: {
-    position: 'absolute',
-    width: '100%',
-    backfaceVisibility: 'hidden',
-  },
+  borderRadius: rf(20),
 
+  padding: wp(5),
+
+  borderWidth: 1,
+
+  borderColor: '#2B1459',
+},
+
+membersRow: {
+  flexDirection: 'row',
+
+  justifyContent: 'space-between',
+
+  marginTop: hp(2),
+},
+
+memberItem: {
+  alignItems: 'center',
+
+  flex: 1,
+},
+
+avatarLeader: {
+  width: wp(16),
+  height: wp(16),
+
+  borderRadius: wp(8),
+
+  backgroundColor: '#FFD45A',
+
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+avatar: {
+  width: wp(16),
+  height: wp(16),
+
+  borderRadius: wp(8),
+
+  backgroundColor: '#30185F',
+
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+avatarEmpty: {
+  width: wp(16),
+  height: wp(16),
+
+  borderRadius: wp(8),
+
+  borderWidth: 2,
+
+  borderColor: '#A88DFF',
+
+  borderStyle: 'dashed',
+
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+avatarText: {
+  color: '#FFF',
+
+  fontSize: rf(18),
+
+  fontFamily: 'Pixel',
+},
+
+plusText: {
+  color: '#A88DFF',
+
+  fontSize: rf(22),
+
+  fontFamily: 'Pixel',
+},
+
+memberName: {
+  marginTop: hp(1),
+
+  color: '#FFF',
+
+  fontSize: rf(13),
+
+  fontFamily: 'PixelOperator',
+},
+
+memberRoleLeader: {
+  color: '#FFD45A',
+
+  fontSize: rf(11),
+
+  fontFamily: 'PixelOperator',
+},
+
+memberRole: {
+  color: '#A88DFF',
+
+  fontSize: rf(11),
+
+  fontFamily: 'PixelOperator',
+},
+  /* SCREEN */
   container: {
-    height: hp(26),
+    flex: 1,
+    backgroundColor: '#07021B',
+  },
 
-    borderRadius: rf(24),
+  /* HERO SECTION */
+  topSection: {
+    width: '100%',
 
-    padding: wp(5),
-
-    borderWidth: 1,
-
-    borderColor: 'rgba(255,255,255,0.08)',
+    minHeight: hp(50),
 
     overflow: 'hidden',
   },
 
-  topRow: {
-    flexDirection: 'row',
+  /* OVERLAY */
+  overlay: {
+    paddingHorizontal: wp(4),
 
-    justifyContent: 'space-between',
+    zIndex: 2,
+
+    paddingTop: hp(1.5),
+  },
+
+  /* TITLE CONTAINER */
+  titleContainer: {
+    marginTop: hp(10),
+  },
+
+  /* TITLE ROW */
+  titleRow: {
+    flexDirection: 'row',
 
     alignItems: 'center',
   },
 
-  label: {
-    color: '#A88DFF',
-
-    fontSize: rf(12),
-
-    fontFamily: 'PixelOperator',
-  },
-
-  teamName: {
-    color: '#FFFFFF',
-
-    fontSize: rf(24),
-
-    marginTop: hp(0.5),
+  /* TITLE */
+  title: {
+    fontSize: rf(20),
 
     fontFamily: 'Pixel',
+
+    textShadowColor: '#C66CFF',
+
+    textShadowRadius: wp(2.5),
   },
 
-  teamCode: {
-    color: 'rgba(255,255,255,0.65)',
-
-    marginTop: hp(0.4),
-
-    fontSize: rf(14),
-
-    fontFamily: 'PixelOperator',
+  /* HIDDEN TEXT FOR MASK */
+  hiddenText: {
+    opacity: 0,
   },
 
-  rankBadge: {
-    width: wp(15),
+  /* STAR */
+star: {
+  marginLeft: wp(1.5),
 
-    height: wp(15),
+  fontSize: rf(24),
 
-    borderRadius: wp(7.5),
+  color: '#EC588C',
 
-    backgroundColor:
-      'rgba(160,97,245,0.15)',
+  textShadowColor: '#FF4FC3',
 
-    justifyContent: 'center',
-
-    alignItems: 'center',
-
-    borderWidth: 1,
-
-    borderColor:
-      'rgba(255,255,255,0.08)',
+  textShadowOffset: {
+    width: 0,
+    height: 0,
   },
 
-  rankText: {
-    color: '#F4C86B',
+  textShadowRadius: wp(1),
 
-    fontSize: rf(18),
-
-    fontFamily: 'Pixel',
-  },
-
-  divider: {
-    height: 1,
-
-    backgroundColor:
-      'rgba(255,255,255,0.08)',
-
-    marginVertical: hp(2),
-  },
-
-  statsRow: {
-    flexDirection: 'row',
-
-    justifyContent: 'space-between',
-  },
-
-  stat: {
-    flex: 1,
-  },
-
-  statValue: {
-    color: '#FFF',
-
-    fontSize: rf(22),
-
-    fontFamily: 'Pixel',
-  },
-
-  statLabel: {
-    color:
-      'rgba(255,255,255,0.6)',
-
-    fontSize: rf(13),
-
-    marginTop: hp(0.5),
-
-    fontFamily: 'PixelOperator',
-  },
-
-  flipHint: {
-    marginTop: hp(2.5),
-
-    color: '#A88DFF',
-
-    textAlign: 'center',
-
-    fontSize: rf(12),
-
-    fontFamily: 'PixelOperator',
-  },
-
-  backTitle: {
-    color: '#FFF',
-
-    fontSize: rf(22),
-
-    marginBottom: hp(2),
-
-    fontFamily: 'Pixel',
-  },
-
-  backText: {
-    color: '#FFF',
-
-    marginBottom: hp(1.2),
-
-    fontSize: rf(15),
-
-    fontFamily: 'PixelOperator',
-  },
-
-  backHint: {
-    position: 'absolute',
-
-    bottom: hp(2),
-
-    alignSelf: 'center',
-
-    color: '#A88DFF',
-
-    fontSize: rf(12),
-
-    fontFamily: 'PixelOperator',
-  },
-cardBack: {
-  position: 'absolute',
-  width: '100%',
+  opacity: 1,
 },
 
+  /* SUBTITLE */
+  subtitle: {
+    marginTop: hp(1.2),
 
+    color: '#FFFFFF',
+
+    fontSize: rf(16),
+
+    lineHeight: hp(2.6),
+
+    fontFamily: 'PixelOperator',
+  },
+
+  /* BOTTOM GRADIENT */
+  gradient: {
+    position: 'absolute',
+
+    bottom: 0,
+
+    width: '100%',
+
+    height: hp(16),
+
+    zIndex: 2,
+  },
+content: {
+  paddingHorizontal: wp(4),
+},
+membersTable: {
+  marginTop: hp(2),
+
+
+  overflow: 'hidden',
+
+  borderWidth: 1,
+
+
+  backgroundColor: '#120522',
+},
+
+membersTitle: {
+  padding: wp(4),
+
+  color: '#FFF',
+
+  fontSize: rf(18),
+
+  fontFamily: 'Pixel',
+
+  borderBottomWidth: 1,
+
+  borderBottomColor: '#3B226E',
+},
+
+tableHeader: {
+  flexDirection: 'row',
+
+  backgroundColor: '#24104A',
+
+  borderBottomWidth: 1,
+
+  borderBottomColor: '#3B226E',
+
+  paddingVertical: hp(1.2),
+},
+
+headerCell: {
+  flex: 1,
+
+  textAlign: 'center',
+
+  color: '#A88DFF',
+
+  fontFamily: 'PixelOperator',
+},
+
+tableRow: {
+  flexDirection: 'row',
+
+  paddingVertical: hp(1.6),
+
+  borderBottomWidth: 1,
+
+  borderBottomColor: 'rgba(255,255,255,0.08)',
+},
+
+memberCell: {
+  flex: 1,
+
+  textAlign: 'center',
+
+  color: '#FFF',
+
+  fontFamily: 'PixelOperator',
+},
+
+leaderCell: {
+  flex: 1,
+
+  textAlign: 'center',
+
+  color: '#FFD45A',
+
+  fontFamily: 'PixelOperator',
+},
+
+pointsCell: {
+  flex: 1,
+
+  textAlign: 'center',
+
+  color: '#F69AEF',
+
+  fontFamily: 'PixelOperator',
+},
 });

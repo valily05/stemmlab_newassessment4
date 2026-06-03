@@ -172,9 +172,9 @@ colors={[
         style={styles.pointsIcon}
       />
 
-      <Text style={styles.points}>
-        {team.totalPoints.toLocaleString()} pts
-      </Text>
+<Text style={styles.points}>
+  {(team.totalPoints ?? 0).toLocaleString()} pts
+</Text>
     </View>
 
 
