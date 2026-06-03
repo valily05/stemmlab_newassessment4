@@ -1,13 +1,13 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -140,8 +140,7 @@ transform: [
 
               <View style={styles.stat}>
                 <Text style={styles.statValue}>
-                  {totalPoints.toLocaleString()}
-                </Text>
+{(totalPoints ?? 0).toLocaleString()}                </Text>
 
                 <Text style={styles.statLabel}>
                   Team Points
@@ -218,8 +217,7 @@ transform: [
             <Text style={styles.backText}>
               ⭐ Total Points:
               {' '}
-              {totalPoints.toLocaleString()}
-            </Text>
+{(totalPoints ?? 0).toLocaleString()}            </Text>
 
             <Text style={styles.backHint}>
               Tap to flip back

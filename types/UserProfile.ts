@@ -5,7 +5,9 @@ export interface UserProfile {
     fullName: string;
     email: string;
     role: "Student";
-    //add other info later
+
+    teamId?: string;
+
     createdAt?: Timestamp;
     lastUpdate?: Timestamp;
 }
