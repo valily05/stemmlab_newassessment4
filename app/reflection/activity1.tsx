@@ -1,6 +1,8 @@
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Notifications from 'expo-notifications';
+
 import { router } from 'expo-router';
 import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
@@ -18,6 +20,14 @@ import {
   View
 } from 'react-native';
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 const { width, height } = Dimensions.get('window');
 
@@ -80,6 +90,8 @@ const meteor8X = useRef(
   new Animated.Value(-2400)
 ).current;
 useEffect(() => {
+
+  Notifications.requestPermissionsAsync();
 
   Animated.loop(
     Animated.timing(
@@ -200,13 +212,24 @@ const improvementWords =
 const hasBadLanguage =
   containsBadWords(learned) ||
   containsBadWords(improvement);
-
 const canSubmit =
   learnedWords >= 10 &&
   improvementWords >= 10 &&
   !hasBadLanguage &&
   rating > 0;
-  return (
+
+const sendCompletionNotification = async () => {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: '🚀 TEAM MISSION COMPLETE',
+      body: 'STEMM LAB completed Parachute Drop Challenge (+500 Team Points)',
+      sound: true,
+    },
+    trigger: null,
+  });
+};
+
+return (
 
 <LinearGradient
   colors={[
@@ -693,22 +716,24 @@ Please remove inappropriate language before submitting.
 )}
 <TouchableOpacity
   disabled={!canSubmit}
-  onPress={() => {
+onPress={async () => {
 
-    if(!canSubmit){
-      return;
-    }
+  if(!canSubmit){
+    return;
+  }
 
-    console.log({
-      rating,
-      learned,
-      improvement,
-    });
+  await sendCompletionNotification();
 
-    router.replace(
-      '/(tabs)/homescreen'
-    );
-  }}
+  console.log({
+    rating,
+    learned,
+    improvement,
+  });
+
+  router.replace(
+    '/(tabs)/homescreen'
+  );
+}}
   style={[
     styles.submitButton,
     !canSubmit && {
