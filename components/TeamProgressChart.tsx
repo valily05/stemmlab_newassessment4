@@ -11,11 +11,13 @@ interface ChartProps {
 }
 
 export default function TeamProgressChart({ data }: ChartProps) {
-  // Handle empty state to prevent chart errors
-  if (!data || data.length === 0) {
+  // Safety check: Ensure data is an array
+  const safeData = Array.isArray(data) ? data : [];
+
+  if (safeData.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No activity data recorded yet.</Text>
+        <Text style={styles.emptyText}>No activity data yet.</Text>
       </View>
     );
   }
@@ -23,13 +25,13 @@ export default function TeamProgressChart({ data }: ChartProps) {
   return (
     <BarChart
       data={{
-        labels: data.map((item) => item.name),
-        datasets: [{ data: data.map((item) => item.time) }],
+        labels: safeData.map((item) => item.name),
+        datasets: [{ data: safeData.map((item) => item.time) }],
       }}
       width={Dimensions.get('window').width - 40}
       height={220}
-      yAxisLabel=""        // Required by the library
-      yAxisSuffix="m"      // Label for Y-axis (e.g., 10m)
+      yAxisLabel=""
+      yAxisSuffix="m"
       chartConfig={{
         backgroundColor: '#000',
         backgroundGradientFrom: '#2D0B58',
@@ -37,14 +39,8 @@ export default function TeamProgressChart({ data }: ChartProps) {
         decimalPlaces: 0,
         color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
         labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-        propsForLabels: {
-          fontSize: 10,
-        },
       }}
-      style={{
-        marginVertical: 8,
-        borderRadius: 16,
-      }}
+      style={{ marginVertical: 8, borderRadius: 16 }}
       showValuesOnTopOfBars
       verticalLabelRotation={30}
     />
@@ -52,17 +48,6 @@ export default function TeamProgressChart({ data }: ChartProps) {
 }
 
 const styles = StyleSheet.create({
-  emptyContainer: {
-    height: 220,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#1A0E32',
-    borderRadius: 16,
-    marginVertical: 8,
-  },
-  emptyText: {
-    color: '#A0A0A0',
-    fontFamily: 'PixelOperator',
-    fontSize: 12,
-  },
+  emptyContainer: { height: 220, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1A0E32', borderRadius: 16 },
+  emptyText: { color: '#A0A0A0', fontSize: 12 },
 });

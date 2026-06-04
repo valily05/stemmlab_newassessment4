@@ -92,8 +92,15 @@ export default function Team() {
               <TeamProgressChart data={teamData.weeklyCompletions || { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 }} />
 
               <Text style={styles.sectionTitle}>Category Breakdown</Text>
-              <CategoryBreakdown data={teamData.categories || {}} />
-
+<CategoryBreakdown
+  data={
+    teamData.categories || {
+      Science: 0,
+      Recycling: 0,
+      Creativity: 0,
+    }
+  }
+/>
               <LeaveButton />
             </>
           ) : (
