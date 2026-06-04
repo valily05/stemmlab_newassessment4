@@ -60,6 +60,7 @@ const isTopThree =
   }, []);
 
   async function loadData() {
+    
     try {
 
       const topTeams = await getTopTeams();
@@ -72,15 +73,17 @@ const isTopThree =
 
       const user = await getUserProfile(uid);
 
-      if (!user?.teamId) return;
+const teamId = user?.teamId || user?.teamId;
 
-      const team = await getTeam(user.teamId);
+if (!teamId) return;
+
+const team = await getTeam(teamId);
 
       setUserTeam(team);
 const allTeams = await getAllTeams();
 
 const index = allTeams.findIndex(
-  (t) => t.id === user.teamId
+  (t) => t.id === teamId
 );
 
 setUserRank(index >= 0 ? index + 1 : null);
