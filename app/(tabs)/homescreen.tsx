@@ -1,14 +1,14 @@
-import { auth } from '@/services/firebase/config';
+import { auth, db } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
-import { getAvatarSource } from '../../data/avatarData';
-
+import { doc, getDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 import {
   ImageBackground,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
+import { getAvatarSource } from '../../data/avatarData';
 
 import ActivitiesSection from '../../components/ActivitiesSection';
 import Banner from '../../components/Banner';
@@ -17,14 +17,57 @@ import Header from '../../components/Header';
 import Hero from '../../components/Hero';
 import SearchBar from '../../components/SearchBar';
 import SearchResults from '../../components/SearchResults';
-import TeamRankingCard from '../../components/TeamRankingCard';
 import Streak from '../../components/streak';
+import TeamRankingCard from '../../components/TeamRankingCard';
 export default function HomeScreen() {
 
   const [search, setSearch] = useState('');
+  const [hasTeam, setHasTeam] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const userPoints = 500;
-const hasTeam = true;
+
+  useEffect(() => {
+    checkTeamStatus();
+  }, []);
+
+  const checkTeamStatus = async () => {
+    try {
+      const uid = auth.currentUser?.uid;
+
+      if (!uid) {
+        setLoading(false);
+        return;
+      }
+
+      const userRef = doc(db, 'users', uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        setLoading(false);
+        return;
+      }
+
+      const userData = userSnap.data();
+
+      if (userData.teamID) {
+        setHasTeam(true);
+      } else {
+        setHasTeam(false);
+      }
+
+      setLoading(false);
+
+    } catch (error) {
+      console.log('Error checking team:', error);
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return null;
+  }
+
   return (
 
     <View style={styles.container}>
