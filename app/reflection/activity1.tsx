@@ -633,6 +633,8 @@ colors={[
     WHAT DID YOU LIKE ABOUT THIS ACTIVITY?
   </Text>
 
+
+</View>
 <Text
   style={[
     styles.wordCounter,
@@ -643,7 +645,6 @@ colors={[
 >
   {learnedWords}/10
 </Text>
-</View>
 <BlurView
   intensity={25}
   tint="dark"
@@ -674,6 +675,8 @@ onFocus={() => {
     WHAT DIFFICULTIES DID YOU EXPERIENCED?
   </Text>
 
+
+</View>
 <Text
   style={[
     styles.wordCounter,
@@ -684,7 +687,6 @@ onFocus={() => {
 >
   {improvementWords}/10
 </Text>
-</View>
   <BlurView
     intensity={25}
     tint="dark"
@@ -809,13 +811,24 @@ questionRow:{
 
   marginBottom:hp(2),
 },
+wordCounter: {
+  backgroundColor: 'rgba(112, 128, 252, 0.15)',
+  color: '#7080FC',
 
-wordCounter:{
-  color:'#AEB8FF',
+  fontSize: rf(14),
+  fontFamily: 'PixelOperator',
+  textAlign:'center',
+  paddingHorizontal: rf(10),
+  paddingVertical: rf(6),
 
-  fontSize:rf(13),
+  borderWidth: 1,
+  borderColor: 'rgba(112, 128, 252, 0.3)',
 
-  fontFamily:'PixelOperator',
+  borderRadius: rf(14),
+
+  marginTop: rf(-20),
+  marginBottom: rf(10),
+  width:rf(55)
 },
 heroText:{
   color:'#D8D8FF',
