@@ -1,6 +1,6 @@
 import { auth, db } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import {
   ImageBackground,
@@ -27,42 +27,35 @@ export default function HomeScreen() {
 
   const userPoints = 500;
 
-  useEffect(() => {
-    checkTeamStatus();
-  }, []);
+useEffect(() => {
+  const uid = auth.currentUser?.uid;
 
-  const checkTeamStatus = async () => {
-    try {
-      const uid = auth.currentUser?.uid;
+  if (!uid) {
+    setLoading(false);
+    return;
+  }
 
-      if (!uid) {
-        setLoading(false);
-        return;
-      }
+  const unsubscribe = onSnapshot(
+    doc(db, 'users', uid),
+    (snapshot) => {
+      if (snapshot.exists()) {
+        const userData = snapshot.data();
 
-      const userRef = doc(db, 'users', uid);
-      const userSnap = await getDoc(userRef);
-
-      if (!userSnap.exists()) {
-        setLoading(false);
-        return;
-      }
-
-      const userData = userSnap.data();
-
-      if (userData.teamID) {
-        setHasTeam(true);
+        setHasTeam(!!userData.teamID);
       } else {
         setHasTeam(false);
       }
 
       setLoading(false);
-
-    } catch (error) {
+    },
+    (error) => {
       console.log('Error checking team:', error);
       setLoading(false);
     }
-  };
+  );
+
+  return unsubscribe;
+}, []);
 
   if (loading) {
     return null;

@@ -32,18 +32,18 @@ export default function SearchResults({
   const activityResults = useMemo(() => {
 
     if (!search.trim()) return [];
+return activities.filter((activity) =>
+(activity.title || '')
+  .toLowerCase()
+  .includes(search.toLowerCase())
+  ||
 
-    return activities.filter((activity) =>
-      activity.title
-        .toLowerCase()
-        .includes(search.toLowerCase())
-
-      ||
-
-      activity.tags.some((tag) =>
-        tag.toLowerCase().includes(search.toLowerCase())
-      )
-    );
+(activity.category || []).some((category) =>
+  category.toLowerCase().includes(
+    search.toLowerCase()
+  )
+)
+);
 
   }, [search]);
 
@@ -88,32 +88,21 @@ export default function SearchResults({
                 style={styles.image}
               />
 
-              <View style={{ flex: 1 }}>
+ <View style={{ flex: 1 }}>
+  <Text style={styles.cardTitle}>
+    {item.title}
+  </Text>
 
-                <Text style={styles.cardTitle}>
-                  {item.title}
-                </Text>
-
-                <View style={styles.tagsRow}>
-
-                  {item.tags.map((tag, index) => (
-
-                    <View
-                      key={index}
-                      style={styles.tag}
-                    >
-
-                      <Text style={styles.tagText}>
-                        {tag}
-                      </Text>
-
-                    </View>
-
-                  ))}
-
-                </View>
-
-              </View>
+  <View style={styles.tagsRow}>
+{(item.category || []).map((category, index) => (
+  <View key={index} style={styles.tag}>
+    <Text style={styles.tagText}>
+      {category}
+    </Text>
+  </View>
+))}
+  </View>
+</View>
 
             </TouchableOpacity>
 
