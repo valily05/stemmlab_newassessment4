@@ -1,5 +1,3 @@
-// app/activities/activity1-experiment.tsx
-
 import {
   useCameraPermissions,
 } from 'expo-camera';
@@ -133,11 +131,11 @@ const [bounced, setBounced] =
       typeof setInterval
     >;
 
-if (isRecording) {
-  interval = setInterval(() => {
-    setElapsedTime(prev => prev + 10);
-  }, 10);
-}
+  if (isRecording) {
+    interval = setInterval(() => {
+      setElapsedTime(prev => prev + 10);
+    }, 10);
+  }
 
     return () => {
       if (interval) {
@@ -231,7 +229,7 @@ const result = {
 
 router.push({
   pathname:
-    '/activities/activity1-results',
+    '/activities/activity1/results',
   params: {
     results: JSON.stringify(
       updatedResults

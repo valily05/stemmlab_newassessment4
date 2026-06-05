@@ -113,7 +113,7 @@ export const activities = {
       "b",
     ],
 
-referencePhoto: require('../assets/images/referenceSetup.png'),
+    referencePhoto: require('../assets/images/referenceSetup.png'),
     safetyNotes: [
       "a",
       "b",
@@ -128,7 +128,7 @@ referencePhoto: require('../assets/images/referenceSetup.png'),
   },
 
   activity3: {
-    id:'3',
+    id: 3,
     image:require(
       '../assets/images/Group 229.png'
     ),
