@@ -1,15 +1,4 @@
-// app/activities/activity1.tsx
-
-import PixelDivider from '@/components/PixelDivider';
-import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
-import SafetyNotes from '@/components/activity/SafetyNotes';
-import StartButton from '@/components/activity/StartButton';
-import StepInstructions from '@/components/activity/StepInstructions';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
 import { useState } from 'react';
-
-import ProgressBar from '@/components/activity/ProgressBar';
 import {
   Dimensions,
   ImageBackground,
@@ -18,11 +7,25 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import ActivityHeader from '../../components/activity/ActivityHeader';
-import ActivityHero from '../../components/activity/ActivityHero';
-import ActivityStats from '../../components/activity/ActivityStats';
-import MaterialsChecklist from '../../components/activity/MaterialsChecklist';
-import SetupGuideCarousel from '../../components/activity/SetupGuideCarousel';
+import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+
+import ActivityHeader from '@/components/activity/ActivityHeader';
+import ActivityHero from '@/components/activity/ActivityHero';
+import ActivityStats from '@/components/activity/ActivityStats';
+import MaterialsChecklist from '@/components/activity/MaterialsChecklist';
+import ProgressBar from '@/components/activity/ProgressBar';
+import SafetyNotes from '@/components/activity/SafetyNotes';
+import SetupGuideCarousel from '@/components/activity/SetupGuideCarousel';
+import StartButton from '@/components/activity/StartButton';
+import StepInstructions from '@/components/activity/StepInstructions';
+import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
+import PixelDivider from '@/components/PixelDivider';
+
+import { activities } from '@/data/activities';
+
+const activity = activities.activity1;
+
 const { width, height } = Dimensions.get('window');
 
 /* RESPONSIVE HELPERS */
@@ -47,102 +50,6 @@ const rf = (size: number) => {
       size * scale
     )
   );
-
-};
-
-const activityData = {
-
-  title: 'PARACHUTE DROP\nCHALLENGE',
-
-  overview:
-    'Design, build, and test a parachute for a small toy to reduce its landing speed and impact force. Teams iterate their designs under time and material constraints.',
-
-  timeLimit: '20 Minutes',
-
-  difficulty: 'Easy',
-
-  mission:
-    'Make the toy land as slowly, safely and accurately as possible.',
-
-  materials: [
-
-    {
-      name: 'STEMM APP ON MOBILE PHONE',
-      quantity: 'x1',
-    },
-
-    {
-      name: 'SMALL TOY OR FIGURE',
-      quantity: 'x1',
-    },
-
-    {
-      name: 'TABLES / ELEVATED SURFACE',
-      quantity: 'x1',
-    },
-
-    {
-      name: 'PLASTIC BAG',
-      quantity: 'x2',
-    },
-
-    {
-      name: 'STRING',
-      quantity: 'x4',
-    },
-
-    {
-      name: 'TAPE',
-      quantity: 'x1',
-    },
-
-    {
-      name: 'SCISSORS',
-      quantity: 'x1',
-    },
-
-  ],
-
-  setupSteps: [
-
-    {
-      title: 'PREPARE THE PLASTIC BAG',
-
-      image: require('../../assets/images/setup1.png'),
-
-      instruction:
-        'Cut the plastic bag into a circle',
-
-      bunnyTip:
-        'Make a smooth circle for better air resistance!',
-    },
-
-    {
-      title: 'ATTACH THE STRINGS',
-
-      image: require('../../assets/images/setup2.png'),
-
-      instruction:
-        'Tape the strings evenly around the parachute',
-    },
-
-  ],
-
-  instructions: [
-
-    'Drop the toy without a parachute and record the fall (baseline test)',
-
-    'Build a parachute using provided materials',
-
-    'Drop the toy from the same height and record the fall',
-
-    'Review speed and landing accuracy results in the app',
-
-    'Redesign and test up to three prototypes within 20 minutes',
-
-    'Upload videos, results, and team reflections',
-
-  ],
 
 };
 
@@ -188,14 +95,14 @@ const canStart =
             <ActivityHeader />
 
             <ActivityHero
-              title={activityData.title}
-              overview={activityData.overview}
+              title={activity.title}
+              overview={activity.overview}
             />
 
             <ActivityStats
-              timeLimit={activityData.timeLimit}
-              difficulty={activityData.difficulty}
-              mission={activityData.mission}
+              timeLimit={activity.duration}
+              difficulty={activity.difficulty}
+              mission={activity.mission}
             />
 
           </View>
@@ -218,17 +125,17 @@ const canStart =
         <View style={styles.content}>
 
 <MaterialsChecklist
-  materials={activityData.materials}
+  materials={activity.materials}
   onProgressChange={
     setMaterialProgress
   }
 />
           <SetupGuideCarousel
-            steps={activityData.setupSteps}
+            steps={activity.setupSteps}
           />
   <PixelDivider />
           <StepInstructions
-            steps={activityData.instructions}
+            steps={activity.instructions}
           />
 
 

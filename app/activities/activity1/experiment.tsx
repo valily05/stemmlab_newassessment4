@@ -17,15 +17,15 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import CaptureExperimentCard from '../../components/activity/CaptureExperimentCard';
-import ExitButton from '../../components/activity/ExitButton';
-import Experiment1Observation from '../../components/activity/Experiment1Observation';
-import ExperimentHero from '../../components/activity/ExperimentHero';
-import ExperimentStats from '../../components/activity/ExperimentStats';
-import ExperimentTipCard from '../../components/activity/ExperimentTipCard';
-import InfoModal from '../../components/activity/InfoModal';
-import LiveTimerCard from '../../components/activity/LiveTimerCard';
-import StopwatchCard from '../../components/activity/StopwatchCard';
+import CaptureExperimentCard from '../../../components/activity/CaptureExperimentCard';
+import ExitButton from '../../../components/activity/ExitButton';
+import Experiment1Observation from '../../../components/activity/Experiment1Observation';
+import ExperimentHero from '../../../components/activity/ExperimentHero';
+import ExperimentStats from '../../../components/activity/ExperimentStats';
+import ExperimentTipCard from '../../../components/activity/ExperimentTipCard';
+import InfoModal from '../../../components/activity/InfoModal';
+import LiveTimerCard from '../../../components/activity/LiveTimerCard';
+import StopwatchCard from '../../../components/activity/StopwatchCard';
 const { width, height } = Dimensions.get('window');
 
 const wp = (percentage: number) =>

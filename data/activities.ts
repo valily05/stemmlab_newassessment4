@@ -1,7 +1,7 @@
-export const activities = [
-  {
+export const activities = {
+  activity1: {
     id: 1,
-    title: "Parachute Drop Challenge",
+    title: "PARACHUTE DROP\nCHALLENGE",
     image: require('../assets/images/Group 227.png'),
     route: '/activities/activity1',
 
@@ -10,49 +10,71 @@ export const activities = [
         "Physics"
     ],
 
-    overview: "",
+    overview: "Design, build, and test a parachute for a small toy to reduce its landing speed and impact force. Teams iterate their designs under time and material constraints.",
     
-    mission: "",
-    duration: "20 mins",
+    mission: "Make the toy land as slowly, safely and accurately as possible.",
+    duration: "20 Minutes",
     difficulty: "Easy",
 
     materials: [
       {
         name: "STEMM LAB ON MOBILE PHONE",
-        quantity: 1
+        quantity: "x1"
       },
       {
         name: "SMALL TOY / FIGURE",
-        quantity: 1
+        quantity: "x1"
       },
       {
         name: "TABLES / ELEVATED SURFACE",
-        quantity: 1
+        quantity: "x1"
       },
       {
         name: "PLASTIC BAG",
-        quantity: 2
+        quantity: "x2"
       },
       {
         name: "STRING",
-        quantity: 4
+        quantity: "x4"
       },
       {
         name: "TAPE",
-        quantity: 1
+        quantity: "x1"
       },
       {
         name: "SCISSORS",
-        quantity: 1
+        quantity: "x1"
       }
     ],
 
-    instructions: [
-      "a",
-      "b",
+    setupSteps: [
+      {
+        title: 'PREPARE THE PLASTIC BAG',
+        image: require('@/assets/images/setup1.png'),
+        instruction:
+          'Cut the plastic bag into a circle',
+        bunnyTip:
+          'Make a smooth circle for better air resistance!',
+      },
+
+      {
+        title: 'ATTACH THE STRINGS',
+        image: require('@/assets/images/setup2.png'),
+        instruction:
+          'Tape the strings evenly around the parachute',
+      },
     ],
 
-referencePhoto: require('../assets/images/referenceSetup.png'),
+    instructions: [
+      'Drop the toy without a parachute and record the fall (baseline test)',
+      'Build a parachute using provided materials',
+      'Drop the toy from the same height and record the fall',
+      'Review speed and landing accuracy results in the app',
+      'Redesign and test up to three prototypes within 20 minutes',
+      'Upload videos, results, and team reflections',
+    ],
+
+    referencePhoto: require('../assets/images/referenceSetup.png'),
     safetyNotes: [
       "a",
       "b",
@@ -66,7 +88,7 @@ referencePhoto: require('../assets/images/referenceSetup.png'),
     ],
   },
 
-  {
+  activity2: {
     id: 2,
     title: "Sound Pollution Hunter",
     image:require('../assets/images/Group 228.png'),
@@ -105,7 +127,7 @@ referencePhoto: require('../assets/images/referenceSetup.png'),
     ],
   },
 
-  {
+  activity3: {
     id:'3',
     image:require(
       '../assets/images/Group 229.png'
@@ -113,7 +135,7 @@ referencePhoto: require('../assets/images/referenceSetup.png'),
     route:'/activities/activity3',
   },
 
-];
+};
 
   // {
   //   id: 3,
