@@ -125,11 +125,10 @@ const [inTarget, setInTarget] =
 
 const [bounced, setBounced] =
   useState<boolean | null>(null);
-
-  useEffect(() => {
-    let interval: ReturnType<
-      typeof setInterval
-    >;
+useEffect(() => {
+  let interval: ReturnType<
+    typeof setInterval
+  >;
 
   if (isRecording) {
     interval = setInterval(() => {
@@ -137,16 +136,46 @@ const [bounced, setBounced] =
     }, 10);
   }
 
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isRecording]);
+  return () => {
+    if (interval) {
+      clearInterval(interval);
+    }
+  };
+}, [isRecording]);
 
+useEffect(() => {
+  const timer = setInterval(() => {
+    setTimeLeft(prev =>
+      prev > 0 ? prev - 1 : 0
+    );
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, []);
+const formatCountdown = (
+  seconds: number
+) => {
+  const mins = Math.floor(
+    seconds / 60
+  );
+
+  const secs = seconds % 60;
+
+  return `${String(mins).padStart(
+    2,
+    '0'
+  )}:${String(secs).padStart(
+    2,
+    '0'
+  )}`;
+};
 const formatTime = (
   milliseconds: number
 ) => {
+
+
+
+
 
   const mins = Math.floor(
     milliseconds / 60000
@@ -341,15 +370,10 @@ return (
     )
   }
 />
-
-        <ExperimentStats
-          timeLeft={formatTime(
-            timeLeft
-          )}
-          iteration={
-            stages[currentStage]
-          }
-        />
+<ExperimentStats
+  timeLeft={formatCountdown(timeLeft)}
+  iteration={stages[currentStage]}
+/>
 
 <CaptureExperimentCard
   isRecording={isRecording}

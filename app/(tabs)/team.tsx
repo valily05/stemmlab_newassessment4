@@ -3,9 +3,10 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { Dimensions, ImageBackground, PixelRatio, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, ImageBackground, PixelRatio, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 // Components
+import Sidebar from '@/components/SideBar';
 import BottomNavbar from '../../components/BottomNavBar';
 import CategoryBreakdown from '../../components/CategoryBreakdown';
 import Header from '../../components/Header';
@@ -24,10 +25,13 @@ const wp = (p: number) => PixelRatio.roundToNearestPixel((width * p) / 100);
 const hp = (p: number) => PixelRatio.roundToNearestPixel((height * p) / 100);
 const rf = (s: number) => Math.round(PixelRatio.roundToNearestPixel((width / 390) * s));
 
+
 export default function Team() {
   const [hasTeam, setHasTeam] = useState(false);
   const [loading, setLoading] = useState(true);
   const [teamData, setTeamData] = useState<any>(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
 
   useEffect(() => {
     const uid = auth.currentUser?.uid;
@@ -57,8 +61,10 @@ export default function Team() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: hp(22) }}>
         <ImageBackground source={require('../../assets/images/teambg2.png')} style={styles.topSection} imageStyle={{ transform: [{ scale: 1.14 }, { translateY: -80 }] }}>
           <View style={styles.overlay}>
-            <Header avatarSource={getAvatarSource(auth.currentUser?.photoURL, auth.currentUser?.uid)} />
-            <View style={styles.titleContainer}>
+        <Header
+          onMenuPress={() => setIsSidebarOpen(true)}
+          avatarSource={getAvatarSource(auth.currentUser?.photoURL, auth.currentUser?.uid)}
+                />            <View style={styles.titleContainer}>
               <View style={styles.titleRow}>
                 <MaskedView maskElement={<Text style={styles.title}>TEAM</Text>}>
                   <LinearGradient colors={['#A061F5', '#8B5CF6', '#5D398F']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
@@ -108,12 +114,22 @@ export default function Team() {
           )}
         </View>
       </ScrollView>
+      {isSidebarOpen && (
+        <View style={styles.sidebarOverlay}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsSidebarOpen(false)} />
+          <View style={styles.sidebarWrapper}>
+            <Sidebar onClose={() => setIsSidebarOpen(false)} />
+          </View>
+        </View>
+      )}
       <BottomNavbar />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+    sidebarOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, backgroundColor: 'rgba(0,0,0,0.6)' },
+  sidebarWrapper: { width: wp(60), height: '100%', backgroundColor: '#07021B', borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.1)' },
   container: { flex: 1, backgroundColor: '#07021B' },
   topSection: { width: '100%', minHeight: hp(50), overflow: 'hidden' },
   overlay: { paddingHorizontal: wp(4), zIndex: 2, paddingTop: hp(1.5) },
