@@ -161,7 +161,7 @@ const canStart =
         objective:
           'Design and test a parachute to achieve the slowest drop time.',
         nextScreen:
-          '/activities/activity1-experiment',
+          '/activities/activity1/experiment',
       },
     })
   }

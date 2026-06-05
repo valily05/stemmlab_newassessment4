@@ -1,10 +1,4 @@
-import MaskedView from '@react-native-masked-view/masked-view';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import * as Notifications from 'expo-notifications';
-
 import { router } from 'expo-router';
-import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -19,6 +13,16 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+
+import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Notifications from 'expo-notifications';
+
+
+
+
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -50,7 +54,7 @@ const rf = (size:number) => {
   );
 };
 
-export default function Activity1Reflection() {
+export default function ActivityFeedbackScreen() {
 const scrollRef = useRef<ScrollView>(null);
   const [rating, setRating] =
     useState(0);

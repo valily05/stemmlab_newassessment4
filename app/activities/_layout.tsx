@@ -1,13 +1,10 @@
 import { Stack } from 'expo-router';
 
 export default function ActivitiesLayout() {
-
   return (
-
     <Stack>
-
       <Stack.Screen
-        name="activity1"
+        name="activity1/overview"
         options={{
           headerShown: false,
         }}
@@ -53,29 +50,36 @@ export default function ActivitiesLayout() {
         options={{
           headerShown: false,
         }}
+      />
 
-        />
       <Stack.Screen
         name="ActivityIntroScreen"
         options={{
           headerShown: false,
         }}
-/>
-          <Stack.Screen
-        name="activity1-experiment"
+      />
+
+      <Stack.Screen
+        name="activity1/experiment"
         options={{
           headerShown: false,
         }}
       />
-   <Stack.Screen
-        name="activity1-results"
+
+      <Stack.Screen
+        name="activity1/results"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="activity1/feedback"
         options={{
           headerShown: false,
         }}
       />
     </Stack>
-
   );
-
 }
 
