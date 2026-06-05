@@ -2,221 +2,72 @@ import { Ionicons } from '@expo/vector-icons';
 import {
   Dimensions,
   Image,
+  ImageSourcePropType,
   PixelRatio,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useLanguage } from '../context/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
 // RESPONSIVE HELPERS
-const wp = (percentage: number) => {
-  return PixelRatio.roundToNearestPixel(
-    (width * percentage) / 100
-  );
-};
-
-const hp = (percentage: number) => {
-  return PixelRatio.roundToNearestPixel(
-    (height * percentage) / 100
-  );
-};
-
-const fp = (size: number) => {
-  return PixelRatio.roundToNearestPixel(
-    (width / 430) * size
-  );
-};
-
-import { ImageSourcePropType } from 'react-native';
+const wp = (p: number) => PixelRatio.roundToNearestPixel((width * p) / 100);
+const hp = (p: number) => PixelRatio.roundToNearestPixel((height * p) / 100);
+const fp = (size: number) => PixelRatio.roundToNearestPixel((width / 430) * size);
 
 type HeaderProps = {
   avatarSource: ImageSourcePropType;
+  onMenuPress: () => void;
 };
 
-export default function Header({
-  avatarSource,
-}: HeaderProps) {
-  // CHANGE THIS
+export default function Header({ avatarSource, onMenuPress }: HeaderProps) {
+  const { t } = useLanguage();
   const hasNotification = false;
 
   return (
-
     <View style={styles.header}>
-{/* HAMBURGER */}
-<TouchableOpacity style={styles.menuBtn}>
-  <Ionicons
-    name="menu"
-    size={fp(24)}
-    color="#C084FC"
-  />
-</TouchableOpacity>
+      {/* HAMBURGER */}
+      <TouchableOpacity onPress={onMenuPress} style={styles.menuBtn}>
+        <Ionicons name="menu" size={fp(24)} color="#C084FC" />
+      </TouchableOpacity>
 
       {/* CENTER */}
       <View style={styles.center}>
-
-        <Text style={styles.logo}>
-          STEMM LAB
-        </Text>
-
+        <Text style={styles.logo}>STEMM LAB</Text>
         <Text style={styles.subtitle}>
-
-          Learn
-
-          <Text style={styles.star}>
-            {' '}✦{' '}
-          </Text>
-
-          Experiment
-
-          <Text style={styles.star}>
-            {' '}✦{' '}
-          </Text>
-
-          Innovate
-
+          {t.learn}
+          <Text style={styles.star}> ✦ </Text>
+          {t.experiment}
+          <Text style={styles.star}> ✦ </Text>
+          {t.innovate}
         </Text>
-
       </View>
 
       {/* RIGHT SIDE */}
       <View style={styles.rightSection}>
-
-        {/* NOTIFICATION */}
         <TouchableOpacity style={styles.notifBtn}>
-
-          <Ionicons
-            name="notifications"
-            size={fp(24)}
-            color="#C084FC"
-          />
-
-          {/* ONLY SHOW IF THERE'S A NOTIFICATION */}
-          {hasNotification && (
-            <View style={styles.dot} />
-          )}
-
+          <Ionicons name="notifications" size={fp(24)} color="#C084FC" />
+          {hasNotification && <View style={styles.dot} />}
         </TouchableOpacity>
-
-
-
-</View>
-   
-<Image
-  source={avatarSource}
-  style={styles.avatar}
-/>
+        
+        <Image source={avatarSource} style={styles.avatar} />
       </View>
-
-
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-
-  header: {
-    marginTop: hp(7),
-
-    flexDirection: 'row',
-
-    justifyContent: 'space-between',
-
-    alignItems: 'center',
-  },
-
-  center: {
-    alignItems: 'center',
-  },
-
-
-  logo: {
-    color: '#fff',
-    fontSize: fp(18),
-    fontFamily: 'Pixel',
-    letterSpacing: 1,
-
-    right: fp(20),
-  },
-
-  subtitle: {
-    color: '#ddd6fe',
-    fontSize: fp(16),
-
-    right: fp(5),
-
-    marginTop: hp(0.6),
-
-    fontFamily: 'PixelOperator',
-    textAlign: 'center',
-  },
-
-  star: {
-    color: '#EC588C',
-  },
-
-  /* RIGHT SIDE */
-  rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-
-    gap: wp(2.5),
-  },
-
-  /* NOTIFICATION BUTTON */
-  notifBtn: {
-    width: wp(11),
-    height: wp(11),
-
-    borderRadius: wp(5.5),
-
-    backgroundColor: '#130C36',
-
-    justifyContent: 'center',
-    alignItems: 'center',
-
-    borderWidth: 2,
-    borderColor: '#301E6A',
-  },
-menuBtn: {
-  width: wp(11),
-  height: wp(11),
-
-  borderRadius: wp(6),
-
-  backgroundColor: '#130C36',
-
-  justifyContent: 'center',
-  alignItems: 'center',
-
-  borderWidth: 2,
-  borderColor: '#301E6A',
-  
-},
-
-
-  /* RED NOTIFICATION DOT */
-  dot: {
-    position: 'absolute',
-
-    top: wp(2.6),
-    right: wp(2.8),
-
-    width: wp(1.9),
-    height: wp(1.9),
-
-    borderRadius: wp(1.25),
-
-    backgroundColor: '#FF4D6D',
-  },
-
-avatar: {
-  width: wp(12.5),
-  height: wp(12.5),
-
-  borderRadius: wp(6.25),
-  resizeMode: 'cover',
-},
-
+  header: { marginTop: hp(7), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: wp(1) },
+  center: { alignItems: 'center', flex: 1,marginRight:hp(2.6) },
+  logo: { color: '#fff', fontSize: fp(18), fontFamily: 'Pixel', letterSpacing: 1 },
+  subtitle: { color: '#ddd6fe', fontSize: fp(14), marginTop: hp(0.4), fontFamily: 'PixelOperator', textAlign: 'center' },
+  star: { color: '#EC588C' },
+  rightSection: { flexDirection: 'row', alignItems: 'center', gap: wp(2.5) },
+  notifBtn: { width: wp(11), height: wp(11), borderRadius: wp(5.5), backgroundColor: '#130C36', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#301E6A' },
+  menuBtn: { width: wp(11), height: wp(11), borderRadius: wp(6), backgroundColor: '#130C36', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#301E6A' },
+  dot: { position: 'absolute', top: wp(2.6), right: wp(2.8), width: wp(1.9), height: wp(1.9), borderRadius: wp(1.25), backgroundColor: '#FF4D6D' },
+  avatar: { width: wp(11), height: wp(11), borderRadius: wp(5.5), resizeMode: 'cover' },
 });
