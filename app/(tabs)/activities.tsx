@@ -160,11 +160,14 @@ export default function Activities() {
           />
 
           {/* SEARCH */}
-          <SearchBar
-            search={search}
-            setSearch={setSearch}
-            placeholder="Search Activities..."
-          />
+     <SearchBar
+  search={search}
+  setSearch={(text) => {
+    console.log(text);
+    setSearch(text);
+  }}
+  placeholder="Search Activities..."
+/>
 
           {/* RESULTS */}
           <ActivitiesResults

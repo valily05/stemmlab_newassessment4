@@ -6,7 +6,7 @@ export interface UserProfile {
     email: string;
     role: "Student";
 
-    teamId?: string;
+    teamID?: string;
 
     createdAt?: Timestamp;
     lastUpdate?: Timestamp;
