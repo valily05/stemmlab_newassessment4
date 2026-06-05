@@ -275,7 +275,7 @@ return (
   }
 >
   <Image
-    source={require('../../assets/images/info-icon.png')}
+    source={require('@/assets/images/info-icon.png')}
     style={styles.infoIcon}
   />
 </TouchableOpacity>
@@ -399,7 +399,7 @@ setHasStarted(false);
   <View style={styles.frame}>
 
     <ImageBackground
-      source={require('../../assets/images/Group 224.png')}
+      source={require('@/assets/images/Group 224.png')}
       style={styles.ribbonImage}
       resizeMode="stretch"
     >

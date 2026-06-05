@@ -1,3 +1,5 @@
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import {
   Dimensions,
@@ -7,19 +9,17 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import ActivityHeader from '@/components/activity/ActivityHeader';
 import ActivityHero from '@/components/activity/ActivityHero';
 import ActivityStats from '@/components/activity/ActivityStats';
 import MaterialsChecklist from '@/components/activity/MaterialsChecklist';
 import ProgressBar from '@/components/activity/ProgressBar';
+import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
 import SafetyNotes from '@/components/activity/SafetyNotes';
 import SetupGuideCarousel from '@/components/activity/SetupGuideCarousel';
 import StartButton from '@/components/activity/StartButton';
 import StepInstructions from '@/components/activity/StepInstructions';
-import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
 import PixelDivider from '@/components/PixelDivider';
 
 import { activities } from '@/data/activities';
@@ -84,7 +84,7 @@ const canStart =
 
         {/* HERO SECTION */}
         <ImageBackground
-          source={require('../../assets/images/miffyspace.png')}
+          source={require('@/assets/images/miffyspace.png')}
           style={styles.heroBackground}
           imageStyle={styles.heroImage}
         >
@@ -140,7 +140,7 @@ const canStart =
 
 
           <ReferenceSetupCard
-            image={require('../../assets/images/referenceSetup.png')}
+            image={require('@/assets/images/referenceSetup.png')}
           />
 
 

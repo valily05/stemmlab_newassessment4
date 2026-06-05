@@ -44,10 +44,14 @@ export default function ActivitiesSection({
 const [hasScrolled, setHasScrolled] =
   useState(false);
   // ADD LOCK STATE DYNAMICALLY
-  const activitiesWithLock = activities.map(activity => ({
-    ...activity,
-    locked: userPoints < activity.pointsRequired,
-  }));
+const activitiesWithLock = Object.values(
+  activities
+).map((activity: any) => ({
+  ...activity,
+  locked:
+    userPoints <
+    (activity.pointsRequired || 0),
+}));
 
   return (
     <View style={styles.container}>

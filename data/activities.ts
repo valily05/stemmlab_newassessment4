@@ -3,7 +3,7 @@ export const activities = {
     id: 1,
     title: "PARACHUTE DROP\nCHALLENGE",
     image: require('../assets/images/Group 227.png'),
-    route: '/activities/activity1',
+    route: '/activities/activity1/overview',
 
     category: [
         "Engineering",

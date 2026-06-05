@@ -1,3 +1,7 @@
+import {
+  uploadVideoToCloudinary
+} from '@/services/cloudinary';
+import { auth, db } from '@/services/firebase/config';
 import MaskedView from '@react-native-masked-view/masked-view';
 import * as FileSystem from 'expo-file-system/legacy';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,6 +11,14 @@ import {
   VideoView,
   useVideoPlayer,
 } from 'expo-video';
+
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
 import {
   ChartNoAxesColumn,
   Clock3,
@@ -50,7 +62,7 @@ const hp = (percentage: number) =>
     (height * percentage) / 100
   );
 export default function Activity1Results() {
-  const params = useLocalSearchParams();
+      const params = useLocalSearchParams();
 
   let parsedResults: any[] = [];
 
@@ -232,6 +244,144 @@ const totalScore =
     experimentScore
   );
 
+  const saveExperiment = async () => {
+  try {
+
+      const uid = auth.currentUser?.uid;
+
+if (!uid) {
+  console.log(
+    'No authenticated user'
+  );
+  return;
+}
+
+const userRef = doc(
+  db,
+  'users',
+  uid
+);
+
+const userSnap =
+  await getDoc(userRef);
+
+if (!userSnap.exists()) {
+  console.log(
+    'User document not found'
+  );
+  return;
+}
+
+const teamID =
+  userSnap.data().teamID;
+const sessionRef = await addDoc(
+  collection(db, 'session'),
+  {
+    teamID,
+
+    activityID: 1,
+
+    experimentTime,
+
+    totalIterations,
+
+    pointsEarned:
+      totalScore,
+
+    completedAt:
+      serverTimestamp(),
+
+    insights: {
+      bestTime:
+        bestResult?.dropTime || 0,
+
+      avgAccuracy:
+        accuracy,
+    },
+  }
+);
+
+for (
+  let i = 0;
+  i < parsedResults.length;
+  i++
+) {
+
+  const result =
+    parsedResults[i];
+
+  let cloudinaryUrl =
+    '';
+
+  if (
+    result.videoUri
+  ) {
+
+    cloudinaryUrl =
+      await uploadVideoToCloudinary(
+        result.videoUri
+      );
+
+    console.log(
+      'CLOUDINARY URL:',
+      cloudinaryUrl
+    );
+  }
+
+  await addDoc(
+    collection(
+      db,
+      'session',
+      sessionRef.id,
+      'iterations'
+    ),
+    {
+      iterationNo:
+        i + 1,
+
+      stage:
+        result.stage,
+
+      dropTime:
+        result.dropTime,
+
+      firstHitTime:
+        result.firstHitTime,
+
+      stopMovingTime:
+        result.stopMovingTime,
+
+      impactForce:
+        result.impactForce,
+
+      inTarget:
+        result.inTarget,
+
+      bounced:
+        result.bounced,
+
+      videoURL:
+        cloudinaryUrl || '',
+    }
+  );
+}
+    console.log(
+      'Session Saved'
+    );
+
+    router.push(
+      '/activities/activity1/feedback'
+    );
+
+  } catch (error) {
+
+    console.log(
+      'SAVE ERROR',
+      error
+    );
+
+  }
+};
 return (
   <View style={styles.container}>
     <ScrollView
@@ -686,8 +836,7 @@ return (
 </View>
 <TouchableOpacity
   style={styles.saveButton}
-  onPress={() => router.push('/reflection/activity1')}
->
+onPress={saveExperiment}>
   <Text style={styles.saveButtonText}>
     SAVE & REFLECT
   </Text>
