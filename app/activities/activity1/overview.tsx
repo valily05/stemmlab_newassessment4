@@ -18,11 +18,11 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import ActivityHeader from '../../components/activity/ActivityHeader';
-import ActivityHero from '../../components/activity/ActivityHero';
-import ActivityStats from '../../components/activity/ActivityStats';
-import MaterialsChecklist from '../../components/activity/MaterialsChecklist';
-import SetupGuideCarousel from '../../components/activity/SetupGuideCarousel';
+import ActivityHeader from '../../../components/activity/ActivityHeader';
+import ActivityHero from '../../../components/activity/ActivityHero';
+import ActivityStats from '../../../components/activity/ActivityStats';
+import MaterialsChecklist from '../../../components/activity/MaterialsChecklist';
+import SetupGuideCarousel from '../../../components/activity/SetupGuideCarousel';
 const { width, height } = Dimensions.get('window');
 
 /* RESPONSIVE HELPERS */
