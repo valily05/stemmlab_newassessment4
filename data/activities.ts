@@ -74,7 +74,7 @@ export const activities = {
       'Upload videos, results, and team reflections',
     ],
 
-    referencePhoto: require('../assets/images/referenceSetup.png'),
+    referencePhoto: require('@/assets/images/referenceSetup.png'),
     safetyNotes: [
       "a",
       "b",
