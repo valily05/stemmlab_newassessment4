@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
+  Alert,
   Dimensions,
   Image,
   ImageBackground,
@@ -13,7 +14,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import CaptureExperimentCard from '../../../components/activity/CaptureExperimentCard';
 import ExitButton from '../../../components/activity/ExitButton';
@@ -144,6 +145,8 @@ useEffect(() => {
 }, [isRecording]);
 
 useEffect(() => {
+  if (!hasStarted) return;
+
   const timer = setInterval(() => {
     setTimeLeft(prev =>
       prev > 0 ? prev - 1 : 0
@@ -151,7 +154,25 @@ useEffect(() => {
   }, 1000);
 
   return () => clearInterval(timer);
-}, []);
+}, [hasStarted]);
+useEffect(() => {
+  if (timeLeft !== 0) return;
+
+  setIsRecording(false);
+
+  Alert.alert(
+    'MISSION FAILED',
+    'You ran out of time!',
+    [
+      {
+        text: 'GO HOME',
+        onPress: () =>
+          router.replace('/'),
+      },
+    ],
+    { cancelable: false }
+  );
+}, [timeLeft]);
 const formatCountdown = (
   seconds: number
 ) => {
