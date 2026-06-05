@@ -43,23 +43,23 @@ const rf = (
     )
   );
 };
-interface Props {
+type Props = {
   inTarget: boolean | null;
   setInTarget: (
-    value: boolean
+    value: boolean | null
   ) => void;
 
   bounced: boolean | null;
   setBounced: (
-    value: boolean
+    value: boolean | null
   ) => void;
 
   dropHeight: number;
 
   firstHitTime: string | null;
   stopMovingTime: string | null;
-}
 
+};
 export default function Experiment1Observation({
   inTarget,
   setInTarget,
@@ -68,10 +68,13 @@ export default function Experiment1Observation({
   dropHeight,
   firstHitTime,
   stopMovingTime,
+  
 }: Props) {
-  const [showTimeFormula, setShowTimeFormula] =
-  useState(false);
 
+
+
+  const [showTimeFormula, setShowTimeFormula] =
+    useState(false);
 const [showGForceFormula, setShowGForceFormula] =
   useState(false);
   const parseTime = (
@@ -114,37 +117,49 @@ const [showGForceFormula, setShowGForceFormula] =
   const gForce =
     velocity /
     (contactTime * 9.81);
+let impactRating = 'SAFE';
+let ratingColor = '#00E84A';
 
-  let impactRating =
-    'SAFE';
+if (gForce >= 5 && gForce < 10) {
+  impactRating = 'CAUTION';
+  ratingColor = '#FFD54F';
+}
 
-  let ratingColor =
-    '#4CAF50';
+if (gForce >= 10 && gForce < 30) {
+  impactRating = 'HIGH';
+  ratingColor = '#FF9800';
+}
 
-  if (gForce >= 5) {
-    impactRating = 'MEDIUM';
-    ratingColor = '#FFD54F';
-  }
+if (gForce >= 30 && gForce < 50) {
+  impactRating = 'SEVERE';
+  ratingColor = '#FF4D4D';
+}
+if (gForce >= 50) {
+  impactRating = 'EXTREME';
+  ratingColor = '#A00000';
+}
 
-
-  if (gForce >= 10) {
-    impactRating = 'HARD';
-    ratingColor = '#FF4D4D';
-  }
-  const iconColor =
+const iconColor =
   impactRating === 'SAFE'
     ? '#00E84A'
-    : impactRating === 'MEDIUM'
+    : impactRating === 'CAUTION'
     ? '#FFD54F'
-    : '#FF4D4D';
+    : impactRating === 'HIGH'
+    ? '#FF9800'
+    : impactRating === 'SEVERE'
+    ? '#FF4D4D'
+    : '#A00000';
 
 const ratingBackground =
   impactRating === 'SAFE'
     ? '#10311A'
-    : impactRating === 'MEDIUM'
+    : impactRating === 'CAUTION'
     ? '#3A2F08'
-    : '#3A1010';
-
+    : impactRating === 'HIGH'
+    ? '#3A2000'
+    : impactRating === 'SEVERE'
+    ? '#3A1010'
+    : '#200000';
   return (
     <View style={styles.card}>
 
@@ -410,78 +425,43 @@ const ratingBackground =
 </View>
 
 <View style={styles.legendCard}>
+  <Text style={styles.legendText}>
+    🟢 SAFE (1–5g)
+  </Text>
 
-  <View style={styles.legendItem}>
-    <View
-      style={[
-        styles.legendCircle,
-        {
-          backgroundColor:
-            '#00E84A',
-        },
-      ]}
-    />
+  <Text style={styles.legendText}>
+    🟡 CAUTION (5–10g)
+  </Text>
 
-    <Text style={styles.legendTitle}>
-      SAFE
-    </Text>
+  <Text style={styles.legendText}>
+    🟠 HIGH (10–30g)
+  </Text>
 
-    <Text style={styles.legendSubtitle}>
-      1-5 g
-    </Text>
-  </View>
+  <Text style={styles.legendText}>
+    🔴 SEVERE (30–50g)
+  </Text>
 
-  <View style={styles.legendDivider} />
-
-  <View style={styles.legendItem}>
-    <View
-      style={[
-        styles.legendCircle,
-        {
-          backgroundColor:
-            '#FFD54F',
-        },
-      ]}
-    />
-
-    <Text style={styles.legendTitle}>
-      MEDIUM
-    </Text>
-
-    <Text style={styles.legendSubtitle}>
-      5-10 g
-    </Text>
-  </View>
-
-  <View style={styles.legendDivider} />
-
-  <View style={styles.legendItem}>
-    <View
-      style={[
-        styles.legendCircle,
-        {
-          backgroundColor:
-            '#FF4D4D',
-        },
-      ]}
-    />
-
-    <Text style={styles.legendTitle}>
-      HARD
-    </Text>
-
-    <Text style={styles.legendSubtitle}>
-      10+ g
-    </Text>
-  </View>
-
+  <Text style={styles.legendText}>
+    ⚫ EXTREME (50g+)
+  </Text>
 </View>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  legendCard: {
+  backgroundColor: '#0E0B24',
+  borderRadius: rf(14),
+  padding: wp(4),
+  gap: hp(0.8),
+},
+
+legendText: {
+  color: '#FFFFFF',
+  fontFamily: 'PixelOperator',
+  fontSize: rf(13),
+},
   card: {
     backgroundColor: '#15112F',
     borderWidth: rf(2),
@@ -698,16 +678,6 @@ legendCircle: {
     marginBottom: hp(2.5),
   },
 
-legendCard: {
-  backgroundColor: '#0E0B24',
-  borderRadius: rf(14),
-  paddingVertical: hp(2),
-  paddingHorizontal: wp(2),
-
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-},
 
   legendRow: {
     flexDirection: 'row',

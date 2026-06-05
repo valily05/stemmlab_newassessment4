@@ -8,12 +8,14 @@ import {
   Dimensions,
   ImageBackground,
   PixelRatio,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
 
+import Sidebar from '@/components/SideBar';
 import ActivitiesResults from '../../components/ActivitiesResults';
 import BottomNavbar from '../../components/BottomNavBar';
 import CategoryTabs from '../../components/CategoryTabs';
@@ -46,7 +48,7 @@ const rf = (size: number) => {
 export default function Activities() {
 
   const [search, setSearch] = useState('');
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] =
     useState('ALL');
 
@@ -73,11 +75,9 @@ export default function Activities() {
 
             {/* HEADER */}
          <Header
-           avatarSource={getAvatarSource(
-             auth.currentUser?.photoURL,
-             auth.currentUser?.uid
-           )}
-         />
+                     onMenuPress={() => setIsSidebarOpen(true)}
+                     avatarSource={getAvatarSource(auth.currentUser?.photoURL, auth.currentUser?.uid)}
+                   />
 
             {/* TITLE SECTION */}
             <View style={styles.titleContainer}>
@@ -178,7 +178,14 @@ export default function Activities() {
         </View>
 
       </ScrollView>
-
+ {isSidebarOpen && (
+        <View style={styles.sidebarOverlay}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsSidebarOpen(false)} />
+          <View style={styles.sidebarWrapper}>
+            <Sidebar onClose={() => setIsSidebarOpen(false)} />
+          </View>
+        </View>
+      )}
       {/* NAVBAR */}
       <BottomNavbar />
 
@@ -203,7 +210,8 @@ const styles = StyleSheet.create({
 
     overflow: 'hidden',
   },
-
+  sidebarOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, backgroundColor: 'rgba(0,0,0,0.6)' },
+  sidebarWrapper: { width: wp(60), height: '100%', backgroundColor: '#07021B', borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.1)' },
   /* OVERLAY */
   overlay: {
     paddingHorizontal: wp(4),

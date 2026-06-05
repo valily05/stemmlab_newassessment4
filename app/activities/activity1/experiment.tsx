@@ -125,7 +125,7 @@ const [inTarget, setInTarget] =
 
 const [bounced, setBounced] =
   useState<boolean | null>(null);
-  
+
   useEffect(() => {
     let interval: ReturnType<
       typeof setInterval
@@ -173,11 +173,52 @@ const formatTime = (
 
 const saveIteration = () => {
 
-const impactForce =
-  bounced === true
-    ? 'MEDIUM'
-    : 'LOW';
+const parseTime = (value: string | null) => {
+  if (!value) return 0;
 
+  const [minSec, centi] = value.split('.');
+  const [min, sec] = minSec.split(':');
+
+  return (
+    Number(min) * 60 +
+    Number(sec) +
+    Number(centi) / 100
+  );
+};
+
+const first = parseTime(firstHitTime);
+const stop = parseTime(stopMovingTime);
+
+const contactTime = Math.max(
+  stop - first,
+  0.01
+);
+
+const velocity = Math.sqrt(
+  2 * 9.81 * Number(dropHeight)
+);
+
+const gForce =
+  velocity /
+  (contactTime * 9.81);
+
+let impactForce = 'SAFE';
+
+if (gForce >= 5 && gForce < 10) {
+  impactForce = 'CAUTION';
+}
+
+if (gForce >= 10 && gForce < 30) {
+  impactForce = 'HIGH';
+}
+
+if (gForce >= 30 && gForce < 50) {
+  impactForce = 'SEVERE';
+}
+
+if (gForce >= 50) {
+  impactForce = 'EXTREME';
+}
 const result = {
   stage: stages[currentStage],
   dropTime: elapsedTime,
@@ -187,7 +228,6 @@ const result = {
 
   inTarget,
   bounced,
-
   impactForce,
 };
 
@@ -485,9 +525,7 @@ onPress={() => {
   setInTarget={setInTarget}
   bounced={bounced}
   setBounced={setBounced}
-
   dropHeight={Number(dropHeight)}
-
   firstHitTime={firstHitTime}
   stopMovingTime={stopMovingTime}
 />

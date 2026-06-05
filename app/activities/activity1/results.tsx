@@ -212,11 +212,14 @@ if (
   );
 
 const impactScore =
-  bestResult?.impactForce === 'Low'
+  bestResult?.impactForce === 'SAFE'
     ? 500
-    : bestResult?.impactForce ===
-      'Medium'
+    : bestResult?.impactForce === 'CAUTION'
+    ? 400
+    : bestResult?.impactForce === 'HIGH'
     ? 250
+    : bestResult?.impactForce === 'SEVERE'
+    ? 100
     : 0;
 
 const accuracyScore =
@@ -772,14 +775,18 @@ return (
               styles.resultValue,
 
               {
-     color:
-  item.impactForce?.toLowerCase() === 'low'
-    ? '#40A560'
-    : item.impactForce?.toLowerCase() === 'medium'
-    ? '#FFC509'
-    : item.impactForce?.toLowerCase() === 'high'
-    ? '#DC412F'
-    : '#FFFFFF',
+color:
+  item.impactForce === 'SAFE'
+    ? '#00E84A'
+    : item.impactForce === 'CAUTION'
+    ? '#FFD54F'
+    : item.impactForce === 'HIGH'
+    ? '#FF9800'
+    : item.impactForce === 'SEVERE'
+    ? '#FF4D4D'
+    : item.impactForce === 'EXTREME'
+    ? '#A00000'
+    : '#FFFFFF'
               },
             ]}
           >

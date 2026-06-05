@@ -29,7 +29,7 @@ const translations = {
     darkMode: "Dark Mode",
     lightMode: "Light Mode",
     language: "Language",
-    logout: "Logout",
+    logout: "LOGOUT",
 
     // Home Screen
     placeholderSearch: "Search Activities, Achievements, Teams...",
@@ -94,7 +94,7 @@ const translations = {
     darkMode: "Mode Gelap",
     lightMode: "Mode Terang",
     language: "Bahasa",
-    logout: "Keluar",
+    logout: "KELUAR",
 
     // Home Screen
     placeholderSearch: "Cari Aktivitas, Pencapaian, Tim...",
