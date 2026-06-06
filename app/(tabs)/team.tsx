@@ -5,7 +5,6 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { Dimensions, ImageBackground, PixelRatio, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-// Components
 import Sidebar from '@/components/SideBar';
 import BottomNavbar from '../../components/BottomNavBar';
 import CategoryBreakdown from '../../components/CategoryBreakdown';
@@ -17,7 +16,6 @@ import TeamCard from '../../components/TeamCard';
 import TeamCodeCard from '../../components/TeamCodeCard';
 import TeamMembersCard from '../../components/TeamMembersCard';
 import TeamProgressChart from '../../components/TeamProgressChart';
-
 import { getAvatarSource } from '../../data/avatarData';
 
 const { width, height } = Dimensions.get('window');
@@ -25,19 +23,16 @@ const wp = (p: number) => PixelRatio.roundToNearestPixel((width * p) / 100);
 const hp = (p: number) => PixelRatio.roundToNearestPixel((height * p) / 100);
 const rf = (s: number) => Math.round(PixelRatio.roundToNearestPixel((width / 390) * s));
 
-
 export default function Team() {
   const [hasTeam, setHasTeam] = useState(false);
   const [loading, setLoading] = useState(true);
   const [teamData, setTeamData] = useState<any>(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const uid = auth.currentUser?.uid;
     if (!uid) { setLoading(false); return; }
     let unsubscribeTeam: (() => void) | null = null;
-
     const unsubscribeUser = onSnapshot(doc(db, 'users', uid), (userSnapshot) => {
       if (!userSnapshot.exists() || !userSnapshot.data()?.teamID) {
         setHasTeam(false); setTeamData(null); setLoading(false);
@@ -61,10 +56,8 @@ export default function Team() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: hp(22) }}>
         <ImageBackground source={require('../../assets/images/teambg2.png')} style={styles.topSection} imageStyle={{ transform: [{ scale: 1.14 }, { translateY: -80 }] }}>
           <View style={styles.overlay}>
-        <Header
-          onMenuPress={() => setIsSidebarOpen(true)}
-          avatarSource={getAvatarSource(auth.currentUser?.photoURL, auth.currentUser?.uid)}
-                />            <View style={styles.titleContainer}>
+            <Header onMenuPress={() => setIsSidebarOpen(true)} avatarSource={getAvatarSource(auth.currentUser?.photoURL, auth.currentUser?.uid)} />
+            <View style={styles.titleContainer}>
               <View style={styles.titleRow}>
                 <MaskedView maskElement={<Text style={styles.title}>TEAM</Text>}>
                   <LinearGradient colors={['#A061F5', '#8B5CF6', '#5D398F']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
@@ -83,30 +76,17 @@ export default function Team() {
           {hasTeam && teamData ? (
             <>
               <TeamCard teamName={teamData.teamName || 'STEMM LAB'} teamCode={teamData.teamCode} totalPoints={teamData.totalPoints || 0} rank={teamData.rank || 0} memberCount={teamData.members?.length || 0} />
-              
               <TeamMembersCard />
               <TeamCodeCard teamCode={teamData.teamCode} />
-              
-              {/* DASHBOARD STATS */}
               <View style={styles.statRow}>
                 <StatCard icon="⭐" value={teamData.totalPoints || 0} label="Points" />
                 <StatCard icon="🚀" value={teamData.totalActivitiesCompleted || 0} label="Missions" />
                 <StatCard icon="⚡" value={`${teamData.averageCompletionTime || 0}m`} label="Avg Time" />
               </View>
-
               <Text style={styles.sectionTitle}>Activity Progress</Text>
               <TeamProgressChart data={teamData.weeklyCompletions || { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 }} />
-
               <Text style={styles.sectionTitle}>Category Breakdown</Text>
-<CategoryBreakdown
-  data={
-    teamData.categories || {
-      Science: 0,
-      Recycling: 0,
-      Creativity: 0,
-    }
-  }
-/>
+              <CategoryBreakdown data={teamData.categories || { Science: 0, Recycling: 0, Creativity: 0 }} />
               <LeaveButton />
             </>
           ) : (
@@ -128,7 +108,7 @@ export default function Team() {
 }
 
 const styles = StyleSheet.create({
-    sidebarOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, backgroundColor: 'rgba(0,0,0,0.6)' },
+  sidebarOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, backgroundColor: 'rgba(0,0,0,0.6)' },
   sidebarWrapper: { width: wp(60), height: '100%', backgroundColor: '#07021B', borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.1)' },
   container: { flex: 1, backgroundColor: '#07021B' },
   topSection: { width: '100%', minHeight: hp(50), overflow: 'hidden' },

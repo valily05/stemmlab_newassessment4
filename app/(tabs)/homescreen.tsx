@@ -36,22 +36,44 @@ export default function HomeScreen() {
   const [hasTeam, setHasTeam] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+const [streak, setStreak] = useState(0);
+const [teamPoints, setTeamPoints] = useState(0);
   const userPoints = 500;
-
   useEffect(() => {
     const uid = auth.currentUser?.uid;
     if (!uid) {
       setLoading(false);
       return;
     }
-    const unsubscribe = onSnapshot(doc(db, 'users', uid), (snapshot) => {
-      setHasTeam(snapshot.exists() ? !!snapshot.data()?.teamID : false);
-      setLoading(false);
-    }, (error) => {
-      console.log('Error checking team:', error);
-      setLoading(false);
+ const unsubscribe = onSnapshot(
+  doc(db, 'users', uid),
+  (snapshot) => {
+if (snapshot.exists()) {
+  const data = snapshot.data();
+
+  setHasTeam(!!data.teamID);
+  setStreak(data.streak || 0);
+
+  if (data.teamID) {
+    const teamRef = doc(
+      db,
+      'teams',
+      data.teamID
+    );
+
+    onSnapshot(teamRef, (teamSnap) => {
+      if (teamSnap.exists()) {
+        setTeamPoints(
+          teamSnap.data().totalPoints || 0
+        );
+      }
     });
+  }
+}
+
+    setLoading(false);
+  }
+);
     return unsubscribe;
   }, []);
 
@@ -90,8 +112,12 @@ export default function HomeScreen() {
           />
           <SearchResults search={search} />
           <ActivitiesSection userPoints={userPoints} />
-          <Streak hasTeam={hasTeam} streak={4} points={250} />
-          <Banner />
+<Streak
+  hasTeam={hasTeam}
+  streak={streak}
+  points={teamPoints}
+/>
+     <Banner />
           <TeamRankingCard />
         </View>
       </ScrollView>

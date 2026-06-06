@@ -14,11 +14,12 @@ import {
   View
 } from 'react-native';
 
-import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Notifications from 'expo-notifications';
+import { useLocalSearchParams } from 'expo-router';
+import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -51,6 +52,7 @@ const rf = (size:number) => {
 };
 
 export default function ActivityFeedbackScreen() {
+  
   const scrollRef = useRef<ScrollView>(null);
 
   const [rating, setRating] =
@@ -84,7 +86,12 @@ export default function ActivityFeedbackScreen() {
   const meteor8X = useRef(
     new Animated.Value(-2400)
   ).current;
-
+const {
+  activityName,
+  pointsEarned,
+} = useLocalSearchParams();
+console.log('activityName:', activityName);
+console.log('pointsEarned:', pointsEarned);
   useEffect(() => {
 
     Notifications.requestPermissionsAsync();
@@ -236,16 +243,16 @@ export default function ActivityFeedbackScreen() {
     !hasBadLanguage &&
     rating > 0;
 
-  const sendCompletionNotification = async () => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: '🚀 TEAM MISSION COMPLETE',
-        body: 'STEMM LAB completed Parachute Drop Challenge (+500 Team Points)',
-        sound: true,
-      },
-      trigger: null,
-    });
-  };
+const sendCompletionNotification = async () => {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: '🚀 TEAM MISSION COMPLETE',
+      body: `${activityName} completed (+${pointsEarned} Team Points)`,
+      sound: true,
+    },
+    trigger: null,
+  });
+};
 
   return (
     <LinearGradient
@@ -601,9 +608,7 @@ export default function ActivityFeedbackScreen() {
             </MaskedView>
 
             <Text style={styles.heroText}>
-              Great job completing the
-              Parachute Drop Challenge.
-              {/* change this text with the value in data/activities.ts */}
+  Great job completing {activityName}.
             </Text>
           </View>
 
@@ -731,8 +736,7 @@ export default function ActivityFeedbackScreen() {
               if(!canSubmit){
                 return;
               }
-              await sendCompletionNotification();
-
+await sendCompletionNotification();
               console.log({
                 rating,
                 learned,

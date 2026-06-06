@@ -17,7 +17,9 @@ import {
   collection,
   doc,
   getDoc,
+  increment,
   serverTimestamp,
+  updateDoc,
 } from 'firebase/firestore';
 import {
   ChartNoAxesColumn,
@@ -275,35 +277,75 @@ if (!userSnap.exists()) {
   return;
 }
 
+const userData =
+  userSnap.data();
+
+let streak =
+  userData.streak || 0;
+
+const lastActivityDate =
+  userData.lastActivityDate;
+
 const teamID =
   userSnap.data().teamID;
+// Save session
 const sessionRef = await addDoc(
   collection(db, 'session'),
   {
     teamID,
-
     activityID: 1,
-
     experimentTime,
-
     totalIterations,
-
-    pointsEarned:
-      totalScore,
-
-    completedAt:
-      serverTimestamp(),
-
+    pointsEarned: totalScore,
+    completedAt: serverTimestamp(),
     insights: {
-      bestTime:
-        bestResult?.dropTime || 0,
-
-      avgAccuracy:
-        accuracy,
+      bestTime: bestResult?.dropTime || 0,
+      avgAccuracy: accuracy,
     },
   }
 );
 
+// Add points to team
+if (teamID) {
+  const teamRef = doc(
+    db,
+    'teams',
+    teamID
+  );
+
+  await updateDoc(teamRef, {
+    totalPoints: increment(totalScore),
+  });
+}
+const today = new Date();
+
+if (!lastActivityDate) {
+  streak = 1;
+} else {
+  const lastDate =
+    lastActivityDate.toDate();
+
+  const diffDays =
+    Math.floor(
+      (today.getTime() -
+        lastDate.getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
+
+  if (diffDays === 0) {
+    // already completed today
+  } else if (diffDays === 1) {
+    streak += 1;
+  } else {
+    streak = 1;
+  }
+}
+
+await updateDoc(userRef, {
+  streak,
+  lastActivityDate:
+    serverTimestamp(),
+});
 for (
   let i = 0;
   i < parsedResults.length;
@@ -372,9 +414,13 @@ for (
       'Session Saved'
     );
 
-    router.push(
-      '/activities/activity1/feedback'
-    );
+router.push({
+  pathname: '/activities/activity1/feedback',
+  params: {
+    activityName: 'Parachute Drop Challenge',
+    pointsEarned: totalScore,
+  },
+});
 
   } catch (error) {
 

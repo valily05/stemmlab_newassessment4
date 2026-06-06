@@ -3,12 +3,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
-    Dimensions,
-    Image,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  Image,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 const { width } = Dimensions.get('window');
 
@@ -163,13 +163,20 @@ if (!hasTeam) {
 style={[
   styles.circle,
   state === 'completed' && styles.completedCircle,
+  state === 'current' && styles.currentCircle,
 ]}
 >
-  {state === 'completed' && (
-    <Text style={styles.check}>
-      ✓
-    </Text>
-  )}
+{state === 'completed' && (
+  <Text style={styles.check}>
+    ✓
+  </Text>
+)}
+
+{state === 'current' && (
+  <Text style={styles.check}>
+    🔥
+  </Text>
+)}
                 
                 </View>
 
@@ -312,6 +319,10 @@ marginLeft:rf(6)
 dayWrapper: {
   width: rf(67),
   alignItems: 'center',
+},
+currentCircle: {
+  backgroundColor: '#FF8A65',
+  borderColor: '#FFD84D',
 },
 star: {
   width: rf(27),
