@@ -137,8 +137,11 @@ const inputRef = useRef<TextInput>(null);
         style={styles.image}
       />
 
-      <Text style={styles.title}>NO CREW DETECTED</Text>
-      <Text style={styles.subtitle}>
+<Text style={styles.title}>
+        <Text style={{ color: '#FFFFFF' }}>NO TEAM </Text>
+        <Text style={{ color: '#A855F7' }}>DETECTED</Text>
+      </Text>
+            <Text style={styles.subtitle}>
         Every explorer needs a crew to discover new worlds and complete missions together.
       </Text>
 <View style={styles.featureContainer}>
@@ -264,17 +267,17 @@ const styles = StyleSheet.create({
 },
 bluePlanet: {
   position: 'absolute',
-  top: hp(3),
-  left: wp(4),
-  width: wp(40),
-  height: wp(40),
+  top: hp(-1),
+  right: wp(40),
+  width: wp(48),
+  height: wp(45),
 },
 dot1: {
   position: 'absolute',
   left: wp(4),
-  top: hp(14),
-  width: 6,
-  height: 6,
+  top: hp(18),
+  width: 20,
+  height: 23,
 },
 
 dot2: {
@@ -287,10 +290,10 @@ dot2: {
 
 dot3: {
   position: 'absolute',
-  right: wp(10),
-  top: hp(16),
-  width: 6,
-  height: 6,
+  right: wp(3),
+  top: hp(19),
+  width: 30,
+  height: 30,
 },
 
 dot4: {
@@ -358,34 +361,35 @@ featureDivider: {
 },
 jupiterPlanet: {
   position: 'absolute',
-  top: hp(10),
-  right: wp(5),
-  width: wp(18),
-  height: wp(18),
+  top: hp(14),
+  right: wp(-23),
+  width: wp(76),
+  height: wp(76),
 },
 
 questionMark: {
   position: 'absolute',
-  top: hp(5),
-  right: wp(25),
-  width: wp(10),
-  height: wp(10),
+  top: hp(7),
+  right: wp(19),
+  width: wp(13),
+  height: wp(17),
+  zIndex:10
 },
 
 star1: {
   position: 'absolute',
-  left: wp(8),
-  top: hp(15),
-  width: wp(6),
-  height: wp(6),
+  left: wp(12),
+  top: hp(24),
+  width: wp(10),
+  height: wp(10),
 },
 
 star2: {
   position: 'absolute',
   right: wp(10),
-  top: hp(22),
-  width: wp(6),
-  height: wp(6),
+  top: hp(38),
+  width: wp(8),
+  height: wp(8),
 },
 readyText: {
   color: '#FFFFFF',
@@ -513,8 +517,8 @@ elevation: 12,
   star: { position: 'absolute', color: '#FFD166', fontSize: rf(16) },
 
 image: {
-  width: wp(90),
-  height: wp(90),
+  width: wp(99),
+  height: wp(99),
 },  title: { color: '#FFF', fontSize: rf(20), fontFamily: 'Pixel', marginBottom: hp(1) },
   subtitle: {
     color: '#A3AED0',
