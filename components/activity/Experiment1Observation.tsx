@@ -59,6 +59,7 @@ type Props = {
   firstHitTime: string | null;
   stopMovingTime: string | null;
 
+
 };
 export default function Experiment1Observation({
   inTarget,
@@ -68,14 +69,13 @@ export default function Experiment1Observation({
   dropHeight,
   firstHitTime,
   stopMovingTime,
-  
 }: Props) {
 
 
 
   const [showTimeFormula, setShowTimeFormula] =
     useState(false);
-const [showGForceFormula, setShowGForceFormula] =
+const [showimpactForceFormula, setShowimpactForceFormula] =
   useState(false);
   const parseTime = (
     value: string | null
@@ -109,32 +109,35 @@ const [showGForceFormula, setShowGForceFormula] =
       0.01
     );
 
-  const velocity =
-    Math.sqrt(
-      2 * 9.81 * dropHeight
-    );
+const velocity =
+  Math.sqrt(
+    2 * 9.81 * dropHeight
+  );
 
-  const gForce =
-    velocity /
-    (contactTime * 9.81);
+const acceleration =
+  velocity / contactTime;
+
+const gForce =
+  velocity /
+  (contactTime * 9.81);
 let impactRating = 'SAFE';
 let ratingColor = '#00E84A';
 
-if (gForce >= 5 && gForce < 10) {
+if (gForce  >= 5 && gForce  < 10) {
   impactRating = 'CAUTION';
   ratingColor = '#FFD54F';
 }
 
-if (gForce >= 10 && gForce < 30) {
+if (gForce  >= 10 && gForce  < 30) {
   impactRating = 'HIGH';
   ratingColor = '#FF9800';
 }
 
-if (gForce >= 30 && gForce < 50) {
+if (gForce  >= 30 && gForce  < 50) {
   impactRating = 'SEVERE';
   ratingColor = '#FF4D4D';
 }
-if (gForce >= 50) {
+if (gForce  >= 50) {
   impactRating = 'EXTREME';
   ratingColor = '#A00000';
 }
@@ -279,7 +282,22 @@ const ratingBackground =
     {dropHeight} m
   </Text>
 </View>
+<View style={styles.metricRow}>
+  <View style={styles.metricLeft}>
+    <ChartColumn
+      size={rf(22)}
+      color="#9B6DFF"
+    />
 
+    <Text style={styles.metricLabel}>
+      VELOCITY
+    </Text>
+  </View>
+
+  <Text style={styles.metricValue}>
+    {velocity.toFixed(2)} m/s
+  </Text>
+</View>
 <TouchableOpacity
   style={styles.metricRow}
   onPress={() =>
@@ -338,11 +356,28 @@ const ratingBackground =
     </Text>
   </View>
 )}
+<View style={styles.metricRow}>
+  <View style={styles.metricLeft}>
+    <Calculator
+      size={rf(22)}
+      color="#9B6DFF"
+    />
+
+    <Text style={styles.metricLabel}>
+      ACCELERATION
+    </Text>
+  </View>
+
+  <Text style={styles.metricValue}>
+    {acceleration.toFixed(2)} m/s²
+  </Text>
+</View>
+
 <TouchableOpacity
   style={styles.metricRow}
   onPress={() =>
-    setShowGForceFormula(
-      !showGForceFormula
+    setShowimpactForceFormula(
+      !showimpactForceFormula
     )
   }
 >
@@ -353,7 +388,7 @@ const ratingBackground =
     />
 
     <Text style={styles.metricLabel}>
-      CALCULATED G-FORCE
+      CALCULATED G-FORCE 
     </Text>
   </View>
 
@@ -365,15 +400,15 @@ const ratingBackground =
     }}
   >
     <Text style={styles.metricValue}>
-      {gForce.toFixed(2)} g
+{gForce.toFixed(2)} g
     </Text>
 <Text style={styles.expandIcon}>
-  {showGForceFormula ? '−' : '+'}
+  {showimpactForceFormula ? '−' : '+'}
 </Text>
 </View>
 </TouchableOpacity>
 
-{showGForceFormula && (
+{showimpactForceFormula && (
   <View style={styles.dropdownBox}>
     <Text style={styles.dropdownTitle}>
       Formula
@@ -390,8 +425,7 @@ const ratingBackground =
     </Text>
 
     <Text style={styles.dropdownResult}>
-      = {gForce.toFixed(2)} g
-    </Text>
+= {gForce.toFixed(2)} g    </Text>
   </View>
 )}
 <Text style={styles.impactLabel}>

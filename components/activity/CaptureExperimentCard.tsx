@@ -49,7 +49,10 @@ interface Props {
   canStopRecording: boolean;
 onStartRecording: () => void;
   videoUri: string | null;
-
+objectWeight: string;
+setObjectWeight: (
+  value: string
+) => void;
   onSaveIteration: () => void;
 
   onVideoSaved?: (
@@ -74,6 +77,8 @@ export default function CaptureExperimentCard({
   onStartRecording,
     dropHeight,
   setDropHeight,
+    objectWeight,
+  setObjectWeight,
 }: Props) {
 
   const [permission, requestPermission] =
@@ -444,17 +449,68 @@ recordingPromise
   </Text>
 )}
 </View>
+<View style={styles.heightCard}>
+  <Text style={styles.heightLabel}>
+    OBJECT WEIGHT (g)
+  </Text>
 
+  <TextInput
+    style={styles.heightInput}
+    placeholder="e.g. 85"
+    placeholderTextColor="#8A8FBF"
+    keyboardType="numeric"
+    value={objectWeight}
+    onChangeText={setObjectWeight}
+  />
+</View>
+{Number(dropHeight) <= 0 &&
+ dropHeight.trim() !== '' && (
+  <Text style={styles.errorText}>
+    * Height must be greater than 0
+  </Text>
+)}
 
+{Number(objectWeight) <= 0 &&
+ objectWeight.trim() !== '' && (
+  <Text style={styles.errorText}>
+    * Weight must be greater than 0
+  </Text>
+)}
+
+{Number(dropHeight) > 10 && (
+  <Text style={styles.errorText}>
+    * Height cannot exceed 10m
+  </Text>
+)}
+
+{Number(objectWeight) > 5000 && (
+  <Text style={styles.errorText}>
+    * Weight cannot exceed 5000g
+  </Text>
+)}
 <TouchableOpacity
   style={[
     styles.startButton,
-    !dropHeight.trim() && {
+    (
+      !dropHeight.trim() ||
+      !objectWeight.trim() ||
+Number(dropHeight) <= 0 ||
+Number(dropHeight) > 10 ||
+Number(objectWeight) <= 0 ||
+Number(objectWeight) > 5000
+    ) && {
       opacity: 0.4,
     },
   ]}
-  disabled={!dropHeight.trim()}
-  onPress={async () => {
+disabled={
+  !dropHeight.trim() ||
+  !objectWeight.trim() ||
+  Number(dropHeight) <= 0 ||
+  Number(dropHeight) > 10 ||
+  Number(objectWeight) <= 0 ||
+  Number(objectWeight) > 5000
+}
+  onPress={() => {
     onStart();
   }}
 >
@@ -537,7 +593,12 @@ heightCard: {
 
   padding: wp(4),
 },
-
+errorText: {
+  color: '#FF6B6B',
+  fontSize: rf(14),
+  fontFamily: 'PixelOperator',
+  marginTop: hp(0.8),
+},
 heightLabel: {
   color: '#FFE95B',
 
