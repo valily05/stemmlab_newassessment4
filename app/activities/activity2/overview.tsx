@@ -2,12 +2,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-  Dimensions,
-  ImageBackground,
-  PixelRatio,
-  ScrollView,
-  StyleSheet,
-  View
+    Dimensions,
+    ImageBackground,
+    PixelRatio,
+    ScrollView,
+    StyleSheet,
+    View
 } from 'react-native';
 
 import ActivityHeader from '@/components/activity/ActivityHeader';
@@ -24,7 +24,7 @@ import PixelDivider from '@/components/PixelDivider';
 
 import { activities } from '@/data/activities';
 
-const activity = activities.activity1;
+const activity = activities.activity2;
 
 const { width, height } = Dimensions.get('window');
 
@@ -84,7 +84,7 @@ const canStart =
 
         {/* HERO SECTION */}
         <ImageBackground
-          source={require('@/assets/images/miffyspace.png')}
+          source={require('@/assets/images/miffysound.png')}
           style={styles.heroBackground}
           imageStyle={styles.heroImage}
         >
@@ -140,7 +140,7 @@ const canStart =
 
 
           <ReferenceSetupCard
-            image={require('@/assets/images/referenceSetup.png')}
+            image={require('@/assets/images/referenceSetup2.png')}
           />
 
 
@@ -154,15 +154,14 @@ const canStart =
   disabled={!canStart}
   onPress={() =>
     router.push({
-      pathname:'/activities/ActivityIntroScreen',
+      pathname: '/activities/ActivityIntroScreen',
       params: {
-        activityNumber: 1,
-        title:
-          'PARACHUTE DROP CHALLENGE',
+        activityNumber: 2,
+        title: 'SOUND POLLUTION HUNTER',
         objective:
-          'Design and test a parachute to achieve the slowest drop time.',
+          'Measure and compare noise levels in different environments to investigate sound pollution and its impact on daily life.',
         nextScreen:
-          '/activities/activity1/experiment',
+          '/activities/activity2/experiment',
       },
     })
   }
@@ -192,24 +191,24 @@ scrollContent: {
   paddingBottom: hp(20),
 },
 
+
+
   /* HERO BG */
   heroBackground: {
     width: '100%',
-
-
     justifyContent: 'flex-end',
+    top:rf(20),
+    zIndex:-1
   },
 
   /* HERO IMAGE */
   heroImage: {
-    resizeMode: 'cover',
-
-  
+    resizeMode: 'cover', // This ensures the whole image is visible
   },
 
   /* OVERLAY */
   overlay: {
-    paddingBottom: hp(4),
+    paddingBottom: hp(0),
   },
 
   /* BOTTOM BLUR */
@@ -227,7 +226,7 @@ scrollContent: {
 
   /* CONTENT */
   content: {
-    marginTop: -hp(1),
+    marginTop: hp(4),
   },
 
 });

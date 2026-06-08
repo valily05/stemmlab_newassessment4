@@ -40,7 +40,7 @@ export default function ActivitiesResults({
 
       image: require('../assets/images/bg2.png'),
 
-      route: '/activities/activity1' as const,
+      route: '/activities/activity1/overview' as const,
     },
 
     {
@@ -62,6 +62,8 @@ export default function ActivitiesResults({
       isNew: true,
 
       image: require('../assets/images/bg2.png'),
+
+      route:'/activities/activity2/overview' as const,
     },
 
     {

@@ -40,12 +40,15 @@ const rf = (
   );
 };
 interface Props {
+  notes: string[];
+
   onAcceptedChange?: (
     accepted: boolean
   ) => void;
 }
 
 export default function SafetyNotes({
+  notes,
   onAcceptedChange,
 }: Props) {
 
@@ -85,21 +88,16 @@ export default function SafetyNotes({
       </View>
 
       {/* NOTES */}
-      <View style={styles.notesContainer}>
-
-        <Text style={styles.note}>
-          • Ensure the drop area is clear of people
-        </Text>
-
-        <Text style={styles.note}>
-          • Use a stable elevated surface
-        </Text>
-
-        <Text style={styles.note}>
-          • Handle scissors with care
-        </Text>
-
-      </View>
+<View style={styles.notesContainer}>
+  {notes.map((note, index) => (
+    <Text
+      key={index}
+      style={styles.note}
+    >
+      • {note}
+    </Text>
+  ))}
+</View>
 
       {/* ACKNOWLEDGEMENT */}
       <Pressable

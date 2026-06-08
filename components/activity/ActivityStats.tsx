@@ -83,29 +83,9 @@ export default function ActivityStats({
                 MISSION :
               </Text>
 
-              <Text style={styles.missionText}>
-
-                Make the toy land as{' '}
-
-                <Text style={styles.pinkText}>
-                  SLOWLY
-                </Text>
-
-                ,{' '}
-
-                <Text style={styles.cyanText}>
-                  SAFELY
-                </Text>
-
-                , and{' '}
-
-                <Text style={styles.yellowText}>
-                  ACCURATELY
-                </Text>
-
-                {' '}as possible!
-
-              </Text>
+             <Text style={styles.missionText}>
+  {mission}
+</Text>
 
             </View>
 

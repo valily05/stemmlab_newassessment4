@@ -12,7 +12,7 @@ export const activities = {
 
     overview: "Design, build, and test a parachute for a small toy to reduce its landing speed and impact force. Teams iterate their designs under time and material constraints.",
     
-    mission: "Make the toy land as slowly, safely and accurately as possible.",
+    mission: "Land the toy slowly and safely.",
     duration: "20 Minutes",
     difficulty: "Easy",
 
@@ -75,11 +75,11 @@ export const activities = {
     ],
 
     referencePhoto: require('@/assets/images/referenceSetup.png'),
-    safetyNotes: [
-      "a",
-      "b",
-      "c"
-    ],
+  safetyNotes: [
+  "Ensure the drop area is clear of people",
+  "Use a stable elevated surface",
+  "Handle scissors with care",
+],
 
     bunnyTip: [
       "Use a ruler in frame for scale",
@@ -88,44 +88,74 @@ export const activities = {
     ],
   },
 
+
   activity2: {
     id: 2,
-    title: "Sound Pollution Hunter",
-    image:require('../assets/images/Group 228.png'),
-    route:'/activities/activity2',
+    title: "SOUND POLLUTION\nHUNTER",
+    image: require('../assets/images/Group 228.png'),
+    route: '/activities/activity2/overview',
 
     category: [
-        "Environmental Science",
+      "Environmental Science",
+      "Data Analysis"
     ],
 
-    overview: "",
+    overview:
+      "Investigate noise levels in different locations and identify sources of sound pollution.",
 
-    mission: "",
-    duration: "20 mins",
-    difficulty: "",
+  mission: "Compare noise levels in different locations.",
+
+    duration: "20 Minutes",
+    difficulty: "Easy",
 
     materials: [
-      
+      {
+        name: "STEMM LAB ON MOBILE PHONE",
+        quantity: "x1",
+      },
+    ],
+
+    setupSteps: [
+      {
+        title: "TEST THE SOUND METER",
+        instruction:
+      "Clap your hands once to make sure the sound meter detects sound correctly.",
+ bunnyTip:
+  "A loud clap should cause the sound level to \nincrease."
+   },
+
+      {
+        title: "TEST LOCATION ACCURACY",
+        instruction:
+    "Walk to a different location and confirm the app updates your position correctly.",
+    bunnyTip:    "Try moving to a nearby area and check\nif your location changes!",
+
+      },
     ],
 
     instructions: [
-      "a",
-      "b",
+      "Start the sound meter",
+      "Record noise levels in different locations",
+      "Identify the loudest and quietest areas",
+      "Compare your findings with your teammates",
+      "Upload results and reflections",
     ],
 
-    referencePhoto: require('../assets/images/referenceSetup.png'),
+    referencePhoto: require('@/assets/images/referenceSetup2.png'),
+
     safetyNotes: [
-      "a",
-      "b",
-      "c"
+      "Stay aware of your surroundings",
+      "Avoid dangerous or restricted areas",
+      "Keep your phone secure while moving",
     ],
 
     bunnyTip: [
-      "a",
-      "b",
-      "c"
+      "Take measurements for at least 10 seconds",
+      "Measure from the same distance each time",
+      "Try both indoor and outdoor locations",
     ],
   },
+
 
   activity3: {
     id: 3,

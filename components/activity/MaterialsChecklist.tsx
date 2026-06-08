@@ -113,7 +113,7 @@ const toggleCheck = (index: number) => {
       {/* FULL VERTICAL DASHED LINE */}
       <View style={styles.fullVerticalLine}>
 
-        {Array.from({ length: 28 }).map((_, i) => (
+        {Array.from({ length: materials.length * 4 }).map((_, i) => (
           <View
             key={i}
             style={styles.verticalDash}
