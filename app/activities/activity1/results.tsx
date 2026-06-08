@@ -1,6 +1,3 @@
-import {
-  uploadVideoToCloudinary
-} from '@/services/cloudinary';
 import { auth, db } from '@/services/firebase/config';
 import MaskedView from '@react-native-masked-view/masked-view';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -339,72 +336,63 @@ const saveExperiment = async () => {
         serverTimestamp(),
     });
 
-    for (
-      let i = 0;
-      i < parsedResults.length;
-      i++
-    ) {
-      const result =
-        parsedResults[i];
+ 
+for (
+  let i = 0;
+  i < parsedResults.length;
+  i++
+) {
+  const result =
+    parsedResults[i];
 
-      let cloudinaryUrl = '';
+  await addDoc(
+    collection(
+      db,
+      'session',
+      sessionRef.id,
+      'iterations'
+    ),
+    {
+      iterationNo: i + 1,
+      stage: result.stage,
+      dropTime: result.dropTime,
+      firstHitTime:
+        result.firstHitTime,
+      stopMovingTime:
+        result.stopMovingTime,
+      impactForce:
+        result.impactForce,
+      inTarget:
+        result.inTarget,
+      bounced:
+        result.bounced,
 
-      if (result.videoUri) {
-        cloudinaryUrl =
-          await uploadVideoToCloudinary(
-            result.videoUri
-          );
+      videoURL:
+        result.videoURL || '',
 
-        console.log(
-          'CLOUDINARY URL:',
-          cloudinaryUrl
-        );
-      }
+      velocity:
+        result.velocity,
 
-      await addDoc(
-        collection(
-          db,
-          'session',
-          sessionRef.id,
-          'iterations'
-        ),
-        {
-          iterationNo: i + 1,
-          stage: result.stage,
-          dropTime: result.dropTime,
-          firstHitTime:
-            result.firstHitTime,
-          stopMovingTime:
-            result.stopMovingTime,
-          impactForce:
-            result.impactForce,
-          inTarget: result.inTarget,
-          bounced: result.bounced,
-          videoURL:
-            cloudinaryUrl || '',
-            velocity:
-  result.velocity,
+      acceleration:
+        result.acceleration,
 
-acceleration:
-  result.acceleration,
-
-weight:
-  result.weight,
-        }
-      );
+      weight:
+        result.weight,
     }
+  );
+}
 
     console.log('Session Saved');
 setIsSaving(false);
-    router.push({
-      pathname:
-        '/activities/activity1/feedback',
-      params: {
-        activityName:
-          'Parachute Drop Challenge',
-        pointsEarned: totalScore,
-      },
-    });
+router.push({
+  pathname:
+    '/activities/activity1/feedback',
+  params: {
+    activityName:
+      'Parachute Drop Challenge',
+    pointsEarned: totalScore,
+  },
+});
   } catch (error) {
     console.log('SAVE ERROR', error);
     setIsSaving(false);
@@ -671,7 +659,84 @@ return (
     </>
   )}
 </View>
+<View style={styles.heightCard}>
+  <Text style={styles.heightLabel}>
+    DROP HEIGHT
+  </Text>
 
+  <Text style={styles.heightValue}>
+    {parsedResults[0]?.dropHeight ?? '--'} m
+  </Text>
+</View>
+<View style={styles.metricsCard}>
+
+  <Text style={styles.metricsTitle}>
+    EXPERIMENT DATA
+  </Text>
+
+  <View style={styles.metricsGrid}>
+
+
+
+    <View style={styles.metricBox}>
+      <Text style={styles.metricLabel}>
+        Velocity
+      </Text>
+      <Text style={styles.metricValue}>
+        {Number(
+          parsedResults[selectedVideo]?.velocity || 0
+        ).toFixed(2)} m/s
+      </Text>
+    </View>
+
+    <View style={styles.metricBox}>
+      <Text style={styles.metricLabel}>
+        Time To Stop
+      </Text>
+      <Text style={styles.metricValue}>
+        {formatSeconds(
+          parsedResults[selectedVideo]?.stopMovingTime
+        )}
+      </Text>
+    </View>
+
+    <View style={styles.metricBox}>
+      <Text style={styles.metricLabel}>
+        Acceleration
+      </Text>
+      <Text style={styles.metricValue}>
+        {Number(
+          parsedResults[selectedVideo]?.acceleration || 0
+        ).toFixed(2)}
+      </Text>
+    </View>
+
+    <View style={styles.metricBox}>
+      <Text style={styles.metricLabel}>
+        G-Force
+      </Text>
+      <Text style={styles.metricValue}>
+        {Number(
+          parsedResults[selectedVideo]?.gForce || 0
+        ).toFixed(2)} g
+      </Text>
+    </View>
+<View style={styles.metricBox}>
+  <Text style={styles.metricLabel}>
+    First Hit Time
+  </Text>
+
+  <Text style={styles.metricValue}>
+    {formatSeconds(
+      parsedResults[selectedVideo]?.firstHitTime
+    )}
+  </Text>
+</View>
+
+
+  </View>
+
+</View>
 </View>
 <LinearGradient
   colors={[
@@ -843,37 +908,14 @@ color:
 <View style={styles.resultRow}>
 
   <View>
-    <Text style={styles.miniLabel}>
-      Velocity
-    </Text>
+   
 
-    <Text
-      style={[
-        styles.resultValue,
-        { color: '#00D9FF' },
-      ]}
-    >
-      {item.velocity
-        ? `${item.velocity.toFixed(2)} m/s`
-        : '--'}
-    </Text>
+
   </View>
 
   <View>
-    <Text style={styles.miniLabel}>
-      Acceleration
-    </Text>
+  
 
-    <Text
-      style={[
-        styles.resultValue,
-        { color: '#C86DFF' },
-      ]}
-    >
-      {item.acceleration
-        ? `${item.acceleration.toFixed(2)} m/s²`
-        : '--'}
-    </Text>
   </View>
 
 </View>
@@ -925,17 +967,17 @@ color:
 </View>
 <TouchableOpacity
   style={styles.cvButton}
-  onPress={() => {
-    router.push({
-      pathname:
-        '/activities/activity1/cv-analysis',
-      params: {
-        results: JSON.stringify(
-          parsedResults
-        ),
-      },
-    });
-  }}
+onPress={() =>
+  router.push({
+    pathname:
+      '/activities/activity1/cv-analysis',
+    params: {
+      results: JSON.stringify(
+        parsedResults
+      ),
+    },
+  })
+}
 >
   <Text style={styles.cvButtonTitle}>
      AI MOTION ANALYSIS
@@ -950,21 +992,54 @@ color:
 <View style={styles.graphCard}>
 
   <Text style={styles.graphTitle}>
-    PARACHUTE IMPROVEMENT TREND
+    ACCELERATION ACROSS ITERATIONS
   </Text>
 
   <Text style={styles.graphSubtitle}>
-    Lower acceleration means a softer landing.
+   Comparing landing acceleration for each prototype.
   </Text>
+<View
+  style={{
+    position: 'relative',
+    marginTop: hp(1),
+  }}
+>
+  <Text
+  style={{
+  position: 'absolute',
+
+  left: wp(-21),
+
+  top: hp(15),
+
+  width: wp(45),
+
+  transform: [{ rotate: '-90deg' }],
+
+  color: '#C86DFF',
+
+  fontSize: rf(14),
+
+  fontFamily: 'PixelOperator',
+
+  textAlign: 'center',
+
+  zIndex: 999,
+}}
+  >
+    Y-Axis: Acceleration (m/s²)
+  </Text>
+
+
 
   <LineChart
     data={accelerationData}
     width={width - wp(16)}
-    height={220}
+    height={260}
     withDots
     withShadow={false}
-    withInnerLines
-    withOuterLines={false}
+    withInnerLines={true}
+    withOuterLines={true}
     bezier
     chartConfig={{
       backgroundGradientFrom:
@@ -985,13 +1060,30 @@ color:
         r: '5',
         strokeWidth: '2',
         stroke: '#C86DFF',
+        
       },
+        propsForLabels: {
+    fontFamily: 'PixelBold',
+    fontSize: 12,},
     }}
     style={{
       borderRadius: rf(16),
       marginTop: hp(1),
+      paddingLeft:wp(2),
     }}
   />
+  </View>
+  <Text
+  style={{
+    color: '#C86DFF',
+    fontSize: rf(14),
+    fontFamily: 'PixelOperator',
+    textAlign: 'center',
+    marginTop: hp(1),
+  }}
+>
+  X-Axis: Iteration Stage
+</Text>
 
 </View>
 <TouchableOpacity
@@ -1000,6 +1092,7 @@ color:
     isSaving && { opacity: 0.7 },
   ]}
   onPress={saveExperiment}
+  
   disabled={isSaving}
 >
   {isSaving ? (
@@ -1089,6 +1182,97 @@ graphSubtitle:{
   justifyContent: 'center',
   flexDirection: 'row',
   gap: 10,
+},
+metricsCard:{
+  marginTop: hp(2),
+
+  backgroundColor:'#121127',
+
+  borderRadius:rf(14),
+
+  padding:rf(16),
+
+  borderWidth:1,
+  borderColor:'rgba(255,255,255,0.08)',
+},
+
+metricsTitle:{
+  color:'#FFFFFF',
+
+  fontSize:rf(18),
+
+  fontFamily:'PixelBold',
+
+  marginBottom:hp(1.5),
+},
+heightCard:{
+  marginTop: hp(2),
+
+  backgroundColor:'#2B0A3D',
+
+  borderRadius:rf(14),
+
+  padding:rf(18),
+
+  alignItems:'center',
+
+  borderWidth:2,
+  borderColor:'#C86DFF',
+},
+
+heightLabel:{
+  color:'#B8BED3',
+
+  fontSize:rf(13),
+
+  fontFamily:'PixelOperator',
+},
+
+heightValue:{
+  color:'#FFFFFF',
+
+  fontSize:rf(32),
+
+  fontFamily:'PixelBold',
+
+  marginTop:hp(0.5),
+},
+metricsGrid:{
+  flexDirection:'row',
+
+  flexWrap:'wrap',
+
+  justifyContent:'space-between',
+},
+
+metricBox:{
+  width:'48%',
+
+  backgroundColor:'#1A1B35',
+
+  borderRadius:rf(10),
+
+  padding:rf(12),
+
+  marginBottom:hp(1),
+},
+
+metricLabel:{
+  color:'#9AA3D8',
+
+  fontSize:rf(12),
+
+  fontFamily:'PixelOperator',
+},
+
+metricValue:{
+  color:'#FFFFFF',
+
+  fontSize:rf(18),
+
+  fontFamily:'PixelBold',
+
+  marginTop:hp(0.5),
 },
 cvButton: {
   marginTop: hp(3),

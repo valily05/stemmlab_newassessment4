@@ -86,14 +86,7 @@ export default function CaptureExperimentCard({
   const cameraRef = useRef<any>(null);
 
 
-console.log(
-  'CURRENT VIDEO URI',
-  videoUri
-);
-console.log(
-  'CAN STOP?',
-  canStopRecording
-);
+
 const [cameraReady, setCameraReady] =
   useState(false);
 
@@ -462,6 +455,18 @@ recordingPromise
     value={objectWeight}
     onChangeText={setObjectWeight}
   />
+  {!dropHeight.trim() && (
+  <Text
+    style={{
+      color: '#FF6B6B',
+      fontSize: rf(14),
+      fontFamily: 'PixelOperator',
+      marginTop: hp(0.8),
+    }}
+  >
+    * Enter the drop weight before starting
+  </Text>
+)}
 </View>
 {Number(dropHeight) <= 0 &&
  dropHeight.trim() !== '' && (

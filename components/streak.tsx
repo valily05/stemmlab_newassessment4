@@ -26,7 +26,7 @@ export default function Streak({
   points = 0,
   hasTeam = false,
 }: Props) {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  const days = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5'];
 if (!hasTeam) {
   return (
 <LinearGradient
@@ -389,8 +389,8 @@ line: {
   dayText: {
     color: '#FFFFFF',
     marginTop: rf(8),
-    fontSize: rf(14),
-    marginRight:rf(26),
+    fontSize: rf(13),
+    marginRight:rf(23),
     fontFamily: 'PixelBold',
   },
 

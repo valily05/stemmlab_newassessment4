@@ -74,10 +74,10 @@ export default function Activities() {
           <View style={styles.overlay}>
 
             {/* HEADER */}
-         <Header
-                     onMenuPress={() => setIsSidebarOpen(true)}
-                     avatarSource={getAvatarSource(auth.currentUser?.photoURL, auth.currentUser?.uid)}
-                   />
+        <Header
+          onMenuPress={() => setIsSidebarOpen(true)}
+          avatarSource={getAvatarSource(auth.currentUser?.photoURL, auth.currentUser?.uid)}
+                />
 
             {/* TITLE SECTION */}
             <View style={styles.titleContainer}>

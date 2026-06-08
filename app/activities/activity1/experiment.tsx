@@ -1,3 +1,4 @@
+import { uploadVideoToCloudinary } from '@/services/cloudinary';
 import {
   useCameraPermissions,
 } from 'expo-camera';
@@ -5,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   Image,
@@ -14,7 +16,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import CaptureExperimentCard from '../../../components/activity/CaptureExperimentCard';
 import ExitButton from '../../../components/activity/ExitButton';
@@ -55,6 +57,8 @@ const stages = [
 ];
 
 export default function Activity1Experiment() {
+  const [isUploading, setIsUploading] =
+  useState(false);
 const [permission, requestPermission] =
   useCameraPermissions();
 
@@ -114,10 +118,7 @@ const [videos, setVideos] =
 const [currentVideoUri, setCurrentVideoUri] =
   useState<string | null>(null);
 
-console.log(
-  'PARENT VIDEO',
-  currentVideoUri
-);
+
 const [canStopRecording, setCanStopRecording] =
   useState(false);
 
@@ -167,6 +168,8 @@ useEffect(() => {
 useEffect(() => {
   if (timeLeft !== 0) return;
 
+  if (!hasStarted) return;
+
   setIsRecording(false);
 
   Alert.alert(
@@ -181,7 +184,7 @@ useEffect(() => {
     ],
     { cancelable: false }
   );
-}, [timeLeft]);
+}, [timeLeft, hasStarted]);
 const formatCountdown = (
   seconds: number
 ) => {
@@ -230,8 +233,9 @@ const formatTime = (
   ).padStart(2, '0')}`;
 };
 
-const saveIteration = () => {
+const saveIteration = async () => {
 
+  if (isUploading) return;
 const parseTime = (value: string | null) => {
   if (!value) return 0;
 
@@ -256,9 +260,6 @@ const contactTime = Math.max(
 const heightMeters =
   Number(dropHeight);
 
-const massKg =
-  Number(objectWeight) / 1000;
-
 const velocity = Math.sqrt(
   2 * 9.81 * heightMeters
 );
@@ -266,33 +267,34 @@ const velocity = Math.sqrt(
 const acceleration =
   velocity / contactTime;
 
-const impactForceValue =
-  massKg * acceleration;
+const gForce =
+  velocity /
+  (contactTime * 9.81);
 
 let impactForce = 'SAFE';
 
 if (
-  impactForceValue >= 5 &&
-  impactForceValue < 15
+  gForce >= 5 &&
+  gForce < 10
 ) {
   impactForce = 'CAUTION';
 }
 
 if (
-  impactForceValue >= 15 &&
-  impactForceValue < 30
+  gForce >= 10 &&
+  gForce < 30
 ) {
   impactForce = 'HIGH';
 }
 
 if (
-  impactForceValue >= 30 &&
-  impactForceValue < 50
+  gForce >= 30 &&
+  gForce < 50
 ) {
   impactForce = 'SEVERE';
 }
 
-if (impactForceValue >= 50) {
+if (gForce >= 50) {
   impactForce = 'EXTREME';
 }
 const result = {
@@ -304,6 +306,9 @@ const result = {
 
   velocity,
   acceleration,
+  gForce,
+
+  dropHeight: Number(dropHeight),
 
   weight: Number(objectWeight),
 
@@ -344,19 +349,53 @@ const result = {
     setHasStarted(true);
     setIsRecording(false);
 
-  } else {
+} else {
 
-    console.log(
-      'Activity Complete',
-      updatedResults
+  setIsUploading(true);
+
+  const resultsWithUrls =
+    await Promise.all(
+      updatedResults.map(
+        async result => {
+
+          let videoURL = '';
+
+          if (result.videoUri) {
+            videoURL =
+              await uploadVideoToCloudinary(
+                result.videoUri
+              );
+          }
+
+          return {
+            ...result,
+            videoURL,
+          };
+        }
+      )
     );
+
+console.log(
+  'UPLOADED RESULTS:',
+  resultsWithUrls
+);
+
+setIsUploading(false);
+
+setHasStarted(false);
+setIsRecording(false);
+
+console.log(
+  'RESULTS SENT TO RESULTS PAGE:',
+  resultsWithUrls
+);
 
 router.push({
   pathname:
     '/activities/activity1/results',
   params: {
     results: JSON.stringify(
-      updatedResults
+      resultsWithUrls
     ),
   },
 });
@@ -602,6 +641,7 @@ onPress={() => {
 
 {recordingComplete && (
   <>
+  
 <Experiment1Observation
   inTarget={inTarget}
   setInTarget={setInTarget}
@@ -612,24 +652,37 @@ onPress={() => {
    dropHeight={Number(dropHeight)}
 />
 
-    <TouchableOpacity
-      style={[
-        styles.hitButton,
-        (inTarget === null ||
-          bounced === null) && {
-          opacity: 0.4,
-        },
-      ]}
-      disabled={
-        inTarget === null ||
-        bounced === null
-      }
-      onPress={saveIteration}
-    >
+<TouchableOpacity
+  style={[
+    styles.hitButton,
+    (
+      inTarget === null ||
+      bounced === null ||
+      isUploading
+    ) && {
+      opacity: 0.4,
+    },
+  ]}
+  disabled={
+    inTarget === null ||
+    bounced === null ||
+    isUploading
+  }
+  onPress={saveIteration}
+>
+  {isUploading ? (
+    <>
+      <ActivityIndicator color="#FFF" />
       <Text style={styles.hitButtonText}>
-        SAVE ITERATION
+        UPLOADING ...
       </Text>
-    </TouchableOpacity>
+    </>
+  ) : (
+    <Text style={styles.hitButtonText}>
+      SAVE ITERATION
+    </Text>
+  )}
+</TouchableOpacity>
 
     <TouchableOpacity
       style={styles.stopButton}

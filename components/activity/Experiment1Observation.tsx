@@ -77,6 +77,11 @@ export default function Experiment1Observation({
     useState(false);
 const [showimpactForceFormula, setShowimpactForceFormula] =
   useState(false);
+  const [showVelocityFormula, setShowVelocityFormula] =
+  useState(false);
+
+const [showAccelerationFormula, setShowAccelerationFormula] =
+  useState(false);
   const parseTime = (
     value: string | null
   ) => {
@@ -282,7 +287,14 @@ const ratingBackground =
     {dropHeight} m
   </Text>
 </View>
-<View style={styles.metricRow}>
+<TouchableOpacity
+  style={styles.metricRow}
+  onPress={() =>
+    setShowVelocityFormula(
+      !showVelocityFormula
+    )
+  }
+>
   <View style={styles.metricLeft}>
     <ChartColumn
       size={rf(22)}
@@ -294,10 +306,41 @@ const ratingBackground =
     </Text>
   </View>
 
-  <Text style={styles.metricValue}>
-    {velocity.toFixed(2)} m/s
-  </Text>
-</View>
+  <View
+    style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: wp(2),
+    }}
+  >
+    <Text style={styles.metricValue}>
+      {velocity.toFixed(2)} m/s
+    </Text>
+
+    <Text style={styles.expandIcon}>
+      {showVelocityFormula ? '−' : '+'}
+    </Text>
+  </View>
+</TouchableOpacity>
+{showVelocityFormula && (
+  <View style={styles.dropdownBox}>
+    <Text style={styles.dropdownTitle}>
+      Formula
+    </Text>
+
+    <Text style={styles.dropdownText}>
+      Velocity = √(2 × g × h)
+    </Text>
+
+    <Text style={styles.dropdownExample}>
+      √(2 × 9.81 × {dropHeight})
+    </Text>
+
+    <Text style={styles.dropdownResult}>
+      = {velocity.toFixed(2)} m/s
+    </Text>
+  </View>
+)}
 <TouchableOpacity
   style={styles.metricRow}
   onPress={() =>
@@ -356,7 +399,14 @@ const ratingBackground =
     </Text>
   </View>
 )}
-<View style={styles.metricRow}>
+<TouchableOpacity
+  style={styles.metricRow}
+  onPress={() =>
+    setShowAccelerationFormula(
+      !showAccelerationFormula
+    )
+  }
+>
   <View style={styles.metricLeft}>
     <Calculator
       size={rf(22)}
@@ -368,11 +418,42 @@ const ratingBackground =
     </Text>
   </View>
 
-  <Text style={styles.metricValue}>
-    {acceleration.toFixed(2)} m/s²
-  </Text>
-</View>
+  <View
+    style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: wp(2),
+    }}
+  >
+    <Text style={styles.metricValue}>
+      {acceleration.toFixed(2)} m/s²
+    </Text>
 
+    <Text style={styles.expandIcon}>
+      {showAccelerationFormula ? '−' : '+'}
+    </Text>
+  </View>
+</TouchableOpacity>
+{showAccelerationFormula && (
+  <View style={styles.dropdownBox}>
+    <Text style={styles.dropdownTitle}>
+      Formula
+    </Text>
+
+    <Text style={styles.dropdownText}>
+      Acceleration = Velocity ÷ Time
+    </Text>
+
+    <Text style={styles.dropdownExample}>
+      {velocity.toFixed(2)} ÷
+      {contactTime.toFixed(2)}
+    </Text>
+
+    <Text style={styles.dropdownResult}>
+      = {acceleration.toFixed(2)} m/s²
+    </Text>
+  </View>
+)}
 <TouchableOpacity
   style={styles.metricRow}
   onPress={() =>

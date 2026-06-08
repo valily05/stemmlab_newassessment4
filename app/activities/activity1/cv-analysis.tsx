@@ -1,21 +1,21 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
 import {
-    Brain,
-    Rocket,
-    TrendingUp,
-    Video
+  Brain,
+  Rocket,
+  TrendingUp,
+  Video
 } from 'lucide-react-native';
 import { useState } from 'react';
 import {
-    ActivityIndicator,
-    Dimensions,
-    PixelRatio,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  PixelRatio,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 const { width, height } =
@@ -51,7 +51,8 @@ export default function CVAnalysis() {
           params.results as string
         )
       : [];
-
+const [cvResult, setCvResult] =
+  useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] =
     useState(false);
 
@@ -65,14 +66,47 @@ export default function CVAnalysis() {
     setSelectedIteration,
   ] = useState(0);
 
-  const analyzeVideo = async () => {
-    setIsAnalyzing(true);
+const analyzeVideo = async () => {
+  try {
 
-    setTimeout(() => {
-      setAnalysisComplete(true);
-      setIsAnalyzing(false);
-    }, 3000);
-  };
+    console.log(
+      'CURRENT RESULT:',
+      currentResult
+    );
+
+    setIsAnalyzing(true);
+console.log(
+  'SENDING VIDEO:',
+  currentResult.videoURL
+);
+console.log("CURRENT RESULT:", currentResult);
+    const response = await fetch(
+      'http://192.168.0.200:8000/analyze',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        
+     body: JSON.stringify({
+videoUrl: currentResult.videoURL,
+  dropHeight: 5,
+}),
+      }
+    );console.log("SENDING VIDEO:", currentResult.videoUrl);
+
+    const data = await response.json();
+setCvResult(data);
+    console.log('CV RESULT:', data);
+
+    setAnalysisComplete(true);
+
+  } catch (err) {
+    console.log('ANALYSIS ERROR:', err);
+  } finally {
+    setIsAnalyzing(false);
+  }
+};
 
   const currentResult =
     parsedResults[selectedIteration];
@@ -258,9 +292,7 @@ export default function CVAnalysis() {
                   styles.metricValue
                 }
               >
-                {currentResult?.velocity?.toFixed(
-                  2
-                )}{' '}
+              {cvResult?.velocity?.toFixed(2)}{' '}
                 m/s
               </Text>
             </View>
@@ -283,9 +315,7 @@ export default function CVAnalysis() {
                   styles.metricValue
                 }
               >
-                {currentResult?.acceleration?.toFixed(
-                  2
-                )}{' '}
+             {cvResult?.acceleration?.toFixed(2)}{' '}
                 m/s²
               </Text>
             </View>
@@ -312,7 +342,7 @@ export default function CVAnalysis() {
                   },
                 ]}
               >
-                95%
+               {cvResult?.confidence}%
               </Text>
             </View>
           </View>
