@@ -290,7 +290,7 @@ star: {
 
     width: '100%',
 
-    height: hp(22),
+    height: hp(26),
 
     zIndex: 1,
   },

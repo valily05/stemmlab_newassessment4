@@ -54,24 +54,57 @@ export default function Team() {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: hp(22) }}>
-        <ImageBackground source={require('../../assets/images/teambg2.png')} style={styles.topSection} imageStyle={{ transform: [{ scale: 1.14 }, { translateY: -80 }] }}>
-          <View style={styles.overlay}>
-            <Header onMenuPress={() => setIsSidebarOpen(true)} avatarSource={getAvatarSource(auth.currentUser?.photoURL, auth.currentUser?.uid)} />
-            <View style={styles.titleContainer}>
-              <View style={styles.titleRow}>
-                <MaskedView maskElement={<Text style={styles.title}>TEAM</Text>}>
-                  <LinearGradient colors={['#A061F5', '#8B5CF6', '#5D398F']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
-                    <Text style={[styles.title, styles.hiddenText]}>TEAM</Text>
-                  </LinearGradient>
-                </MaskedView>
-                <Text style={styles.star}>✦</Text>
-              </View>
-              <Text style={styles.subtitle}>Tiny Explorers, Big Ideas</Text>
-            </View>
-          </View>
-          <LinearGradient colors={['rgba(4,6,27,0)', '#04061B']} style={styles.gradient} />
-        </ImageBackground>
+     {hasTeam && (
+  <ImageBackground
+    source={require('../../assets/images/teambg2.png')}
+    style={styles.topSection}
+    imageStyle={{ transform: [{ scale: 1.14 }, { translateY: -80 }] }}
+  >
+    <View style={styles.overlay}>
+      <Header
+        onMenuPress={() => setIsSidebarOpen(true)}
+        avatarSource={getAvatarSource(
+          auth.currentUser?.photoURL,
+          auth.currentUser?.uid
+        )}
+      />
 
+      <View style={styles.titleContainer}>
+        <View style={styles.titleRow}>
+          <MaskedView maskElement={<Text style={styles.title}>TEAM</Text>}>
+            <LinearGradient
+              colors={['#A061F5', '#8B5CF6', '#5D398F']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            >
+              <Text style={[styles.title, styles.hiddenText]}>
+                TEAM
+              </Text>
+            </LinearGradient>
+          </MaskedView>
+
+          <Text style={styles.star}>✦</Text>
+        </View>
+
+        <Text style={styles.subtitle}>
+          Tiny Explorers, Big Ideas
+        </Text>
+      </View>
+    </View>
+
+    <LinearGradient
+      colors={[
+        'rgba(4,6,27,0)',
+        'rgba(4,6,27,0.45)',
+        'rgba(4,6,27,0.85)',
+        'rgba(4,6,27,0.99)',
+        '#04061B',
+      ]}
+      locations={[0, 0.35, 0.6, 0.82, 1]}
+      style={styles.gradient}
+    />
+  </ImageBackground>
+)}
         <View style={styles.content}>
           {hasTeam && teamData ? (
             <>
@@ -90,7 +123,9 @@ export default function Team() {
               <LeaveButton />
             </>
           ) : (
-            <NoTeamCard />
+          <View style={{ marginTop: hp(6) }}>
+  <NoTeamCard />
+</View>
           )}
         </View>
       </ScrollView>
@@ -119,7 +154,18 @@ const styles = StyleSheet.create({
   hiddenText: { opacity: 0 },
   star: { marginLeft: wp(1.5), fontSize: rf(24), color: '#EC588C' },
   subtitle: { marginTop: hp(1.2), color: '#FFFFFF', fontSize: rf(16), fontFamily: 'PixelOperator' },
-  gradient: { position: 'absolute', bottom: 0, width: '100%', height: hp(16) },
+  /* BOTTOM GRADIENT */
+  gradient: {
+    position: 'absolute',
+
+    bottom: 0,
+
+    width: '100%',
+
+    height: hp(25),
+
+    zIndex: 1,
+  },
   content: { paddingHorizontal: wp(4) },
   statRow: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: hp(2) },
   sectionTitle: { color: '#B8A0FF', fontSize: rf(16), marginTop: hp(3), marginBottom: hp(1.5), fontFamily: 'PixelBold' },

@@ -31,6 +31,7 @@ const wp = (p: number) => PixelRatio.roundToNearestPixel((width * p) / 100);
 const hp = (p: number) => PixelRatio.roundToNearestPixel((height * p) / 100);
 
 export default function HomeScreen() {
+  const [userPoints, setUserPoints] = useState(0);
   const { t } = useLanguage(); // Access the translation object
   const [search, setSearch] = useState('');
   const [hasTeam, setHasTeam] = useState(false);
@@ -38,45 +39,60 @@ export default function HomeScreen() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 const [streak, setStreak] = useState(0);
 const [teamPoints, setTeamPoints] = useState(0);
-  const userPoints = 500;
-  useEffect(() => {
-    const uid = auth.currentUser?.uid;
-    if (!uid) {
-      setLoading(false);
-      return;
-    }
- const unsubscribe = onSnapshot(
-  doc(db, 'users', uid),
-  (snapshot) => {
-if (snapshot.exists()) {
-  const data = snapshot.data();
+useEffect(() => {
+  const uid = auth.currentUser?.uid;
 
-  setHasTeam(!!data.teamID);
-  setStreak(data.streak || 0);
-
-  if (data.teamID) {
-    const teamRef = doc(
-      db,
-      'teams',
-      data.teamID
-    );
-
-    onSnapshot(teamRef, (teamSnap) => {
-      if (teamSnap.exists()) {
-        setTeamPoints(
-          teamSnap.data().totalPoints || 0
-        );
-      }
-    });
-  }
-}
-
+  if (!uid) {
     setLoading(false);
+    return;
   }
-);
-    return unsubscribe;
-  }, []);
 
+  let unsubscribeTeam: (() => void) | null = null;
+
+  const unsubscribeUser = onSnapshot(
+    doc(db, 'users', uid),
+    (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+
+   setHasTeam(!!data.teamID);
+setStreak(data.streak || 0);
+setUserPoints(data.points || 0);
+
+        if (unsubscribeTeam) {
+          unsubscribeTeam();
+          unsubscribeTeam = null;
+        }
+
+        if (data.teamID) {
+          unsubscribeTeam = onSnapshot(
+            doc(db, 'teams', data.teamID),
+            (teamSnap) => {
+              if (teamSnap.exists()) {
+                setTeamPoints(
+                  teamSnap.data().totalPoints || 0
+                );
+              }
+            }
+          );
+        }
+      }
+
+      setLoading(false);
+    },
+    (error) => {
+      console.log('User listener error:', error);
+    }
+  );
+
+  return () => {
+    unsubscribeUser();
+
+    if (unsubscribeTeam) {
+      unsubscribeTeam();
+    }
+  };
+}, []);
   if (loading) return null;
 
   return (
