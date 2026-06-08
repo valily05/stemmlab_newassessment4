@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -13,15 +13,13 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 
-import { sendCompletionNotification } from '@/services/notifications/notificationService';
 import { activities } from '@/data/activities';
+import { sendCompletionNotification } from '@/services/notifications/notificationService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -48,12 +46,9 @@ export default function ActivityFeedbackScreen() {
   
   const scrollRef = useRef<ScrollView>(null);
 
-  const [rating, setRating] =
-    useState(0);
-  const [learned, setLearned] =
-    useState('');
-  const [improvement, setImprovement] =
-    useState('');
+  const [rating, setRating] = useState(0);
+  const [learned, setLearned] = useState('');
+  const [improvement, setImprovement] = useState('');
 
   const meteor1X = useRef(
     new Animated.Value(-300)
@@ -79,12 +74,15 @@ export default function ActivityFeedbackScreen() {
   const meteor8X = useRef(
     new Animated.Value(-2400)
   ).current;
-const {
-  activityName,
-  pointsEarned,
-} = useLocalSearchParams();
-console.log('activityName:', activityName);
-console.log('pointsEarned:', pointsEarned);
+
+  const {
+    activityName,
+    pointsEarned,
+  } = useLocalSearchParams();
+
+  console.log('activityName:', activityName);
+  console.log('pointsEarned:', pointsEarned);
+
   useEffect(() => {
     Animated.loop(
       Animated.timing(
@@ -179,7 +177,6 @@ console.log('pointsEarned:', pointsEarned);
     text.toLowerCase().replace(/[^a-z]/g,'');
 
   const containsBadWords = (text:string) => {
-
     const cleaned = normalizeText(text);
 
     const offensiveRoots = [
@@ -213,10 +210,11 @@ console.log('pointsEarned:', pointsEarned);
       containsBypass
     );
   };
+
   const learnedWords =
-  learned.trim()
-    ? learned.trim().split(/\s+/).length
-    : 0;
+    learned.trim()
+      ? learned.trim().split(/\s+/).length
+      : 0;
 
   const improvementWords =
     improvement.trim()
@@ -250,10 +248,8 @@ console.log('pointsEarned:', pointsEarned);
         1,
       ]}
       style={styles.container}
-      
     >
       <View style={styles.starsContainer}>
-
         <View style={[styles.star, styles.star1]} />
         <View style={[styles.star, styles.star2]} />
         <View style={[styles.star, styles.star3]} />
@@ -587,7 +583,7 @@ console.log('pointsEarned:', pointsEarned);
             </MaskedView>
 
             <Text style={styles.heroText}>
-  Great job completing {activityName}.
+              Great job completing {activityName}.
             </Text>
           </View>
 
@@ -705,7 +701,7 @@ console.log('pointsEarned:', pointsEarned);
 
           {hasBadLanguage && (
             <Text style={styles.errorText}>
-          Please remove inappropriate language before submitting.
+              Please remove inappropriate language before submitting.
             </Text>
           )}
 
@@ -715,7 +711,9 @@ console.log('pointsEarned:', pointsEarned);
               if(!canSubmit){
                 return;
               }
-              await sendCompletionNotification(activities.activity1.title, 500);//the score will be calculated
+
+              await sendCompletionNotification(String(activityName), Number(pointsEarned));//the score will be calculated
+
               console.log({
                 rating,
                 learned,
