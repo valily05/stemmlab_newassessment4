@@ -928,7 +928,7 @@ color:
   onPress={() => {
     router.push({
       pathname:
-        '/activities/activity1/results',
+        '/activities/activity1/cv-analysis',
       params: {
         results: JSON.stringify(
           parsedResults
@@ -938,7 +938,7 @@ color:
   }}
 >
   <Text style={styles.cvButtonTitle}>
-    🤖 ANALYZE MOTION (BETA)
+     AI MOTION ANALYSIS
   </Text>
 
   <Text style={styles.cvButtonSubtitle}>
