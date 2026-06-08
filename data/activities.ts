@@ -101,14 +101,11 @@ export const activities = {
       "Data Analysis"
     ],
 
-<<<<<<< HEAD
-    overview:
-      "Investigate noise levels in different locations and identify sources of sound pollution.",
-=======
-    overview: "",
-    objective: "",
->>>>>>> d94dc144ce7db4e2bc2e7f62ed1ece4f62059982
+overview:
+  "Investigate noise levels in different locations and identify sources of sound pollution.",
 
+objective:
+  "Measure and compare noise levels in different environments to investigate sound pollution.",
   mission: "Compare noise levels in different locations.",
 
     duration: "20 Minutes",
@@ -162,25 +159,11 @@ export const activities = {
     ],
   },
 
-<<<<<<< HEAD
-
-  activity3: {
-    id: 3,
-    image:require(
-      '../assets/images/Group 229.png'
-    ),
-    route:'/activities/activity3',
-  },
-=======
-  // activity3: {
-  //   id: 3,
-  //   image:require(
-  //     '../assets/images/Group 229.png'
-  //   ),
-  //   route:'/activities/activity3',
-  // },
->>>>>>> d94dc144ce7db4e2bc2e7f62ed1ece4f62059982
-
+activity3: {
+  id: 3,
+  image: require('../assets/images/Group 229.png'),
+  route: '/activities/activity3',
+},
 };
 
   // {

@@ -1,3 +1,5 @@
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import {
   Dimensions,
@@ -7,8 +9,6 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import ActivityHeader from '@/components/activity/ActivityHeader';
 import ActivityHero from '@/components/activity/ActivityHero';
@@ -136,29 +136,21 @@ export default function Activity1Overview() {
           <ReferenceSetupCard
             image={require('@/assets/images/referenceSetup.png')}
           />
-
-          <SafetyNotes
-            onAcceptedChange={
-              setSafetyComplete
-            }
-          />
-
-<<<<<<< HEAD
 <SafetyNotes
   notes={activity.safetyNotes}
   onAcceptedChange={
     setSafetyComplete
   }
 />
+
 <StartButton
   disabled={!canStart}
   onPress={() =>
     router.push({
-      pathname:'/activities/ActivityIntroScreen',
+      pathname: '/activities/ActivityIntroScreen',
       params: {
         activityNumber: 1,
-        title:
-          'PARACHUTE DROP CHALLENGE',
+        title: 'PARACHUTE DROP CHALLENGE',
         objective:
           'Design and test a parachute to achieve the slowest drop time.',
         nextScreen:
@@ -167,20 +159,6 @@ export default function Activity1Overview() {
     })
   }
 />
-=======
-          <StartButton
-            disabled={!canStart}
-            onPress={() =>
-              router.push({
-                pathname:'/activities/ActivityIntroScreen',
-                params: {
-                  activityID: 1,
-                  nextScreen: '/activities/activity1/experiment',
-                },
-              })
-            }
-          />
->>>>>>> d94dc144ce7db4e2bc2e7f62ed1ece4f62059982
         </View>
       </ScrollView>
 
