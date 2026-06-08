@@ -74,82 +74,23 @@ const inputRef = useRef<TextInput>(null);
 
   return (
     <View style={styles.card}>
-  <Image
-  source={require('../assets/images/planet-blue.png')}
-  style={styles.bluePlanet}
-/>
 
-<Image
-  source={require('../assets/images/planet-jupiter.png')}
-  style={styles.jupiterPlanet}
-/>
-<Image
-  source={require('../assets/images/tiny-blue-dot.png')}
-  style={styles.dot1}
-/>
-
-<Image
-  source={require('../assets/images/tiny-purple-dot.png')}
-  style={styles.dot2}
-/>
-
-<Image
-  source={require('../assets/images/tiny-pink-dot.png')}
-  style={styles.dot3}
-/>
-
-<Image
-  source={require('../assets/images/tiny-blue-dot.png')}
-  style={styles.dot4}
-/>
-
-<Image
-  source={require('../assets/images/tiny-purple-dot.png')}
-  style={styles.dot5}
-/>
-
-<Image
-  source={require('../assets/images/star-yellow.png')}
-  style={styles.star3}
-/>
-
-<Image
-  source={require('../assets/images/star-yellow.png')}
-  style={styles.star4}
-/>
-<Image
-  source={require('../assets/images/question-purple.png')}
-  style={styles.questionMark}
-/>
-
-<Image
-  source={require('../assets/images/star-yellow.png')}
-  style={styles.star1}
-/>
-
-<Image
-  source={require('../assets/images/star-yellow.png')}
-  style={styles.star2}
-/>
 
       <Image
-        source={require('../assets/images/qmiffy.png')}
+        source={require('../assets/images/miffyd.png')}
         style={styles.image}
       />
 
-<Text style={styles.title}>
-        <Text style={{ color: '#FFFFFF' }}>NO TEAM </Text>
-        <Text style={{ color: '#A855F7' }}>DETECTED</Text>
-      </Text>
             <Text style={styles.subtitle}>
-        Every explorer needs a crew to discover new worlds and complete missions together.
-      </Text>
+You are not part of any team yet.
+Join a team to collaborate, compete and complete missions together!      </Text>
 <View style={styles.featureContainer}>
   <View style={styles.featureItem}>
-    <Image
-      source={require('../assets/images/Group 160.png')}
-      style={styles.featureIcon}
-    />
+  <Image
+  source={require('../assets/images/Group 267.png')}
+  style={styles.collaborateIcon}
+/>
+
     <Text style={styles.featureText}>
       Collaborate{"\n"}with peers
     </Text>
@@ -158,10 +99,10 @@ const inputRef = useRef<TextInput>(null);
   <View style={styles.featureDivider} />
 
   <View style={styles.featureItem}>
-    <Image
-      source={require('../assets/images/star.png')}
-      style={styles.featureIcon}
-    />
+ <Image
+  source={require('../assets/images/star.png')}
+  style={styles.starIcon}
+/>
     <Text style={styles.featureText}>
       Earn more{"\n"}points
     </Text>
@@ -170,19 +111,21 @@ const inputRef = useRef<TextInput>(null);
   <View style={styles.featureDivider} />
 
   <View style={styles.featureItem}>
-    <Image
-      source={require('../assets/images/leaderboard.png')}
-      style={styles.featureIcon}
-    />
+   <Image
+  source={require('../assets/images/Group 77.png')}
+  style={styles.leaderboardIcon}
+/>
     <Text style={styles.featureText}>
       Climb ranks{"\n"}together
     </Text>
   </View>
 </View>
 <View style={styles.codeSection}>
-  <Text style={styles.readyText}>
-    ✦ Ready To Start Your Journey? ✦
-  </Text>
+<Text style={styles.readyText}>
+  <Text style={styles.readyStar}>✦{"\u00A0\u00A0\u00A0"}</Text>
+  Ready To Start Your Journey?
+  <Text style={styles.readyStar}>{"\u00A0\u00A0\u00A0"}✦</Text>
+</Text>
 
   <TouchableOpacity
     activeOpacity={1}
@@ -192,7 +135,7 @@ const inputRef = useRef<TextInput>(null);
       {[0, 1, 2, 3].map((i) => (
         <View key={i} style={styles.codeBox}>
           <Text style={styles.codeDigit}>
-            {teamCode[i] || '—'}
+            {teamCode[i] || '#'}
           </Text>
         </View>
       ))}
@@ -218,12 +161,12 @@ const inputRef = useRef<TextInput>(null);
   style={{ width: '100%' }}
 >
 
-  <LinearGradient
-    colors={['#A855F7', '#7C5CFF']}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 0 }}
-    style={styles.joinButton}
-  >
+ <LinearGradient
+  colors={['#5B21B6', '#DB2777']}
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 0 }}
+  style={styles.joinButton}
+>
     {loading ? (
       <ActivityIndicator color="#FFF" />
     ) : (
@@ -252,7 +195,6 @@ const inputRef = useRef<TextInput>(null);
     CREATE A TEAM
   </Text>
 
-  <Text style={styles.arrow}>›</Text>
 </TouchableOpacity>
 
     </View>
@@ -265,76 +207,15 @@ const styles = StyleSheet.create({
   alignItems: 'center',
   marginTop: hp(2),
 },
-bluePlanet: {
-  position: 'absolute',
-  top: hp(-1),
-  right: wp(40),
-  width: wp(48),
-  height: wp(45),
-},
-dot1: {
-  position: 'absolute',
-  left: wp(4),
-  top: hp(18),
-  width: 20,
-  height: 23,
-},
-
-dot2: {
-  position: 'absolute',
-  left: wp(15),
-  top: hp(28),
-  width: 5,
-  height: 5,
-},
-
-dot3: {
-  position: 'absolute',
-  right: wp(3),
-  top: hp(19),
-  width: 30,
-  height: 30,
-},
-
-dot4: {
-  position: 'absolute',
-  left: wp(7),
-  top: hp(22),
-  width: 4,
-  height: 4,
-},
-
-dot5: {
-  position: 'absolute',
-  right: wp(18),
-  top: hp(8),
-  width: 5,
-  height: 5,
-},
-
-star3: {
-  position: 'absolute',
-  right: wp(5),
-  top: hp(4),
-  width: wp(4),
-  height: wp(4),
-},
-
-star4: {
-  position: 'absolute',
-  left: wp(25),
-  top: hp(6),
-  width: wp(3),
-  height: wp(3),
-},
 featureContainer: {
   flexDirection: 'row',
   width: '100%',
-  borderWidth: 1,
+  borderWidth: 3,
   borderColor: '#3E2A78',
   borderRadius: 18,
   paddingVertical: hp(2),
-  marginBottom: hp(3),
+  marginBottom: hp(1.4),
+  backgroundColor:'#0D102E'
 },
 
 featureItem: {
@@ -342,16 +223,63 @@ featureItem: {
   alignItems: 'center',
 },
 
-featureIcon: {
-  width: wp(8),
-  height: wp(8),
+collaborateIcon: {
+  width: wp(13),
+  height: wp(7),
   marginBottom: hp(1),
 },
 
+starIcon: {
+  width: wp(7),
+  height: wp(7),
+  marginBottom: hp(1),
+},
+
+leaderboardIcon: {
+  width: wp(13),
+  height: wp(7),
+  marginBottom: hp(1),
+},
+titleContainer: {
+  position: 'relative',
+  alignItems: 'center',
+},
+
+title: {
+  fontFamily: 'PressStart2P-Regular', // or your pixel font
+  fontSize: 22,
+  letterSpacing: 1,
+},
+
+readyText: {
+  color: '#FFFFFF',
+  fontFamily: 'PixelBold',
+  fontSize: rf(19),
+  marginBottom: hp(3),
+  textAlign: 'center',
+},
+
+readyStar: {
+  color: '#ED359D',
+},
+
+noTeam: {
+  color: '#FFFFFF',
+},
+
+detected: {
+  color: '#FFD93D', // yellow
+  textShadowColor: '#A855F7',
+  textShadowOffset: {
+    width: 2,
+    height: 2,
+  },
+  textShadowRadius: 0,
+},
 featureText: {
   color: '#FFFFFF',
   textAlign: 'center',
-  fontSize: rf(10),
+  fontSize: rf(12),
   fontFamily: 'PixelOperator',
 },
 
@@ -362,9 +290,9 @@ featureDivider: {
 jupiterPlanet: {
   position: 'absolute',
   top: hp(14),
-  right: wp(-23),
-  width: wp(76),
-  height: wp(76),
+  right: wp(-24),
+  width: wp(70),
+  height: wp(60),
 },
 
 questionMark: {
@@ -379,24 +307,17 @@ questionMark: {
 star1: {
   position: 'absolute',
   left: wp(12),
-  top: hp(24),
-  width: wp(10),
-  height: wp(10),
+  top: hp(17),
+  width: wp(12),
+  height: wp(12),
 },
 
 star2: {
   position: 'absolute',
-  right: wp(10),
-  top: hp(38),
+  right: wp(4),
+  top: hp(37),
   width: wp(8),
   height: wp(8),
-},
-readyText: {
-  color: '#FFFFFF',
-  fontFamily: 'PixelOperator',
-  fontSize: rf(14),
-  marginBottom: hp(2.5),
-  textAlign: 'center',
 },
 
 codeBoxes: {
@@ -409,7 +330,7 @@ codeBoxes: {
 codeBox: {
   width: wp(14),
   height: wp(14),
-  borderRadius: 14,
+  borderRadius: 10,
   borderWidth: 2,
   borderColor: '#6F42FF',
   backgroundColor: '#1B1235',
@@ -418,9 +339,9 @@ codeBox: {
 },
 
 codeDigit: {
-  color: '#FFFFFF',
-  fontSize: rf(20),
-  fontFamily: 'Pixel',
+  color: '#ffffff', 
+  fontSize: rf(25),
+  fontFamily: 'PixelBold',
 },
 
 hiddenInput: {
@@ -460,6 +381,7 @@ orText: {
   color: '#7184A8',
   marginHorizontal: wp(4),
   fontFamily: 'PixelOperator',
+  fontSize:15,
 },
 
 createTeamCard: {
@@ -468,7 +390,7 @@ createTeamCard: {
   borderRadius: 20,
   borderWidth: 2,
   borderColor: '#6F42FF',
-  backgroundColor: '#0F1028',
+  backgroundColor: '#0D102E',
   flexDirection: 'row',
   alignItems: 'center',
   paddingHorizontal: wp(5),
@@ -481,12 +403,18 @@ createIcon: {
   backgroundColor: '#6F42FF',
   justifyContent: 'center',
   alignItems: 'center',
+ marginLeft: wp(8),
 },
 
 plus: {
   color: '#FFF',
-  fontSize: rf(18),
-  fontWeight: 'bold',
+  fontSize: rf(40),
+  lineHeight: rf(32),
+  fontFamily: 'PixelOperator',
+  textAlign: 'center',
+  includeFontPadding: false,
+  textAlignVertical: 'center',
+    transform: [{ translateY: 3 }],
 },
 
 createTeamText: {
@@ -494,7 +422,8 @@ createTeamText: {
   color: '#FFF',
   fontFamily: 'Pixel',
   fontSize: rf(14),
-  marginLeft: wp(4),
+  textAlign:'center',
+  marginRight:wp(5)
 },
 
 arrow: {
@@ -502,31 +431,24 @@ arrow: {
   fontSize: rf(22),
 },
   card: {
-backgroundColor: '#16112D',
-borderColor: '#5A35B6',
-    borderRadius: 28,
-    borderWidth: 1,
-    padding: wp(6),
     alignItems: 'center',
-    marginHorizontal: wp(4),
-    shadowColor: '#7C5CFF',
-shadowOpacity: 0.3,
-shadowRadius: 20,
-elevation: 12,
+width:'100%'
   },
   star: { position: 'absolute', color: '#FFD166', fontSize: rf(16) },
 
 image: {
-  width: wp(99),
-  height: wp(99),
-},  title: { color: '#FFF', fontSize: rf(20), fontFamily: 'Pixel', marginBottom: hp(1) },
+  width: wp(97),
+  height: wp(80),
+
+},  
   subtitle: {
-    color: '#A3AED0',
-    fontSize: rf(13),
+    color: '#FFFFFF',
+    fontSize: rf(15),
     textAlign: 'center',
-    lineHeight: hp(2.5),
+    lineHeight: hp(2.2),
     fontFamily: 'PixelOperator',
     marginBottom: hp(3),
+    width:'80%'
   },
   codeContainer: { width: '100%', marginBottom: hp(3) },
   codeLabel: { color: '#7E8FB5', fontFamily: 'PixelOperator', fontSize: rf(10), marginBottom: hp(1) },
