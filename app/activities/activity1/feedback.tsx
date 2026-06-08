@@ -17,18 +17,11 @@ import {
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Notifications from 'expo-notifications';
 import { useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+import { sendCompletionNotification } from '@/services/notifications/notificationService';
+import { activities } from '@/data/activities';
 
 const { width, height } = Dimensions.get('window');
 
@@ -93,9 +86,6 @@ const {
 console.log('activityName:', activityName);
 console.log('pointsEarned:', pointsEarned);
   useEffect(() => {
-
-    Notifications.requestPermissionsAsync();
-
     Animated.loop(
       Animated.timing(
         meteor1X,
@@ -242,17 +232,6 @@ console.log('pointsEarned:', pointsEarned);
     improvementWords >= 10 &&
     !hasBadLanguage &&
     rating > 0;
-
-const sendCompletionNotification = async () => {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: '🚀 TEAM MISSION COMPLETE',
-      body: `${activityName} completed (+${pointsEarned} Team Points)`,
-      sound: true,
-    },
-    trigger: null,
-  });
-};
 
   return (
     <LinearGradient
@@ -685,7 +664,7 @@ const sendCompletionNotification = async () => {
           <View style={styles.card}>
             <View style={styles.questionRow}>
               <Text style={styles.cardTitle}>
-                WHAT DIFFICULTIES DID YOU EXPERIENCED?
+                WHAT DIFFICULTIES DID YOU EXPERIENCE?
               </Text>
             </View>
 
@@ -736,7 +715,7 @@ const sendCompletionNotification = async () => {
               if(!canSubmit){
                 return;
               }
-await sendCompletionNotification();
+              await sendCompletionNotification(activities.activity1.title, 500);//the score will be calculated
               console.log({
                 rating,
                 learned,
