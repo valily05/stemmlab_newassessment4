@@ -11,7 +11,6 @@ import {
   VideoView,
   useVideoPlayer,
 } from 'expo-video';
-
 import {
   addDoc,
   collection,
@@ -33,6 +32,7 @@ import {
 } from 'lucide-react-native';
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   PixelRatio,
@@ -42,7 +42,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-
+import { LineChart } from 'react-native-chart-kit';
 const { width, height } = Dimensions.get('window');
 
 const wp = (percentage: number) =>
@@ -84,6 +84,7 @@ export default function Activity1Results() {
       error
     );
   }
+
 const [selectedVideo, setSelectedVideo] =
   useState(0);
   const currentVideo =
@@ -94,6 +95,8 @@ const player = useVideoPlayer(
     player.loop = false;
   }
 );
+const [isSaving, setIsSaving] = useState(false);
+
   const totalIterations =
     parsedResults.length;
 
@@ -248,189 +251,186 @@ const totalScore =
     dropTimeScore +
     experimentScore
   );
+const saveExperiment = async () => {
+  if (isSaving) return;
 
-  const saveExperiment = async () => {
+  setIsSaving(true);
+
   try {
+    const uid = auth.currentUser?.uid;
 
-      const uid = auth.currentUser?.uid;
+    if (!uid) {
+      console.log('No authenticated user');
+      setIsSaving(false);
+      return;
+    }
 
-if (!uid) {
-  console.log(
-    'No authenticated user'
-  );
-  return;
-}
+    const userRef = doc(db, 'users', uid);
 
-const userRef = doc(
-  db,
-  'users',
-  uid
-);
+    const userSnap = await getDoc(userRef);
 
-const userSnap =
-  await getDoc(userRef);
+    if (!userSnap.exists()) {
+      console.log('User document not found');
+      setIsSaving(false);
+      return;
+    }
 
-if (!userSnap.exists()) {
-  console.log(
-    'User document not found'
-  );
-  return;
-}
+    const userData = userSnap.data();
 
-const userData =
-  userSnap.data();
+    let streak = userData.streak || 0;
+    const lastActivityDate =
+      userData.lastActivityDate;
 
-let streak =
-  userData.streak || 0;
+    const teamID = userData.teamID;
 
-const lastActivityDate =
-  userData.lastActivityDate;
-
-const teamID =
-  userSnap.data().teamID;
-// Save session
-const sessionRef = await addDoc(
-  collection(db, 'session'),
-  {
-    teamID,
-    activityID: 1,
-    experimentTime,
-    totalIterations,
-    pointsEarned: totalScore,
-    completedAt: serverTimestamp(),
-    insights: {
-      bestTime: bestResult?.dropTime || 0,
-      avgAccuracy: accuracy,
-    },
-  }
-);
-
-// Add points to team
-if (teamID) {
-  const teamRef = doc(
-    db,
-    'teams',
-    teamID
-  );
-
-  await updateDoc(teamRef, {
-    totalPoints: increment(totalScore),
-  });
-}
-const today = new Date();
-
-if (!lastActivityDate) {
-  streak = 1;
-} else {
-  const lastDate =
-    lastActivityDate.toDate();
-
-  const diffDays =
-    Math.floor(
-      (today.getTime() -
-        lastDate.getTime()) /
-        (1000 * 60 * 60 * 24)
+    const sessionRef = await addDoc(
+      collection(db, 'session'),
+      {
+        teamID,
+        activityID: 1,
+        experimentTime,
+        totalIterations,
+        pointsEarned: totalScore,
+        completedAt: serverTimestamp(),
+        insights: {
+          bestTime:
+            bestResult?.dropTime || 0,
+          avgAccuracy: accuracy,
+        },
+      }
     );
 
-  if (diffDays === 0) {
-    // already completed today
-  } else if (diffDays === 1) {
-    streak += 1;
-  } else {
-    streak = 1;
-  }
-}
-
-await updateDoc(userRef, {
-  streak,
-  lastActivityDate:
-    serverTimestamp(),
-});
-for (
-  let i = 0;
-  i < parsedResults.length;
-  i++
-) {
-
-  const result =
-    parsedResults[i];
-
-  let cloudinaryUrl =
-    '';
-
-  if (
-    result.videoUri
-  ) {
-
-    cloudinaryUrl =
-      await uploadVideoToCloudinary(
-        result.videoUri
+    if (teamID) {
+      const teamRef = doc(
+        db,
+        'teams',
+        teamID
       );
 
-    console.log(
-      'CLOUDINARY URL:',
-      cloudinaryUrl
-    );
-  }
-
-  await addDoc(
-    collection(
-      db,
-      'session',
-      sessionRef.id,
-      'iterations'
-    ),
-    {
-      iterationNo:
-        i + 1,
-
-      stage:
-        result.stage,
-
-      dropTime:
-        result.dropTime,
-
-      firstHitTime:
-        result.firstHitTime,
-
-      stopMovingTime:
-        result.stopMovingTime,
-
-      impactForce:
-        result.impactForce,
-
-      inTarget:
-        result.inTarget,
-
-      bounced:
-        result.bounced,
-
-      videoURL:
-        cloudinaryUrl || '',
+      await updateDoc(teamRef, {
+        totalPoints: increment(totalScore),
+      });
     }
-  );
-}
-    console.log(
-      'Session Saved'
-    );
 
-router.push({
-  pathname: '/activities/activity1/feedback',
-  params: {
-    activityName: 'Parachute Drop Challenge',
-    pointsEarned: totalScore,
-  },
-});
+    const today = new Date();
 
+    if (!lastActivityDate) {
+      streak = 1;
+    } else {
+      const lastDate =
+        lastActivityDate.toDate();
+
+      const diffDays = Math.floor(
+        (today.getTime() -
+          lastDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      if (diffDays === 1) {
+        streak += 1;
+      } else if (diffDays > 1) {
+        streak = 1;
+      }
+    }
+
+    await updateDoc(userRef, {
+      streak,
+      lastActivityDate:
+        serverTimestamp(),
+    });
+
+    for (
+      let i = 0;
+      i < parsedResults.length;
+      i++
+    ) {
+      const result =
+        parsedResults[i];
+
+      let cloudinaryUrl = '';
+
+      if (result.videoUri) {
+        cloudinaryUrl =
+          await uploadVideoToCloudinary(
+            result.videoUri
+          );
+
+        console.log(
+          'CLOUDINARY URL:',
+          cloudinaryUrl
+        );
+      }
+
+      await addDoc(
+        collection(
+          db,
+          'session',
+          sessionRef.id,
+          'iterations'
+        ),
+        {
+          iterationNo: i + 1,
+          stage: result.stage,
+          dropTime: result.dropTime,
+          firstHitTime:
+            result.firstHitTime,
+          stopMovingTime:
+            result.stopMovingTime,
+          impactForce:
+            result.impactForce,
+          inTarget: result.inTarget,
+          bounced: result.bounced,
+          videoURL:
+            cloudinaryUrl || '',
+            velocity:
+  result.velocity,
+
+acceleration:
+  result.acceleration,
+
+weight:
+  result.weight,
+        }
+      );
+    }
+
+    console.log('Session Saved');
+setIsSaving(false);
+    router.push({
+      pathname:
+        '/activities/activity1/feedback',
+      params: {
+        activityName:
+          'Parachute Drop Challenge',
+        pointsEarned: totalScore,
+      },
+    });
   } catch (error) {
-
-    console.log(
-      'SAVE ERROR',
-      error
-    );
-
+    console.log('SAVE ERROR', error);
+    setIsSaving(false);
   }
 };
+const accelerationData = {
+  labels: parsedResults.map(
+    item =>
+      item.stage.replace(
+        'PROTOTYPE ',
+        'P'
+      )
+  ),
+
+  datasets: [
+    {
+      data: parsedResults.map(
+        item =>
+          Number(
+            item.acceleration || 0
+          )
+      ),
+    },
+  ],
+};
+
 return (
   <View style={styles.container}>
     <ScrollView
@@ -840,7 +840,43 @@ color:
         </View>
         
       </View>
+<View style={styles.resultRow}>
 
+  <View>
+    <Text style={styles.miniLabel}>
+      Velocity
+    </Text>
+
+    <Text
+      style={[
+        styles.resultValue,
+        { color: '#00D9FF' },
+      ]}
+    >
+      {item.velocity
+        ? `${item.velocity.toFixed(2)} m/s`
+        : '--'}
+    </Text>
+  </View>
+
+  <View>
+    <Text style={styles.miniLabel}>
+      Acceleration
+    </Text>
+
+    <Text
+      style={[
+        styles.resultValue,
+        { color: '#C86DFF' },
+      ]}
+    >
+      {item.acceleration
+        ? `${item.acceleration.toFixed(2)} m/s²`
+        : '--'}
+    </Text>
+  </View>
+
+</View>
     </View>
 
   </View>
@@ -888,11 +924,99 @@ color:
 
 </View>
 <TouchableOpacity
-  style={styles.saveButton}
-onPress={saveExperiment}>
-  <Text style={styles.saveButtonText}>
-    SAVE & REFLECT
+  style={styles.cvButton}
+  onPress={() => {
+    router.push({
+      pathname:
+        '/activities/activity1/results',
+      params: {
+        results: JSON.stringify(
+          parsedResults
+        ),
+      },
+    });
+  }}
+>
+  <Text style={styles.cvButtonTitle}>
+    🤖 ANALYZE MOTION (BETA)
   </Text>
+
+  <Text style={styles.cvButtonSubtitle}>
+    Use Computer Vision to calculate
+    trajectory, velocity and acceleration.
+  </Text>
+</TouchableOpacity>
+
+<View style={styles.graphCard}>
+
+  <Text style={styles.graphTitle}>
+    PARACHUTE IMPROVEMENT TREND
+  </Text>
+
+  <Text style={styles.graphSubtitle}>
+    Lower acceleration means a softer landing.
+  </Text>
+
+  <LineChart
+    data={accelerationData}
+    width={width - wp(16)}
+    height={220}
+    withDots
+    withShadow={false}
+    withInnerLines
+    withOuterLines={false}
+    bezier
+    chartConfig={{
+      backgroundGradientFrom:
+        '#121127',
+
+      backgroundGradientTo:
+        '#121127',
+
+      decimalPlaces: 2,
+
+      color: opacity =>
+        `rgba(200,109,255,${opacity})`,
+
+      labelColor: opacity =>
+        `rgba(255,255,255,${opacity})`,
+
+      propsForDots: {
+        r: '5',
+        strokeWidth: '2',
+        stroke: '#C86DFF',
+      },
+    }}
+    style={{
+      borderRadius: rf(16),
+      marginTop: hp(1),
+    }}
+  />
+
+</View>
+<TouchableOpacity
+  style={[
+    styles.saveButton,
+    isSaving && { opacity: 0.7 },
+  ]}
+  onPress={saveExperiment}
+  disabled={isSaving}
+>
+  {isSaving ? (
+    <>
+      <ActivityIndicator
+        size="small"
+        color="#FFFFFF"
+      />
+      <Text style={styles.saveButtonText}>
+        SAVING RESULTS...
+      </Text>
+    </>
+  ) : (
+    <Text style={styles.saveButtonText}>
+      SAVE & REFLECT
+    </Text>
+  )}
 </TouchableOpacity>
 </ScrollView>
 </View>
@@ -920,6 +1044,99 @@ const styles = StyleSheet.create({
     fontFamily: 'Pixel',
     letterSpacing: 1,
   },
+  graphCard:{
+  backgroundColor:'#121127',
+
+  borderRadius:rf(16),
+
+  padding:rf(16),
+
+  marginTop:hp(3),
+  marginBottom:hp(3),
+
+  borderWidth:1,
+  borderColor:'rgba(255,255,255,0.08)',
+},
+
+graphTitle:{
+  color:'#FFFFFF',
+
+  fontSize:rf(20),
+
+  fontFamily:'PixelBold',
+
+  textAlign:'center',
+},
+
+graphSubtitle:{
+  color:'#B8BED3',
+
+  fontSize:rf(14),
+
+  fontFamily:'PixelOperator',
+
+  textAlign:'center',
+
+  marginTop:hp(0.5),
+  marginBottom:hp(1.5),
+},
+  saveButton: {
+  backgroundColor: '#7A4DFF',
+  borderRadius: rf(18),
+  paddingVertical: hp(2.2),
+  marginTop: hp(3),
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexDirection: 'row',
+  gap: 10,
+},
+cvButton: {
+  marginTop: hp(3),
+
+  backgroundColor: '#121127',
+
+  borderRadius: rf(18),
+
+  padding: rf(18),
+
+  borderWidth: 2,
+  borderColor: '#6D4AFF',
+
+  shadowColor: '#6D4AFF',
+  shadowOpacity: 0.35,
+  shadowRadius: 15,
+
+  shadowOffset: {
+    width: 0,
+    height: 0,
+  },
+
+  elevation: 10,
+},
+
+cvButtonTitle: {
+  color: '#FFFFFF',
+
+  fontSize: rf(20),
+
+  fontFamily: 'PixelBold',
+
+  textAlign: 'center',
+
+  marginBottom: hp(0.8),
+},
+
+cvButtonSubtitle: {
+  color: '#B8BED3',
+
+  fontSize: rf(14),
+
+  fontFamily: 'PixelOperator',
+
+  textAlign: 'center',
+
+  lineHeight: rf(18),
+},
 iterationSection:{
   borderRadius:rf(18),
 
@@ -1412,13 +1629,6 @@ feedbackContent: {
     fontWeight: 'bold',
   },
 
-  saveButton: {
-    backgroundColor: '#7A4DFF',
-    borderRadius: rf(18),
-    paddingVertical: hp(2.2),
-    marginTop: hp(3),
-    alignItems: 'center',
-  },
 
   saveButtonText: {
     color: '#FFFFFF',

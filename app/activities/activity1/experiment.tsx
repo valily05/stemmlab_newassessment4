@@ -82,8 +82,14 @@ const [results, setResults] =
     {
       stage: string;
       dropTime: number;
+
       firstHitTime: string;
       stopMovingTime: string;
+
+      velocity: number;
+      acceleration: number;
+
+      weight: number;
 
       videoUri?: string;
 
@@ -119,6 +125,9 @@ const [recordingComplete, setRecordingComplete] =
   useState(false);
 
 const [dropHeight, setDropHeight] =
+  useState('');
+
+  const [objectWeight, setObjectWeight] =
   useState('');
 
 const [inTarget, setInTarget] =
@@ -244,40 +253,65 @@ const contactTime = Math.max(
   0.01
 );
 
+const heightMeters =
+  Number(dropHeight);
+
+const massKg =
+  Number(objectWeight) / 1000;
+
 const velocity = Math.sqrt(
-  2 * 9.81 * Number(dropHeight)
+  2 * 9.81 * heightMeters
 );
 
-const gForce =
-  velocity /
-  (contactTime * 9.81);
+const acceleration =
+  velocity / contactTime;
+
+const impactForceValue =
+  massKg * acceleration;
 
 let impactForce = 'SAFE';
 
-if (gForce >= 5 && gForce < 10) {
+if (
+  impactForceValue >= 5 &&
+  impactForceValue < 15
+) {
   impactForce = 'CAUTION';
 }
 
-if (gForce >= 10 && gForce < 30) {
+if (
+  impactForceValue >= 15 &&
+  impactForceValue < 30
+) {
   impactForce = 'HIGH';
 }
 
-if (gForce >= 30 && gForce < 50) {
+if (
+  impactForceValue >= 30 &&
+  impactForceValue < 50
+) {
   impactForce = 'SEVERE';
 }
 
-if (gForce >= 50) {
+if (impactForceValue >= 50) {
   impactForce = 'EXTREME';
 }
 const result = {
   stage: stages[currentStage],
   dropTime: elapsedTime,
+
   firstHitTime: firstHitTime ?? '',
   stopMovingTime: stopMovingTime ?? '',
+
+  velocity,
+  acceleration,
+
+  weight: Number(objectWeight),
+
   videoUri: videos[currentStage] ?? '',
 
   inTarget,
   bounced,
+
   impactForce,
 };
 
@@ -401,8 +435,11 @@ return (
   hasStarted={hasStarted}
   canStopRecording={canStopRecording}
   videoUri={currentVideoUri}
-    dropHeight={dropHeight}
-  setDropHeight={setDropHeight}
+dropHeight={dropHeight}
+setDropHeight={setDropHeight}
+
+objectWeight={objectWeight}
+setObjectWeight={setObjectWeight}
 
 onStartRecording={startRecording}
 onVideoSaved={(uri) => {
@@ -570,9 +607,9 @@ onPress={() => {
   setInTarget={setInTarget}
   bounced={bounced}
   setBounced={setBounced}
-  dropHeight={Number(dropHeight)}
   firstHitTime={firstHitTime}
   stopMovingTime={stopMovingTime}
+   dropHeight={Number(dropHeight)}
 />
 
     <TouchableOpacity
