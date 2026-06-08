@@ -1,7 +1,3 @@
-import {
-  router,
-  useLocalSearchParams
-} from 'expo-router';
 import { useEffect, useRef } from 'react';
 import {
   Animated,
@@ -12,6 +8,12 @@ import {
   Text,
   View,
 } from 'react-native';
+import {
+  router,
+  useLocalSearchParams
+} from 'expo-router';
+
+import { activities } from '@/data/activities';
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,45 +40,45 @@ const rf = (size: number) => {
 };
 
 export default function ActivityIntroScreen() {
+  const {
+    activityID,
+    nextScreen,
+  } = useLocalSearchParams();
 
-const {
-  activityNumber,
-  title,
-  objective,
-  nextScreen,
-} = useLocalSearchParams();
+  const activityKey = `activity${activityID}`;
+  const activity = activities[activityKey as keyof typeof activities];
+
   const blinkAnim = useRef(
     new Animated.Value(1)
   ).current;
-useEffect(() => {
-  Animated.loop(
-    Animated.sequence([
-      Animated.timing(blinkAnim, {
-        toValue: 0.3,
-        duration: 900,
-        useNativeDriver: true,
-      }),
 
-      Animated.timing(blinkAnim, {
-        toValue: 1,
-        duration: 900,
-        useNativeDriver: true,
-      }),
-    ])
-  ).start();
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(blinkAnim, {
+          toValue: 0.3,
+          duration: 900,
+          useNativeDriver: true,
+        }),
 
-  const timer = setTimeout(() => {
-    if (nextScreen) {
-router.replace(
-  nextScreen as any
-);
-    }
-  }, 7000);
+        Animated.timing(blinkAnim, {
+          toValue: 1,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
 
-  return () => {
-    clearTimeout(timer);
-  };
-}, [nextScreen]);
+    const timer = setTimeout(() => {
+      if (nextScreen) {
+        router.replace(nextScreen as any);
+      }
+    }, 7000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [nextScreen]);
 
   return (
     <View style={styles.container}>
@@ -89,11 +91,11 @@ router.replace(
       {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.activityNumber}>
-          ACTIVITY #{activityNumber}
+          ACTIVITY #{activityID}
         </Text>
 
         <Text style={styles.title}>
-          {title}
+          {activity.title}
         </Text>
       </View>
 
@@ -113,7 +115,7 @@ router.replace(
           </Text>
 
           <Text style={styles.objectiveText}>
-            {objective}
+            {activity.objective}
           </Text>
         </View>
       </View>
@@ -160,24 +162,22 @@ const styles = StyleSheet.create({
     marginTop: hp(10),
   },
 
-activityNumber: {
-  color: '#FFD94E',
-  fontSize: rf(25),
-  fontFamily: 'Pixel',
-  marginBottom:rf(10),
+  activityNumber: {
+    color: '#FFD94E',
+    fontSize: rf(25),
+    fontFamily: 'Pixel',
+    marginBottom:rf(10),
+  },
 
-},
-
-title: {
-  color: '#FFFFFF',
-  fontSize: rf(19),
-  lineHeight: rf(34),
-  width: wp(78),
-  marginTop: hp(1),
-  fontFamily: 'Pixel',
-
-
-},
+  title: {
+    color: '#FFFFFF',
+    fontSize: rf(19),
+    lineHeight: rf(34),
+    width: wp(78),
+    marginTop: hp(1),
+    fontFamily: 'Pixel',
+  },
+  
   /* SPEECH BUBBLE */
   speechBubbleContainer: {
     marginTop: hp(12),
