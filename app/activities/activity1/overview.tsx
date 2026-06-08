@@ -1,5 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
 import { useState } from 'react';
 import {
   Dimensions,
@@ -9,6 +7,8 @@ import {
   StyleSheet,
   View
 } from 'react-native';
+import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import ActivityHeader from '@/components/activity/ActivityHeader';
 import ActivityHero from '@/components/activity/ActivityHero';
@@ -53,45 +53,40 @@ const rf = (size: number) => {
 
 };
 
-export default function Activity1Screen() {
-const [materialProgress,
-  setMaterialProgress] =
-  useState(0);
+export default function Activity1Overview() {
+  const [materialProgress,
+    setMaterialProgress] =
+    useState(0);
 
+  const [safetyComplete,
+    setSafetyComplete] =
+    useState(false);
 
-const [safetyComplete,
-  setSafetyComplete] =
-  useState(false);
-const progress =
-  Math.round(
-    materialProgress * 0.5 +
-    (safetyComplete ? 50 : 0)
-  );
-const canStart =
-  progress === 100;
+  const progress =
+    Math.round(
+      materialProgress * 0.5 +
+      (safetyComplete ? 50 : 0)
+    );
 
+  const canStart =
+    progress === 100;
 
   return (
-
     <View style={styles.container}>
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={
           styles.scrollContent
         }
       >
-
         {/* HERO SECTION */}
         <ImageBackground
           source={require('@/assets/images/miffyspace.png')}
           style={styles.heroBackground}
           imageStyle={styles.heroImage}
         >
-
           {/* OVERLAY */}
           <View style={styles.overlay}>
-
             <ActivityHeader />
 
             <ActivityHero
@@ -104,7 +99,6 @@ const canStart =
               difficulty={activity.difficulty}
               mission={activity.mission}
             />
-
           </View>
 
           {/* BOTTOM BLUR */}
@@ -118,32 +112,38 @@ const canStart =
             locations={[0, 0.4, 0.72, 1]}
             style={styles.bottomBlur}
           />
-
         </ImageBackground>
 
         {/* CONTENT */}
         <View style={styles.content}>
+          <MaterialsChecklist
+            materials={activity.materials}
+            onProgressChange={
+              setMaterialProgress
+            }
+          />
 
-<MaterialsChecklist
-  materials={activity.materials}
-  onProgressChange={
-    setMaterialProgress
-  }
-/>
           <SetupGuideCarousel
             steps={activity.setupSteps}
           />
-  <PixelDivider />
+
+          <PixelDivider />
+
           <StepInstructions
             steps={activity.instructions}
           />
-
 
           <ReferenceSetupCard
             image={require('@/assets/images/referenceSetup.png')}
           />
 
+          <SafetyNotes
+            onAcceptedChange={
+              setSafetyComplete
+            }
+          />
 
+<<<<<<< HEAD
 <SafetyNotes
   notes={activity.safetyNotes}
   onAcceptedChange={
@@ -167,52 +167,53 @@ const canStart =
     })
   }
 />
+=======
+          <StartButton
+            disabled={!canStart}
+            onPress={() =>
+              router.push({
+                pathname:'/activities/ActivityIntroScreen',
+                params: {
+                  activityID: 1,
+                  nextScreen: '/activities/activity1/experiment',
+                },
+              })
+            }
+          />
+>>>>>>> d94dc144ce7db4e2bc2e7f62ed1ece4f62059982
         </View>
-
       </ScrollView>
-<ProgressBar
-  progress={progress}
-/>
+
+      <ProgressBar
+        progress={progress}
+      />
     </View>
-
   );
-
 }
 
 const styles = StyleSheet.create({
-
-  /* SCREEN */
   container: {
     flex: 1,
     backgroundColor: '#050014',
   },
 
-  /* SCROLL */
-scrollContent: {
-  paddingBottom: hp(20),
-},
+  scrollContent: {
+    paddingBottom: hp(20),
+  },
 
-  /* HERO BG */
   heroBackground: {
     width: '100%',
-
-
     justifyContent: 'flex-end',
   },
 
-  /* HERO IMAGE */
   heroImage: {
     resizeMode: 'cover',
-
-  
   },
 
-  /* OVERLAY */
   overlay: {
     paddingBottom: hp(4),
   },
 
-  /* BOTTOM BLUR */
   bottomBlur: {
     position: 'absolute',
 
@@ -225,9 +226,7 @@ scrollContent: {
     zIndex: 1,
   },
 
-  /* CONTENT */
   content: {
     marginTop: -hp(1),
   },
-
 });

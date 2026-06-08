@@ -53,7 +53,7 @@ export default function ActivityHeader() {
       <TouchableOpacity
         style={styles.backButton}
         onPress={() =>
-          router.replace('/(tabs)/activities')
+          router.back()
         }
         activeOpacity={0.8}
       >

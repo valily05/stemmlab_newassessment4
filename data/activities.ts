@@ -11,6 +11,7 @@ export const activities = {
     ],
 
     overview: "Design, build, and test a parachute for a small toy to reduce its landing speed and impact force. Teams iterate their designs under time and material constraints.",
+    objective: "Design and test a parachute to achieve the slowest drop time.",
     
     mission: "Land the toy slowly and safely.",
     duration: "20 Minutes",
@@ -100,8 +101,13 @@ export const activities = {
       "Data Analysis"
     ],
 
+<<<<<<< HEAD
     overview:
       "Investigate noise levels in different locations and identify sources of sound pollution.",
+=======
+    overview: "",
+    objective: "",
+>>>>>>> d94dc144ce7db4e2bc2e7f62ed1ece4f62059982
 
   mission: "Compare noise levels in different locations.",
 
@@ -156,6 +162,7 @@ export const activities = {
     ],
   },
 
+<<<<<<< HEAD
 
   activity3: {
     id: 3,
@@ -164,6 +171,15 @@ export const activities = {
     ),
     route:'/activities/activity3',
   },
+=======
+  // activity3: {
+  //   id: 3,
+  //   image:require(
+  //     '../assets/images/Group 229.png'
+  //   ),
+  //   route:'/activities/activity3',
+  // },
+>>>>>>> d94dc144ce7db4e2bc2e7f62ed1ece4f62059982
 
 };
 
