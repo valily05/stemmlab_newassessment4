@@ -61,9 +61,25 @@ const inputRef = useRef<TextInput>(null);
       }
 
       const teamDoc = teamSnapshot.docs[0];
-      await updateDoc(doc(db, 'teams', teamDoc.id), { members: arrayUnion(uid) });
-      await updateDoc(doc(db, 'users', uid), { teamID: teamDoc.id });
+const teamData = teamDoc.data();
+const currentMembers = teamData.members || [];
 
+// Max 4 members per team
+if (currentMembers.length >= 4) {
+  Alert.alert(
+    'Team Full',
+    'This team already has the maximum number of members.'
+  );
+  return;
+}
+
+await updateDoc(doc(db, 'teams', teamDoc.id), {
+  members: arrayUnion(uid),
+});
+
+await updateDoc(doc(db, 'users', uid), {
+  teamID: teamDoc.id,
+});
       Alert.alert('Success', 'Joined the crew!');
     } catch (error: any) {
       Alert.alert('Error', error.message);
@@ -96,8 +112,11 @@ Join a team to collaborate, compete and complete missions together!      </Text>
     </Text>
   </View>
 
-  <View style={styles.featureDivider} />
-
+<View style={styles.dashedDivider}>
+  {[...Array(5)].map((_, i) => (
+    <View key={i} style={styles.dash} />
+  ))}
+</View>
   <View style={styles.featureItem}>
  <Image
   source={require('../assets/images/star.png')}
@@ -108,8 +127,11 @@ Join a team to collaborate, compete and complete missions together!      </Text>
     </Text>
   </View>
 
-  <View style={styles.featureDivider} />
-
+<View style={styles.dashedDivider}>
+  {[...Array(5)].map((_, i) => (
+    <View key={i} style={styles.dash} />
+  ))}
+</View>
   <View style={styles.featureItem}>
    <Image
   source={require('../assets/images/Group 77.png')}
@@ -258,7 +280,18 @@ readyText: {
   marginBottom: hp(3),
   textAlign: 'center',
 },
+dashedDivider: {
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingVertical: hp(0.5),
+},
 
+dash: {
+  width: 2,
+  height: hp(0.7),
+  backgroundColor: '#3E2A78',
+  marginVertical: hp(0.3),
+},
 readyStar: {
   color: '#ED359D',
 },

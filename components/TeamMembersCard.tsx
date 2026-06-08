@@ -146,8 +146,6 @@ const styles = StyleSheet.create({
     width: wp(16),
     height: wp(16),
     borderRadius: wp(8),
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   avatarImage: {
     width: '100%',
