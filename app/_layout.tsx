@@ -1,5 +1,4 @@
-import '../i18n';
-
+import { useEffect } from 'react';
 import {
   DarkTheme,
   DefaultTheme,
@@ -12,9 +11,15 @@ import 'react-native-reanimated';
 import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from '@/context/LanguageContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { initializeNotifications } from '@/services/notifications/notificationService';
+import '@/i18n';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    initializeNotifications();
+  }, []);
 
   return (
     <LanguageProvider>
