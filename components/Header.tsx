@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import {
   Dimensions,
   Image,
@@ -48,10 +49,18 @@ export default function Header({ avatarSource, onMenuPress }: HeaderProps) {
 
       {/* RIGHT SIDE */}
       <View style={styles.rightSection}>
-        <TouchableOpacity style={styles.notifBtn}>
-          <Ionicons name="notifications" size={fp(24)} color="#C084FC" />
-          {hasNotification && <View style={styles.dot} />}
-        </TouchableOpacity>
+<TouchableOpacity
+  style={styles.notifBtn}
+  onPress={() => router.push('/notification')}
+>
+  <Ionicons
+    name="notifications"
+    size={fp(24)}
+    color="#C084FC"
+  />
+
+  {hasNotification && <View style={styles.dot} />}
+</TouchableOpacity>
         
         <Image source={avatarSource} style={styles.avatar} />
       </View>
