@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import {
+  ReactNode,
   useEffect,
   useRef,
   useState,
@@ -57,10 +58,12 @@ interface Step {
 
 interface Props {
   steps: Step[];
+  bottomComponent?: ReactNode;
 }
 
 export default function SetupGuideCarousel({
   steps,
+  bottomComponent,
 }: Props) {
 
   const [activeIndex, setActiveIndex] =
@@ -236,19 +239,22 @@ export default function SetupGuideCarousel({
                 />
 
                 {/* INSTRUCTION */}
-                <View style={styles.instructionRow}>
+{/* INSTRUCTION */}
+<View style={styles.instructionRow}>
 
-                  <Text style={styles.arrow}>
-                    ▶
-                  </Text>
+  <Text style={styles.arrow}>
+    ▶
+  </Text>
 
-                  <Text style={styles.instruction}>
-                    {item.instruction}
-                  </Text>
+  <Text style={styles.instruction}>
+    {item.instruction}
+  </Text>
 
-                </View>
+</View>
 
-                {/* TIP */}
+{bottomComponent}
+
+{/* TIP */}
                 {item.bunnyTip && (
 
                   <View style={styles.tipBox}>

@@ -2,12 +2,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-    Dimensions,
-    ImageBackground,
-    PixelRatio,
-    ScrollView,
-    StyleSheet,
-    View
+  Dimensions,
+  ImageBackground,
+  PixelRatio,
+  ScrollView,
+  StyleSheet,
+  View
 } from 'react-native';
 
 import ActivityHeader from '@/components/activity/ActivityHeader';
@@ -18,6 +18,7 @@ import ProgressBar from '@/components/activity/ProgressBar';
 import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
 import SafetyNotes from '@/components/activity/SafetyNotes';
 import SetupGuideCarousel from '@/components/activity/SetupGuideCarousel';
+import SoundMeterTest from '@/components/activity/soundmetertest';
 import StartButton from '@/components/activity/StartButton';
 import StepInstructions from '@/components/activity/StepInstructions';
 import PixelDivider from '@/components/PixelDivider';
@@ -61,6 +62,9 @@ const [materialProgress,
 
 const [safetyComplete,
   setSafetyComplete] =
+  useState(false);
+  const [soundMeterVerified,
+  setSoundMeterVerified] =
   useState(false);
 const progress =
   Math.round(
@@ -130,9 +134,15 @@ const canStart =
     setMaterialProgress
   }
 />
-          <SetupGuideCarousel
-            steps={activity.setupSteps}
-          />
+<SetupGuideCarousel
+  steps={activity.setupSteps}
+  bottomComponent={
+    <SoundMeterTest
+      onCompleted={setSoundMeterVerified}
+    />
+  }
+/>
+
   <PixelDivider />
           <StepInstructions
             steps={activity.instructions}
