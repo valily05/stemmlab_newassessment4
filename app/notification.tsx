@@ -74,6 +74,25 @@ const handleMarkAllRead = async () => {
 
   await batch.commit();
 };
+const getSectionTitle = (date: Date) => {
+  const today = new Date();
+  const yesterday = new Date();
+
+  yesterday.setDate(today.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  }
+
+  if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  }
+
+  return date.toLocaleDateString([], {
+    month: "long",
+    day: "numeric",
+  });
+};
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -168,34 +187,78 @@ const handleMarkAllRead = async () => {
     No notifications yet.
   </Text>
 ) : (
-  notifications.map((item: any) => (
-    <NotificationCard
-      key={item.id}
-      notification={{
-        id: item.id,
-        title: item.title,
-        subtitle: item.subtitle,
-        type: item.type,
-        unread: !item.read,
-        route:
-  item.type === "streak"
-    ? "/activities"
-    : item.type === "leaderboard"
-    ? "/leaderboard"
-    : item.type === "team"
-    ? "/team"
-    : "/",
-        time: item.createdAt
-          ? item.createdAt
-              .toDate()
-              .toLocaleTimeString([], {
-                hour: "numeric",
-                minute: "2-digit",
-              })
-          : "",
-      }}
-    />
-  ))
+notifications.map((item: any, index: number) => {
+  const currentDate = item.createdAt?.toDate();
+  const previousDate =
+    notifications[index - 1]?.createdAt?.toDate();
+
+  const showHeader =
+    index === 0 ||
+    getSectionTitle(currentDate) !==
+      getSectionTitle(previousDate);
+
+  return (
+    <View key={item.id}>
+     {showHeader && (
+<View style={styles.sectionRow}>
+  <LinearGradient
+    colors={[
+      "transparent",
+      "#6D5CFF",
+      "#A970FF",
+    ]}
+    locations={[0, 0.5, 1]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.sectionLine}
+  />
+
+  <Text style={styles.section}>
+    {getSectionTitle(currentDate).toUpperCase()}
+  </Text>
+
+  <LinearGradient
+    colors={[
+      "#A970FF",
+      "#6D5CFF",
+      "transparent",
+    ]}
+    locations={[0, 0.5, 1]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.sectionLine}
+  />
+</View>
+)}
+
+      <NotificationCard
+        notification={{
+          id: item.id,
+          title: item.title,
+          subtitle: item.subtitle,
+          type: item.type,
+          unread: !item.read,
+          route:
+            item.type === "streak"
+              ? "/activities"
+              : item.type === "leaderboard"
+              ? "/leaderboard"
+              : item.type === "team"
+              ? "/team"
+              : "/",
+          time: item.createdAt
+            ? item.createdAt
+                .toDate()
+                .toLocaleTimeString([], {
+                  hour: "numeric",
+                  minute: "2-digit",
+                })
+            : "",
+        }}
+      />
+    </View>
+  );
+})
 )}
 
      
@@ -295,7 +358,6 @@ color: '#8E74E8',
 markRead: {
   alignSelf: 'flex-end',
 
-  marginBottom: hp(2),
 
   paddingHorizontal: wp(4.5),
   paddingVertical: hp(1.1),
@@ -322,11 +384,33 @@ markReadText: {
   fontSize: wp(3.7),
 },
 
-  section: {
-    color: '#9B6CFF',
-    fontSize: wp(6),
-    fontWeight: '700',
-    marginBottom: hp(1.5),
-    fontFamily:'PixelBold'
-  },
+
+
+
+
+sectionRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+
+  marginTop: hp(2),
+  marginBottom: hp(2),
+},
+
+section: {
+  color: "#D8B4FE",
+  fontFamily: "PixelBold",
+  fontSize: wp(4.2),
+
+  letterSpacing: 1.2,
+
+  marginHorizontal: wp(3.5),
+},
+
+sectionLine: {
+  flex: 1,
+  height: 2,
+  borderRadius: 999,
+  opacity: 0.9,
+},
 });

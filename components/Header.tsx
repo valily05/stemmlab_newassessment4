@@ -1,5 +1,13 @@
+import { auth, db } from "@/services/firebase/config";
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -11,7 +19,6 @@ import {
   View,
 } from 'react-native';
 import { useLanguage } from '../context/LanguageContext';
-
 const { width, height } = Dimensions.get('window');
 
 // RESPONSIVE HELPERS
@@ -26,8 +33,25 @@ type HeaderProps = {
 
 export default function Header({ avatarSource, onMenuPress }: HeaderProps) {
   const { t } = useLanguage();
-  const hasNotification = false;
+const [hasNotification, setHasNotification] =
+  useState(false);
+  useEffect(() => {
+  const uid = auth.currentUser?.uid;
 
+  if (!uid) return;
+
+  const q = query(
+    collection(db, "notifications"),
+    where("userID", "==", uid),
+    where("read", "==", false)
+  );
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    setHasNotification(!snapshot.empty);
+  });
+
+  return unsubscribe;
+}, []);
   return (
     <View style={styles.header}>
       {/* HAMBURGER */}
@@ -77,6 +101,20 @@ const styles = StyleSheet.create({
   rightSection: { flexDirection: 'row', alignItems: 'center', gap: wp(2.5) },
   notifBtn: { width: wp(11), height: wp(11), borderRadius: wp(5.5), backgroundColor: '#130C36', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#301E6A' },
   menuBtn: { width: wp(11), height: wp(11), borderRadius: wp(6), backgroundColor: '#130C36', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#301E6A' },
-  dot: { position: 'absolute', top: wp(2.6), right: wp(2.8), width: wp(1.9), height: wp(1.9), borderRadius: wp(1.25), backgroundColor: '#FF4D6D' },
-  avatar: { width: wp(11), height: wp(11), borderRadius: wp(5.5), resizeMode: 'cover' },
+dot: {
+  position: "absolute",
+
+  top: wp(1.8),
+  right: wp(1.8),
+
+  width: wp(2.8),
+  height: wp(2.8),
+
+  borderRadius: 999,
+
+  backgroundColor: "#EC588C",
+
+  borderWidth: 2,
+  borderColor: "#130C36",
+},  avatar: { width: wp(11), height: wp(11), borderRadius: wp(5.5), resizeMode: 'cover' },
 });

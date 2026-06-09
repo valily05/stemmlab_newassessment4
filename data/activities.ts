@@ -1,6 +1,7 @@
 export const activities = {
   activity1: {
     id: 1,
+    group:"ENGINEERING",
     title: "PARACHUTE DROP\nCHALLENGE",
     image: require('../assets/images/Group 227.png'),
     route: '/activities/activity1/overview',
@@ -92,6 +93,7 @@ export const activities = {
 
   activity2: {
     id: 2,
+    group:"ENGINEERING",
     title: "SOUND POLLUTION\nHUNTER",
     image: require('../assets/images/Group 228.png'),
     route: '/activities/activity2/overview',
@@ -161,6 +163,7 @@ objective:
 
 activity3: {
   id: 3,
+  group:"ENGINEERING",
   image: require('../assets/images/Group 229.png'),
   route: '/activities/activity3',
 },
