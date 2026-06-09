@@ -149,12 +149,8 @@ export default function Activity1Overview() {
     router.push({
       pathname: '/activities/ActivityIntroScreen',
       params: {
-        activityNumber: 1,
-        title: 'PARACHUTE DROP CHALLENGE',
-        objective:
-          'Design and test a parachute to achieve the slowest drop time.',
-        nextScreen:
-          '/activities/activity1/experiment',
+        activityID: 1,
+        nextScreen: '/activities/activity1/experiment',
       },
     })
   }
