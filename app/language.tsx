@@ -1,13 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import {
-    Animated,
-    Image,
-    ImageBackground,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Animated,
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -226,8 +226,8 @@ backRow: {
   },
 
   ufo: {
-    width: 90,
-    height: 90,
+    width: 170,
+    height: 170,
     resizeMode: 'contain',
     marginTop: -2
   },
@@ -236,7 +236,7 @@ backRow: {
     width: 175,
     height: 48,
     transform: [{ translateX: 50 }],
-    marginBottom: -10
+    marginBottom: -37
   },
 
   speechText: {

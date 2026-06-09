@@ -1,6 +1,15 @@
 import NotificationCard from '@/components/NotificationCard';
+import { auth, db } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import {
+    collection,
+    onSnapshot,
+    orderBy,
+    query,
+    where,
+} from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 import {
     Dimensions,
     Image,
@@ -22,76 +31,32 @@ const wp = (p: number) =>
 const hp = (p: number) =>
   PixelRatio.roundToNearestPixel((height * p) / 100);
 
-const todayNotifications = [
-  {
-    id: '1',
-    type: 'team',
-    title: 'Emily joined your team!',
-    subtitle: 'Welcome Emily to Team Newton 👋',
-    time: '10:42 AM',
-    unread: true,
-    route: '/team',
-  },
-  {
-    id: '2',
-    type: 'leaderboard',
-    title: "You're in the Top 3!",
-    subtitle: 'Keep making your way to the top! 🚀',
-    time: '9:15 AM',
-    unread: true,
-    route: '/leaderboard',
-  },
-  {
-    id: '3',
-    type: 'streak',
-    title: "Don't let your streak end!",
-    subtitle: 'Complete a challenge within the next hour 🔥',
-    time: '11:00 AM',
-    unread: true,
-    route: '/',
-  },
-  {
-    id: '4',
-    type: 'rank',
-    title: 'Your team climbed 2 places!',
-    subtitle: "Great job! You're now in 4th place.",
-    time: '8:30 AM',
-    unread: true,
-    route: '/leaderboard',
-  },
-  {
-    id: '5',
-    type: 'challenge',
-    title: 'New challenge available!',
-    subtitle: 'Bridge Building Challenge is waiting.',
-    time: '7:45 AM',
-    unread: true,
-    route: '/activities',
-  },
-];
-
-const yesterdayNotifications = [
-  {
-    id: '6',
-    type: 'team',
-    title: 'Jason left your team.',
-    subtitle: 'Your team now has 4 members.',
-    time: 'Yesterday, 6:20 PM',
-    unread: false,
-    route: '/team',
-  },
-  {
-    id: '7',
-    type: 'leaderboard',
-    title: "You're only 150 points from 2nd!",
-    subtitle: 'Keep going, you can do it! 💪',
-    time: 'Yesterday, 3:10 PM',
-    unread: false,
-    route: '/leaderboard',
-  },
-];
 
 export default function NotificationPage() {
+    const [notifications, setNotifications] = useState<any[]>([]);
+    useEffect(() => {
+  const uid = auth.currentUser?.uid;
+
+  if (!uid) return;
+
+const q = query(
+  collection(db, "notifications"),
+  where("userID", "==", uid),
+  orderBy("createdAt", "desc")
+);
+
+  const unsubscribe = onSnapshot(q, snapshot => {
+    const data = snapshot.docs
+      .map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+  
+    setNotifications(data);
+  });
+
+  return unsubscribe;
+}, []);
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -157,9 +122,7 @@ export default function NotificationPage() {
               <Text style={styles.chipText}>Reminders</Text>
             </Pressable>
 
-            <Pressable style={styles.chip}>
-              <Text style={styles.chipText}>Challenges</Text>
-            </Pressable>
+        
           </ScrollView>
 
           <Pressable style={styles.markRead}>
@@ -167,28 +130,50 @@ export default function NotificationPage() {
               Mark all as read
             </Text>
           </Pressable>
+{notifications.length === 0 ? (
+  <Text
+    style={{
+      color: "#B7B8D0",
+      textAlign: "center",
+      marginTop: hp(8),
+      fontFamily: "PixelOperator",
+    }}
+  >
+    No notifications yet.
+  </Text>
+) : (
+  notifications.map((item: any) => (
+    <NotificationCard
+      key={item.id}
+      notification={{
+        id: item.id,
+        title: item.title,
+        subtitle: item.subtitle,
+        type: item.type,
+        unread: !item.read,
+        route:
+  item.type === "streak"
+    ? "/activities"
+    : item.type === "leaderboard"
+    ? "/leaderboard"
+    : item.type === "team"
+    ? "/team"
+    : "/",
+        time: item.createdAt
+          ? item.createdAt
+              .toDate()
+              .toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit",
+              })
+          : "",
+      }}
+    />
+  ))
+)}
 
-          {/* Today */}
-
-          <Text style={styles.section}>Today</Text>
-
-          {todayNotifications.map((item) => (
-            <NotificationCard
-              key={item.id}
-              notification={item}
-            />
-          ))}
-
-          <Text style={[styles.section, { marginTop: hp(2) }]}>
-            Yesterday
-          </Text>
-
-          {yesterdayNotifications.map((item) => (
-            <NotificationCard
-              key={item.id}
-              notification={item}
-            />
-          ))}
+     
+       
         </ScrollView>
       </ImageBackground>
     </View>

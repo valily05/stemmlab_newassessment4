@@ -1,4 +1,6 @@
+import { db } from '@/services/firebase/config';
 import { router } from 'expo-router';
+import { doc, updateDoc } from 'firebase/firestore';
 import {
     Dimensions,
     Image,
@@ -9,7 +11,6 @@ import {
     Text,
     View
 } from 'react-native';
-
 
 const { width, height } = Dimensions.get('window');
 
@@ -40,24 +41,41 @@ export default function NotificationCard({
 const getIcon = (): ImageSourcePropType => {
     switch(notification.type){
         case 'team':
-            return require('../assets/images/fireicon.png');
+            return require('../assets/images/teamicon.png');
 
         case 'leaderboard':
-            return require('../assets/images/fireicon.png');
+            return require('../assets/images/trophyicon.png');
 
         case 'streak':
             return require('../assets/images/fireicon.png');
 
         case 'rank':
-            return require('../assets/images/fireicon.png');
-
-        case 'challenge':
-            return require('../assets/images/fireicon.png');
+            return require('../assets/images/rankupicon.png');
 
         default:
             return require('../assets/images/fireicon.png');
     }
 }
+const getGlowColor = () => {
+  switch (notification.type) {
+    case 'team':
+      return '#7A58F2';
+
+    case 'leaderboard':
+      return '#FFD54A';
+
+    case 'streak':
+      return '#FF6B35';
+
+    case 'rank':
+      return '#55E57A';
+
+
+
+    default:
+      return '#A970FF';
+  }
+};
     
   const getCircleColor = () => {
     switch (notification.type) {
@@ -84,14 +102,35 @@ const getIcon = (): ImageSourcePropType => {
   return (
     <Pressable
       android_ripple={{ color: '#2C214F' }}
- style={({ pressed }) => [
+style={({ pressed }) => [
   styles.card,
+
+  !notification.unread && {
+    opacity: 0.65,
+  },
+
+  notification.unread && styles.unreadCard,
+
   pressed && {
     transform: [{ scale: 0.98 }],
     opacity: 0.9,
   },
 ]}
-      onPress={() => router.push(notification.route as any)}
+     onPress={async () => {
+  try {
+    await updateDoc(
+      doc(db, "notifications", notification.id),
+      {
+        read: true,
+      }
+    );
+
+   console.log(notification.route);
+router.push(notification.route as any);
+  } catch (err) {
+    console.log(err);
+  }
+}}
     >
       {/* Left Icon */}
 
@@ -103,10 +142,19 @@ const getIcon = (): ImageSourcePropType => {
     },
   ]}
 >
+<View
+  style={[
+    styles.iconGlow,
+    {
+      shadowColor: getGlowColor(),
+    },
+  ]}
+>
   <Image
     source={getIcon()}
     style={styles.icon}
   />
+</View>
 </View>
 
       {/* Middle */}
@@ -142,9 +190,7 @@ const getIcon = (): ImageSourcePropType => {
           {notification.time}
         </Text>
 
-        {notification.unread && (
-          <View style={styles.dot} />
-        )}
+     
       </View>
     </Pressable>
   );
@@ -155,10 +201,9 @@ card: {
   flexDirection: 'row',
   alignItems: 'center',
 
-  backgroundColor: 'rgba(22, 20, 45, 0.72)',
+  backgroundColor: 'rgba(22,20,45,0.72)',
 
   borderRadius: 22,
-
   paddingHorizontal: wp(4),
   paddingVertical: hp(2),
 
@@ -191,28 +236,58 @@ iconCircle: {
   borderWidth: 2,
   borderColor: 'rgba(255,255,255,0.06)',
 },
+iconGlow: {
+  justifyContent: 'center',
+  alignItems: 'center',
+
+  shadowOpacity: 0.5,
+  shadowRadius: 10,
+  shadowOffset: {
+    width: 0,
+    height: 0,
+  },
+
+  elevation: 12,
+},
+icon: {
+  width: wp(8),
+  height: wp(8),
+  resizeMode: 'contain',
+},
 
   content: {
     flex: 1,
 
     marginLeft: wp(4),
   },
+unreadCard: {
+  borderColor: '#8B5CF6',
+  borderWidth: 1.5,
 
+  shadowColor: '#8B5CF6',
+  shadowOpacity: 0.45,
+  shadowRadius: 14,
+  shadowOffset: {
+    width: 0,
+    height: 0,
+  },
+
+  elevation: 10,
+},
   title: {
     color: '#FFFFFF',
 
-    fontSize: wp(4.8),
-
-    fontWeight: '700',
+    fontSize: wp(5),
+    fontFamily:'PixelBold',
   },
 
   subtitle: {
     color: '#B7B8D0',
 
-    fontSize: wp(3.8),
+    fontSize: wp(4.2),
 
     marginTop: hp(0.5),
-
+    fontFamily:'PixelOperator',
     lineHeight: hp(2.6),
   },
 
@@ -221,16 +296,12 @@ iconCircle: {
 
     justifyContent: 'space-between',
 
-    height: hp(6),
+    height: hp(10),
   },
-icon: {
-  width: wp(9.5),
-  height: wp(9.5),
-  resizeMode: 'contain',
-},
+
   time: {
     color: '#BDBDD4',
-
+    fontFamily:'PixelBold',
     fontSize: wp(3.5),
   },
 

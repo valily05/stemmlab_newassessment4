@@ -308,34 +308,29 @@ const saveExperiment = async () => {
         totalPoints: increment(totalScore),
       });
     }
+const today = new Date();
 
-    const today = new Date();
+if (!lastActivityDate) {
+  streak = 1;
+} else {
+  const lastDate = lastActivityDate.toDate();
 
-    if (!lastActivityDate) {
-      streak = 1;
-    } else {
-      const lastDate =
-        lastActivityDate.toDate();
+  const diffHours =
+    (today.getTime() - lastDate.getTime()) /
+    (1000 * 60 * 60);
 
-      const diffDays = Math.floor(
-        (today.getTime() -
-          lastDate.getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
+  if (diffHours >= 24 && diffHours < 48) {
+    streak++;
+  } else if (diffHours >= 48) {
+    streak = 1;
+  }
+  // if diffHours < 24, streak stays the same
+}
 
-      if (diffDays === 1) {
-        streak += 1;
-      } else if (diffDays > 1) {
-        streak = 1;
-      }
-    }
-
-    await updateDoc(userRef, {
-      streak,
-      lastActivityDate:
-        serverTimestamp(),
-    });
-
+await updateDoc(userRef, {
+  streak,
+  lastActivityDate: serverTimestamp(),
+});
  
 for (
   let i = 0;

@@ -1,7 +1,15 @@
 import { auth, db } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
+import { useEffect, useRef, useState } from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -34,11 +42,59 @@ export default function HomeScreen() {
   const [userPoints, setUserPoints] = useState(0);
   const { t } = useLanguage(); // Access the translation object
   const [search, setSearch] = useState('');
+const sendingReminder = useRef(false);
   const [hasTeam, setHasTeam] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 const [streak, setStreak] = useState(0);
 const [teamPoints, setTeamPoints] = useState(0);
+const checkStreakReminder = async () => {
+  const uid = auth.currentUser?.uid;
+
+  if (!uid || sendingReminder.current) return;
+
+  sendingReminder.current = true;
+
+  try {
+    const userRef = doc(db, "users", uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
+    if (!data.lastActivityDate || data.streak <= 0) return;
+
+    const diffInHours =
+      (Date.now() - data.lastActivityDate.toDate().getTime()) /
+      (1000 * 60 * 60);
+
+    if (diffInHours < 23 || diffInHours >= 24) return;
+
+    const today = new Date().toDateString();
+
+    const lastReminder =
+      data.lastStreakReminder?.toDate()?.toDateString();
+
+    if (lastReminder === today) return;
+
+    await addDoc(collection(db, "notifications"), {
+      userID: uid,
+      type: "streak",
+      title: "Don't lose your streak !",
+      subtitle: "Complete an activity within the next hour to keep your streak alive!",
+      route: "/activities",
+      read: false,
+      createdAt: serverTimestamp(),
+    });
+
+    await updateDoc(userRef, {
+      lastStreakReminder: serverTimestamp(),
+    });
+  } finally {
+    sendingReminder.current = false;
+  }
+};
 useEffect(() => {
   const uid = auth.currentUser?.uid;
 
@@ -49,15 +105,44 @@ useEffect(() => {
 
   let unsubscribeTeam: (() => void) | null = null;
 
-  const unsubscribeUser = onSnapshot(
-    doc(db, 'users', uid),
-    (snapshot) => {
+const unsubscribeUser = onSnapshot(
+  doc(db, 'users', uid),
+  async (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
 
-   setHasTeam(!!data.teamID);
-setStreak(data.streak || 0);
+setHasTeam(!!data.teamID);
 setUserPoints(data.points || 0);
+
+let currentStreak = data.streak || 0;
+
+if (data.lastActivityDate) {
+
+  const lastActivity = data.lastActivityDate.toDate();
+
+  const now = new Date();
+
+  const diffInHours =
+    (now.getTime() - lastActivity.getTime()) /
+    (1000 * 60 * 60);
+
+  if (
+    diffInHours >= 24 &&
+    currentStreak > 0 &&
+    data.streak !== 0
+  ) {
+    currentStreak = 0;
+    setStreak(0);
+
+    updateDoc(doc(db, "users", uid), {
+      streak: 0,
+    }).catch(err =>
+      console.log("Failed to reset streak:", err)
+    );
+  }
+}
+
+setStreak(currentStreak);
 
         if (unsubscribeTeam) {
           unsubscribeTeam();
@@ -93,6 +178,48 @@ setUserPoints(data.points || 0);
     }
   };
 }, []);
+useEffect(() => {
+  if (!loading) {
+    checkStreakReminder();
+  }
+}, [loading]);
+useEffect(() => {
+  if (streak !== 0) return;
+
+  const timer = setTimeout(async () => {
+    const uid = auth.currentUser?.uid;
+
+    if (!uid) return;
+
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+
+    const data = userSnap.data();
+
+    const today = new Date().toDateString();
+
+    const lastStartReminder =
+      data?.lastStartReminder?.toDate()?.toDateString();
+
+    if (lastStartReminder !== today) {
+      await addDoc(collection(db, "notifications"), {
+        userID: uid,
+        type: "streak",
+        title: "Start your streak today!",
+        subtitle: "Complete any activity to begin your streak! 🚀",
+        route: "/activities",
+        read: false,
+        createdAt: serverTimestamp(),
+      });
+
+      await updateDoc(userRef, {
+        lastStartReminder: serverTimestamp(),
+      });
+    }
+  }, 120000);
+
+  return () => clearTimeout(timer);
+}, [streak]);
   if (loading) return null;
 
   return (
