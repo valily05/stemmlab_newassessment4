@@ -4,11 +4,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import {
     collection,
+    doc,
     onSnapshot,
     orderBy,
     query,
     where,
-} from 'firebase/firestore';
+    writeBatch,
+} from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import {
     Dimensions,
@@ -22,7 +24,6 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-
 const { width, height } = Dimensions.get('window');
 
 const wp = (p: number) =>
@@ -57,6 +58,22 @@ const q = query(
 
   return unsubscribe;
 }, []);
+const handleMarkAllRead = async () => {
+  const batch = writeBatch(db);
+
+  notifications.forEach((notification) => {
+    if (!notification.read) {
+      batch.update(
+        doc(db, "notifications", notification.id),
+        {
+          read: true,
+        }
+      );
+    }
+  });
+
+  await batch.commit();
+};
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -125,11 +142,20 @@ const q = query(
         
           </ScrollView>
 
-          <Pressable style={styles.markRead}>
-            <Text style={styles.markReadText}>
-              Mark all as read
-            </Text>
-          </Pressable>
+{notifications.some((n) => !n.read) && (
+<Pressable onPress={handleMarkAllRead}>
+  <LinearGradient
+    colors={['#A970FF', '#6D5CFF']}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={styles.markRead}
+  >
+    <Text style={styles.markReadText}>
+       Mark all as read
+    </Text>
+  </LinearGradient>
+</Pressable>
+)}
 {notifications.length === 0 ? (
   <Text
     style={{
@@ -266,17 +292,35 @@ color: '#8E74E8',
 
   },
 
-  markRead: {
-    alignSelf: 'flex-end',
-    marginBottom: hp(2),
+markRead: {
+  alignSelf: 'flex-end',
+
+  marginBottom: hp(2),
+
+  paddingHorizontal: wp(4.5),
+  paddingVertical: hp(1.1),
+
+  borderRadius: 999,
+
+  borderWidth: 1,
+  borderColor: 'rgba(255,255,255,0.15)',
+
+  shadowColor: '#9B6CFF',
+  shadowOpacity: 0.35,
+  shadowRadius: 10,
+  shadowOffset: {
+    width: 0,
+    height: 3,
   },
 
-  markReadText: {
-    color: '#9B6CFF',
-    fontWeight: '600',
-        fontFamily:'PixelOperator'
+  elevation: 6,
+},
 
-  },
+markReadText: {
+  color: '#FFFFFF',
+  fontFamily: 'PixelOperator',
+  fontSize: wp(3.7),
+},
 
   section: {
     color: '#9B6CFF',
