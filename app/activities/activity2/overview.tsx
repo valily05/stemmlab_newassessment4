@@ -17,8 +17,6 @@ import MaterialsChecklist from '@/components/activity/MaterialsChecklist';
 import ProgressBar from '@/components/activity/ProgressBar';
 import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
 import SafetyNotes from '@/components/activity/SafetyNotes';
-import SetupGuideCarousel from '@/components/activity/SetupGuideCarousel';
-import SoundMeterTest from '@/components/activity/soundmetertest';
 import StartButton from '@/components/activity/StartButton';
 import StepInstructions from '@/components/activity/StepInstructions';
 import PixelDivider from '@/components/PixelDivider';
@@ -134,14 +132,14 @@ const canStart =
     setMaterialProgress
   }
 />
-<SetupGuideCarousel
+{/* <SetupGuideCarousel
   steps={activity.setupSteps}
   bottomComponent={
     <SoundMeterTest
       onCompleted={setSoundMeterVerified}
     />
   }
-/>
+/> */}
 
   <PixelDivider />
           <StepInstructions
