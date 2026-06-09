@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext";
 import { auth } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -31,10 +32,11 @@ const { width } = Dimensions.get('window');
 const wp = (p: number) => PixelRatio.roundToNearestPixel((width * p) / 100);
 
 const THEME_COLORS = {
-    switchOnBg: '#FFEBB7',
-    switchOffBg: '#0F2F4F',
-    knobOnColor: '#FFCB30',
-    knobOffColor: '#47CFFF',
+    switchOnBg: '#0F2F4F',      // dark track
+    switchOffBg: '#FFEBB7',     // light track
+
+    knobOnColor: '#47CFFF',     // moon
+    knobOffColor: '#FFCB30',    // sun
 };
 
 const SWITCH_WIDTH = wp(16);
@@ -47,16 +49,19 @@ interface CustomSwitchProps {
 }
 
 const CustomThemeSwitch = ({ value }: CustomSwitchProps) => {
-    const animatedKnobPosition = useMemo(() => new Animated.Value(value ? 0 : 1), [value]);
+const animatedKnobPosition = useMemo(
+  () => new Animated.Value(value ? 1 : 0),
+  [value]
+);
 
-    React.useEffect(() => {
-        Animated.timing(animatedKnobPosition, {
-            toValue: value ? 0 : 1,
-            duration: 250,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true,
-        }).start();
-    }, [value, animatedKnobPosition]);
+React.useEffect(() => {
+  Animated.timing(animatedKnobPosition, {
+    toValue: value ? 1 : 0,
+    duration: 250,
+    easing: Easing.out(Easing.cubic),
+    useNativeDriver: true,
+  }).start();
+}, [value, animatedKnobPosition]);
 
     const interpolateKnobX = animatedKnobPosition.interpolate({
         inputRange: [0, 1],
@@ -74,11 +79,11 @@ const CustomThemeSwitch = ({ value }: CustomSwitchProps) => {
                     },
                 ]}
             >
-                {value ? (
-                    <Sun color="#fff" size={KNOB_SIZE * 0.6} />
-                ) : (
-                    <Moon color="#fff" size={KNOB_SIZE * 0.6} />
-                )}
+{value ? (
+    <Moon color="#fff" size={KNOB_SIZE * 0.6} />
+) : (
+    <Sun color="#fff" size={KNOB_SIZE * 0.6} />
+)}
             </Animated.View>
         </View>
     );
@@ -91,7 +96,7 @@ interface SidebarProps {
 const Sidebar = ({ onClose }: SidebarProps) => {
     const router = useRouter();
     const { language, t } = useLanguage();
-    const [isDarkMode, setIsDarkMode] = React.useState(true);
+const { isDark, toggleTheme } = useTheme();
 
     const handleLogout = async () => {
         try {
@@ -157,12 +162,12 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                     <TouchableOpacity 
                         activeOpacity={0.7}
                         style={[styles.menuItem, styles.modeToggleContainer]}
-                        onPress={() => setIsDarkMode(!isDarkMode)}
+                       onPress={toggleTheme}
                     >
                         <View style={styles.row}>
-                            <Text style={styles.label}>{isDarkMode ? "Light Mode" : "Dark Mode"}</Text>
+                            <Text style={styles.label}>{isDark ? "Dark Mode" : "Light Mode"}</Text>
                         </View>
-                        <CustomThemeSwitch value={isDarkMode} />
+                        <CustomThemeSwitch value={isDark} />
                     </TouchableOpacity>
 
                     <TouchableOpacity activeOpacity={0.7} style={styles.logoutButton} onPress={handleLogout}>

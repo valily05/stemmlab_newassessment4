@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext";
 import { auth, db } from "@/services/firebase/config";
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -32,7 +33,8 @@ type HeaderProps = {
 };
 
 export default function Header({ avatarSource, onMenuPress }: HeaderProps) {
-  const { t } = useLanguage();
+ const { t } = useLanguage();
+const { theme } = useTheme();
 const [hasNotification, setHasNotification] =
   useState(false);
   useEffect(() => {
@@ -53,42 +55,104 @@ const [hasNotification, setHasNotification] =
   return unsubscribe;
 }, []);
   return (
-    <View style={styles.header}>
-      {/* HAMBURGER */}
-      <TouchableOpacity onPress={onMenuPress} style={styles.menuBtn}>
-        <Ionicons name="menu" size={fp(24)} color="#C084FC" />
-      </TouchableOpacity>
+<View style={styles.header}>
+  <TouchableOpacity
+    onPress={onMenuPress}
+    style={[
+      styles.menuBtn,
+      {
+        backgroundColor: theme.surface,
+        borderColor: theme.border,
+      },
+    ]}
+  >
+    <Ionicons
+      name="menu"
+      size={fp(24)}
+      color={theme.primary}
+    />
+  </TouchableOpacity>
 
-      {/* CENTER */}
-      <View style={styles.center}>
-        <Text style={styles.logo}>STEMM LAB</Text>
-        <Text style={styles.subtitle}>
-          {t.learn}
-          <Text style={styles.star}> ✦ </Text>
-          {t.experiment}
-          <Text style={styles.star}> ✦ </Text>
-          {t.innovate}
-        </Text>
-      </View>
+  <View style={styles.center}>
+    <Text
+      style={[
+        styles.logo,
+        {
+          color: theme.headerTitle,
+        },
+      ]}
+    >
+      STEMM LAB
+    </Text>
 
-      {/* RIGHT SIDE */}
-      <View style={styles.rightSection}>
-<TouchableOpacity
-  style={styles.notifBtn}
-  onPress={() => router.push('/notification')}
->
-  <Ionicons
-    name="notifications"
-    size={fp(24)}
-    color="#C084FC"
-  />
+    <Text
+      style={[
+        styles.subtitle,
+        {
+          color: theme.headerSubtitle,
+        },
+      ]}
+    >
+      {t.learn}
 
-  {hasNotification && <View style={styles.dot} />}
-</TouchableOpacity>
-        
-        <Image source={avatarSource} style={styles.avatar} />
-      </View>
-    </View>
+      <Text
+        style={{
+          color: theme.accent,
+        }}
+      >
+        {" "}✦{" "}
+      </Text>
+
+      {t.experiment}
+
+      <Text
+        style={{
+          color: theme.accent,
+        }}
+      >
+        {" "}✦{" "}
+      </Text>
+
+      {t.innovate}
+    </Text>
+  </View>
+
+  <View style={styles.rightSection}>
+    <TouchableOpacity
+      style={[
+        styles.notifBtn,
+        {
+          backgroundColor: theme.surface,
+          borderColor: theme.border,
+        },
+      ]}
+      onPress={() => router.push("/notification")}
+    >
+      <Ionicons
+        name="notifications"
+        size={fp(24)}
+        color={theme.primary}
+      />
+
+      {hasNotification && (
+        <View
+          style={[
+            styles.dot,
+            {
+              backgroundColor: theme.accent,
+              borderColor: theme.surface,
+            },
+          ]}
+        />
+      )}
+    </TouchableOpacity>
+
+    <Image
+      source={avatarSource}
+      style={styles.avatar}
+    />
+  </View>
+</View>
   );
 }
 
