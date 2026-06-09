@@ -1,17 +1,20 @@
 import { auth, db } from '@/services/firebase/config';
 import {
-    arrayRemove,
-    doc,
-    getDoc,
-    updateDoc,
-} from 'firebase/firestore';
+  addDoc,
+  arrayRemove,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import {
-    Alert,
-    Dimensions,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
+  Alert,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 
 const { width } = Dimensions.get('window');
@@ -47,23 +50,62 @@ export default function LeaveButton() {
             onPress: async () => {
               try {
                 // 1. Fetch current team tracking reference
-                const userSnap = await getDoc(doc(db, 'users', uid));
-                const teamID = userSnap.data()?.teamID;
+const userSnap = await getDoc(doc(db, "users", uid));
+const userData = userSnap.data();
 
-                if (!teamID) {
-                  Alert.alert('Notice', 'You are not currently in a team.');
-                  return;
-                }
+const teamID = userData?.teamID;
+const username =
+  userData?.displayName ||
+  userData?.username ||
+  "A teammate";
+
+            if (!teamID) {
+  Alert.alert("Notice", "You are not currently in a team.");
+  return;
+}
+
+const teamRef = doc(db, "teams", teamID);
+const teamSnap = await getDoc(teamRef);
+
+const teamData = teamSnap.data();
+
+const teamName = teamData?.teamName || "your team";
+const members = teamData?.members || [];
 
                 // 2. Clear user out of the team array
-                await updateDoc(doc(db, 'teams', teamID), {
-                  members: arrayRemove(uid),
-                });
+await updateDoc(teamRef, {
+  members: arrayRemove(uid),
+});
 
                 // 3. Reset user profile mapping state
                 await updateDoc(doc(db, 'users', uid), {
                   teamID: null,
                 });
+                // Notify the user who left
+await addDoc(collection(db, "notifications"), {
+  userID: uid,
+  type: "team",
+  title: "You left the team",
+  subtitle: `You have left ${teamName}.`,
+  route: "/team",
+  read: false,
+  createdAt: serverTimestamp(),
+});
+
+// Notify remaining teammates
+for (const memberId of members) {
+  if (memberId === uid) continue;
+
+  await addDoc(collection(db, "notifications"), {
+    userID: memberId,
+    type: "team",
+title: "Team update ",
+subtitle: `${username} has left ${teamName}.`,
+    route: "/team",
+    read: false,
+    createdAt: serverTimestamp(),
+  });
+}
 
                 Alert.alert('Success', 'You have left the team.');
               } catch (dbError) {

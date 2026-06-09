@@ -1,12 +1,14 @@
 import { auth, db } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
+  addDoc,
   arrayUnion,
   collection,
   doc,
   getDoc,
   getDocs,
   query,
+  serverTimestamp,
   updateDoc,
   where,
 } from 'firebase/firestore';
@@ -63,8 +65,14 @@ const inputRef = useRef<TextInput>(null);
       const teamDoc = teamSnapshot.docs[0];
 const teamData = teamDoc.data();
 const currentMembers = teamData.members || [];
+const teamName = teamData.teamName;
+const userData = userSnap.data();
 
-// Max 4 members per team
+const username =
+  userData?.displayName ||
+  userData?.username ||
+  auth.currentUser?.displayName ||
+  "A teammate";// Max 4 members per team
 if (currentMembers.length >= 4) {
   Alert.alert(
     'Team Full',
@@ -80,6 +88,28 @@ await updateDoc(doc(db, 'teams', teamDoc.id), {
 await updateDoc(doc(db, 'users', uid), {
   teamID: teamDoc.id,
 });
+await addDoc(collection(db, "notifications"), {
+  userID: uid,
+  type: "team",
+  title: "Welcome aboard!",
+  subtitle: `You've joined ${teamName}. Start earning points together!`,
+  route: "/team",
+  read: false,
+  createdAt: serverTimestamp(),
+});
+for (const memberId of currentMembers) {
+  if (memberId === uid) continue;
+
+  await addDoc(collection(db, "notifications"), {
+    userID: memberId,
+    type: "team",
+    title: "A new teammate joined! 🎉",
+    subtitle: `${username} is now part of your team.`,
+    route: "/team",
+    read: false,
+    createdAt: serverTimestamp(),
+  });
+}
       Alert.alert('Success', 'Joined the crew!');
     } catch (error: any) {
       Alert.alert('Error', error.message);
