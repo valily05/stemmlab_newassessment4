@@ -1,32 +1,3 @@
-import { auth, db } from '@/services/firebase/config';
-import MaskedView from '@react-native-masked-view/masked-view';
-import * as FileSystem from 'expo-file-system/legacy';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router, useLocalSearchParams } from 'expo-router';
-import * as Sharing from 'expo-sharing';
-import {
-  VideoView,
-  useVideoPlayer,
-} from 'expo-video';
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  increment,
-  serverTimestamp,
-  updateDoc,
-} from 'firebase/firestore';
-import {
-  ChartNoAxesColumn,
-  Clock3,
-  Crosshair,
-  Download,
-  RotateCcw,
-  Star,
-  Trophy,
-  Video
-} from 'lucide-react-native';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -40,6 +11,27 @@ import {
   View
 } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
+import MaskedView from '@react-native-masked-view/masked-view';
+import {
+  ChartNoAxesColumn,
+  Clock3,
+  Crosshair,
+  Download,
+  RotateCcw,
+  Star,
+  Trophy,
+  Video
+} from 'lucide-react-native';
+
+import * as FileSystem from 'expo-file-system/legacy';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router, useLocalSearchParams } from 'expo-router';
+import * as Sharing from 'expo-sharing';
+import {
+  VideoView,
+  useVideoPlayer,
+} from 'expo-video';
+
 const { width, height } = Dimensions.get('window');
 
 const wp = (percentage: number) =>
@@ -56,24 +48,62 @@ const rf = (size: number) => {
     )
   );
 };
+
 const hp = (percentage: number) =>
   PixelRatio.roundToNearestPixel(
     (height * percentage) / 100
   );
+
 export default function Activity1Results() {
-      const params = useLocalSearchParams();
+  const params = useLocalSearchParams();
+
+  // const {
+  //   sessionID,
+  //   totalScore,
+  //   totalIterations,
+  //   bestResult,
+  //   accuracy,
+  //   results
+  // } = useLocalSearchParams();
+
+  // const totalScore = Number(
+  //   params.totalScore || 0
+  // );
+
+  const totalIterations = Number(
+    params.totalIterations ?? 0
+  );
+
+  const accuracy = Number(
+    params.accuracy ?? 0
+  );
+
+  let bestResult: any = null;
+
+  try {
+    if (params.bestResult) {
+      bestResult = JSON.parse(
+        params.bestResult as string
+      );
+    }
+  } catch (error) {
+    console.log(
+      'BEST RESULT PARSE ERROR',
+      error
+    );
+  }
 
   let parsedResults: any[] = [];
 
   try {
-    if (params.results) {
+    if (params.esults) {
       parsedResults = JSON.parse(
         params.results as string
       );
       console.log(
-  'PARSED RESULTS',
-  parsedResults
-);
+        'PARSED RESULTS',
+        parsedResults
+      );
     }
   } catch (error) {
     console.log(
@@ -82,1042 +112,835 @@ export default function Activity1Results() {
     );
   }
 
-const [selectedVideo, setSelectedVideo] =
-  useState(0);
+  const [selectedVideo, setSelectedVideo] =
+    useState(0);
+
   const currentVideo =
-  parsedResults[selectedVideo]?.videoUri;
-const player = useVideoPlayer(
-  currentVideo || '',
-  (player: any) => {
-    player.loop = false;
-  }
-);
-const [isSaving, setIsSaving] = useState(false);
+    parsedResults[selectedVideo]?.videoUri;
 
-  const totalIterations =
-    parsedResults.length;
-
-  const inTargetCount =
-    parsedResults.filter(
-      item => item.inTarget
-    ).length;
-
-  const accuracy =
-    totalIterations > 0
-      ? Math.round(
-          (inTargetCount /
-            totalIterations) *
-            100
-        )
-      : 0;
-const experimentTime =
-  parsedResults.reduce(
-    (total, item) =>
-      total + (item.dropTime || 0),
-    0
-  );
-
-const formatSeconds = (
-  value: string | number | null | undefined
-) => {
-  if (value === null || value === undefined) {
-    return '0.00 s';
-  }
-
-  if (typeof value === 'number') {
-    return `${(value / 1000).toFixed(2)} s`;
-  }
-
-  const parts = value.split(':');
-
-  if (parts.length === 2) {
-    const minutes = Number(parts[0]);
-    const seconds = Number(parts[1]);
-
-    return `${(
-      minutes * 60 +
-      seconds
-    ).toFixed(2)} s`;
-  }
-
-  return value;
-};
-const downloadResultsTable = async () => {
-  const csvContent = [
-    [
-      'Iteration',
-      'First Hit (s)',
-      'Stop Moving (s)',
-      'Drop Time (s)',
-      'In Target',
-      'Bounce',
-      'Impact Force',
-    ].join(','),
-
-    ...parsedResults.map(item =>
-      [
-        item.stage,
-        formatSeconds(item.firstHitTime).replace(' s', ''),
-        formatSeconds(item.stopMovingTime).replace(' s', ''),
-        formatSeconds(item.dropTime).replace(' s', ''),
-        item.inTarget ? 'Yes' : 'No',
-        item.bounced ? 'Yes' : 'No',
-        item.impactForce,
-      ].join(',')
-    ),
-  ].join('\n');
-
-const fileUri =
-  FileSystem.documentDirectory +
-  'Activity1Results.csv';
-  await FileSystem.writeAsStringAsync(
-    fileUri,
-    csvContent
-  );
-
-  await Sharing.shareAsync(fileUri);
-};
-
-const bestResult =
-  parsedResults.reduce(
-    (
-      best,
-      current
-    ) => {
-      if (!best) {
-        return current;
-      }
-
-      const bestTarget =
-        best.inTarget ? 1 : 0;
-
-      const currentTarget =
-        current.inTarget ? 1 : 0;
-
-      if (
-        currentTarget >
-        bestTarget
-      ) {
-        return current;
-      }
-
-if (
-  currentTarget === bestTarget &&
-  current.dropTime > best.dropTime
-) {
-  return current;
-}
-
-      return best;
-    },
-    null as any
-  );
-
-const impactScore =
-  bestResult?.impactForce === 'SAFE'
-    ? 500
-    : bestResult?.impactForce === 'CAUTION'
-    ? 400
-    : bestResult?.impactForce === 'HIGH'
-    ? 250
-    : bestResult?.impactForce === 'SEVERE'
-    ? 100
-    : 0;
-
-const accuracyScore =
-  accuracy * 2.5;
-
-const dropTimeScore =
-  Math.min(
-    150,
-    bestResult
-      ? bestResult.dropTime / 50
-      : 0
-  );
-
-const experimentScore =
-  Math.min(
-    100,
-    experimentTime / 200
-  );
-
-const totalScore =
-  Math.round(
-    impactScore +
-    accuracyScore +
-    dropTimeScore +
-    experimentScore
-  );
-const saveExperiment = async () => {
-  if (isSaving) return;
-
-  setIsSaving(true);
-
-  try {
-    const uid = auth.currentUser?.uid;
-
-    if (!uid) {
-      console.log('No authenticated user');
-      setIsSaving(false);
-      return;
+  const player = useVideoPlayer(
+    currentVideo || '',
+    (player: any) => {
+      player.loop = false;
     }
+  );
 
-    const userRef = doc(db, 'users', uid);
+  const [isSaving, setIsSaving] = useState(false);
 
-    const userSnap = await getDoc(userRef);
+  
 
-    if (!userSnap.exists()) {
-      console.log('User document not found');
-      setIsSaving(false);
-      return;
-    }
-
-    const userData = userSnap.data();
-
-    let streak = userData.streak || 0;
-    const lastActivityDate =
-      userData.lastActivityDate;
-
-    const teamID = userData.teamID;
-
-    const sessionRef = await addDoc(
-      collection(db, 'session'),
-      {
-        teamID,
-        activityID: 1,
-        experimentTime,
-        totalIterations,
-        pointsEarned: totalScore,
-        completedAt: serverTimestamp(),
-        insights: {
-          bestTime:
-            bestResult?.dropTime || 0,
-          avgAccuracy: accuracy,
-        },
-      }
+  const experimentTime =
+    parsedResults.reduce(
+      (total, item) =>
+        total + (item.dropTime || 0),
+      0
     );
 
-    if (teamID) {
-      const teamRef = doc(
-        db,
-        'teams',
-        teamID
+  const formatSeconds = (
+    value: string | number | null | undefined
+  ) => {
+    if (value === null || value === undefined) {
+      return '0.00 s';
+    }
+
+    if (typeof value === 'number') {
+      return `${(value / 1000).toFixed(2)} s`;
+    }
+
+    const parts = value.split(':');
+
+    if (parts.length === 2) {
+      const minutes = Number(parts[0]);
+      const seconds = Number(parts[1]);
+
+      return `${(
+        minutes * 60 +
+        seconds
+      ).toFixed(2)} s`;
+    }
+    
+    return value;
+  };
+//const today = new Date();
+
+
+// if (!lastActivityDate) {
+//   streak = 1;
+// } else {
+//   const lastDate = lastActivityDate.toDate();
+
+//   const diffHours =
+//     (today.getTime() - lastDate.getTime()) /
+//     (1000 * 60 * 60);
+
+//   if (diffHours >= 24 && diffHours < 48) {
+//     streak++;
+//   } else if (diffHours >= 48) {
+//     streak = 1;
+//   }
+//   // if diffHours < 24, streak stays the same
+// }
+
+// await updateDoc(userRef, {
+//   streak,
+//   lastActivityDate: serverTimestamp(),
+// });
+ 
+// for (
+//   let i = 0;
+//   i < parsedResults.length;
+//   i++
+// ) {
+//   const result =
+//     parsedResults[i];
+
+//     if (typeof value === 'number') {
+//       return `${(value / 1000).toFixed(2)} s`;
+//     }
+
+//     const parts = value.split(':');
+
+//     if (parts.length === 2) {
+//       const minutes = Number(parts[0]);
+//       const seconds = Number(parts[1]);
+
+
+//       return `${(
+//         minutes * 60 +
+//         seconds
+//       ).toFixed(2)} s`;
+//     }
+
+//     return value;
+//   };
+
+  const downloadResultsTable = async () => {
+    const csvContent = [
+      [
+        'Iteration',
+        'First Hit (s)',
+        'Stop Moving (s)',
+        'Drop Time (s)',
+        'In Target',
+        'Bounce',
+        'Impact Force',
+      ].join(','),
+
+      ...parsedResults.map(item =>
+        [
+          item.stage,
+          formatSeconds(item.firstHitTime).replace(' s', ''),
+          formatSeconds(item.stopMovingTime).replace(' s', ''),
+          formatSeconds(item.dropTime).replace(' s', ''),
+          item.inTarget ? 'Yes' : 'No',
+          item.bounced ? 'Yes' : 'No',
+          item.impactForce,
+        ].join(',')
+      ),
+    ].join('\n');
+
+    const fileUri =
+      FileSystem.documentDirectory +
+      'Activity1Results.csv';
+      await FileSystem.writeAsStringAsync(
+        fileUri,
+        csvContent
       );
 
-      await updateDoc(teamRef, {
-        totalPoints: increment(totalScore),
-      });
-    }
-const today = new Date();
+    await Sharing.shareAsync(fileUri);
+  };
 
-if (!lastActivityDate) {
-  streak = 1;
-} else {
-  const lastDate = lastActivityDate.toDate();
-
-  const diffHours =
-    (today.getTime() - lastDate.getTime()) /
-    (1000 * 60 * 60);
-
-  if (diffHours >= 24 && diffHours < 48) {
-    streak++;
-  } else if (diffHours >= 48) {
-    streak = 1;
-  }
-  // if diffHours < 24, streak stays the same
-}
-
-await updateDoc(userRef, {
-  streak,
-  lastActivityDate: serverTimestamp(),
-});
- 
-for (
-  let i = 0;
-  i < parsedResults.length;
-  i++
-) {
-  const result =
-    parsedResults[i];
-
-  await addDoc(
-    collection(
-      db,
-      'session',
-      sessionRef.id,
-      'iterations'
+  const accelerationData = {
+    labels: parsedResults.map(
+      item =>
+        item.stage.replace(
+          'PROTOTYPE ',
+          'P'
+        )
     ),
-    {
-      iterationNo: i + 1,
-      stage: result.stage,
-      dropTime: result.dropTime,
-      firstHitTime:
-        result.firstHitTime,
-      stopMovingTime:
-        result.stopMovingTime,
-      impactForce:
-        result.impactForce,
-      inTarget:
-        result.inTarget,
-      bounced:
-        result.bounced,
 
-      videoURL:
-        result.videoURL || '',
+    datasets: [
+      {
+        data: parsedResults.map(
+          item =>
+            Number(
+              item.acceleration || 0
+            )
+        ),
+      },
+    ],
+  };
 
-      velocity:
-        result.velocity,
-
-      acceleration:
-        result.acceleration,
-
-      weight:
-        result.weight,
-    }
-  );
-}
-
-    console.log('Session Saved');
-setIsSaving(false);
-router.push({
-  pathname:
-    '/activities/activity1/feedback',
-  params: {
-    activityName:
-      'Parachute Drop Challenge',
-    pointsEarned: totalScore,
-  },
-});
-  } catch (error) {
-    console.log('SAVE ERROR', error);
-    setIsSaving(false);
-  }
-};
-const accelerationData = {
-  labels: parsedResults.map(
-    item =>
-      item.stage.replace(
-        'PROTOTYPE ',
-        'P'
-      )
-  ),
-
-  datasets: [
-    {
-      data: parsedResults.map(
-        item =>
-          Number(
-            item.acceleration || 0
-          )
-      ),
-    },
-  ],
-};
-
-return (
-  <View style={styles.container}>
-    <ScrollView
-      contentContainerStyle={
-        styles.content
-      }
-      showsVerticalScrollIndicator={
-        false
-      }
-    >
-<MaskedView
-  maskElement={
-    <Text style={styles.title}>
-      ACTIVITY 1 RESULTS
-    </Text>
-  }
->
-<LinearGradient
-  colors={[
-    '#E39BFF',
-    '#C86DFF',
-    '#FF5BC7',
-  ]}
-  start={{ x: 0, y: 0 }}
-  end={{ x: 1, y: 0 }}
->
-    <Text
-      style={[
-        styles.title,
-        { opacity: 0 },
-      ]}
-    >
-      ACTIVITY 1 RESULTS
-    </Text>
-  </LinearGradient>
-</MaskedView>
-<LinearGradient
-  colors={[
-    '#2A0D45',
-    '#351058',
-    '#2B0A3D',
-    '#12031E',
-  ]}
-  locations={[
-    0,
-    0.35,
-    0.7,
-    1,
-  ]}
-  start={{ x: 0, y: 0 }}
-  end={{ x: 1, y: 1 }}
-  style={styles.heroCard}
->
-<Text style={styles.heroTitle}>
-  Total Score
-</Text>
-
-<View style={styles.scoreRow}>
-
-  <Image
-    source={require(
-      '@/assets/images/medal.png'
-    )}
-    style={styles.bigMedal}
-  />
-
-<MaskedView
-  maskElement={
-    <Text style={styles.heroScore}>
-      {totalScore}
-    </Text>
-  }
->
-  <LinearGradient
-    colors={[
-      '#FFF8D6',
-      '#FFE95B',
-      '#FFC107',
-      '#FF9800',
-    ]}
-    locations={[
-      0,
-      0.35,
-      0.75,
-      1,
-    ]}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 0 }}
-  >
-    <Text
-      style={[
-        styles.heroScore,
-        { opacity: 0 },
-      ]}
-    >
-      {totalScore}
-    </Text>
-  </LinearGradient>
-</MaskedView>
- <Image
-  source={require(
-    '@/assets/images/medal.png'
-  )}
-  style={styles.bigMedal}
-/>
-
-</View>
-
-<View style={styles.heroDivider} />
-
-
-
-
-
-
-
-
-<View style={styles.heroGrid}>
-
-  <View style={styles.timeCard}>
-    <Clock3 size={rf(30)} color="#ED359D" />
-    <Text style={styles.statValue}>
-      {formatSeconds(experimentTime)}
-    </Text>
-    <Text style={styles.statLabel}>
-      Experiment Time
-    </Text>
-  </View>
-
-  <View style={styles.iterationCard}>
-    <RotateCcw size={rf(30)} color="#2B70DD" />
-    <Text style={styles.statValue}>
-      {totalIterations}
-    </Text>
-    <Text style={styles.statLabel}>
-      Total Iterations
-    </Text>
-  </View>
-
-</View>
-
-<View style={styles.heroGrid}>
-
-  <View style={styles.bestTimeCard}>
-    <Trophy size={rf(30)} color="#FACC15" />
-    <Text style={styles.statValue}>
-      {bestResult
-        ? formatSeconds(bestResult.dropTime)
-        : '--'}
-    </Text>
-    <Text style={styles.statLabel}>
-      Best Time
-    </Text>
-  </View>
-
-  <View style={styles.accuracyCard}>
-    <Crosshair size={rf(30)} color="#259F60" />
-    <Text style={styles.statValue}>
-      {accuracy}%
-    </Text>
-    <Text style={styles.statLabel}>
-      Avg Accuracy
-    </Text>
-  </View>
-
-</View>
-</LinearGradient>
-<View style={styles.videoCard}>
-  <Video
-    size={rf(26)}
-    color="#C86DFF"
-    style={{
-      marginBottom:wp(-6.5),
-      marginLeft:wp(2)
-    }}
-  />
-<View style={styles.videoTitleRow}>
-  <Text style={styles.videoTitle}>
-    EXPERIMENT RECORDINGS
-  </Text>
-
-
-</View>
-
-  <ScrollView
-    horizontal
-    showsHorizontalScrollIndicator={false}
-    contentContainerStyle={styles.videoTabs}
-  >
-    {parsedResults.map(
-      (item, index) => (
-        <TouchableOpacity
-          key={index}
-          onPress={() =>
-            setSelectedVideo(index)
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={
+          styles.content
+        }
+        showsVerticalScrollIndicator={
+          false
+        }
+      >
+        <MaskedView
+          maskElement={
+            <Text style={styles.title}>
+              ACTIVITY 1 RESULTS
+            </Text>
           }
-          style={[
-            styles.videoTab,
-
-            selectedVideo === index &&
-              styles.activeVideoTab,
-
-          ]}
         >
-          <Text
-            style={styles.videoTabText}
+          <LinearGradient
+            colors={[
+              '#E39BFF',
+              '#C86DFF',
+              '#FF5BC7',
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
           >
-            {bestResult?.stage === item.stage
-              ? `🏆 ${item.stage}`
-              : item.stage}
+            <Text
+              style={[
+                styles.title,
+                { opacity: 0 },
+              ]}
+            >
+              ACTIVITY 1 RESULTS
+            </Text>
+          </LinearGradient>
+        </MaskedView>
+
+        <LinearGradient
+          colors={[
+            '#2A0D45',
+            '#351058',
+            '#2B0A3D',
+            '#12031E',
+          ]}
+          locations={[
+            0,
+            0.35,
+            0.7,
+            1,
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.heroCard}
+        >
+          <Text style={styles.heroTitle}>
+            Total Score
+          </Text>
+
+          <View style={styles.scoreRow}>
+            <Image
+              source={require(
+                '@/assets/images/medal.png'
+              )}
+              style={styles.bigMedal}
+            />
+
+            <MaskedView
+              maskElement={
+                <Text style={styles.heroScore}>
+                  {params.totalScore}
+                </Text>
+              }
+            >
+              <LinearGradient
+                colors={[
+                  '#FFF8D6',
+                  '#FFE95B',
+                  '#FFC107',
+                  '#FF9800',
+                ]}
+                locations={[
+                  0,
+                  0.35,
+                  0.75,
+                  1,
+                ]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text
+                  style={[
+                    styles.heroScore,
+                    { opacity: 0 },
+                  ]}
+                >
+                  {params.totalScore}
+                </Text>
+              </LinearGradient>
+            </MaskedView>
+
+            <Image
+              source={require(
+                '@/assets/images/medal.png'
+              )}
+              style={styles.bigMedal}
+            />
+          </View>
+
+          <View style={styles.heroDivider} />
+
+          <View style={styles.heroGrid}>
+            <View style={styles.timeCard}>
+              <Clock3 size={rf(30)} color="#ED359D" />
+              <Text style={styles.statValue}>
+                {formatSeconds(experimentTime)}
+              </Text>
+              <Text style={styles.statLabel}>
+                Experiment Time
+              </Text>
+            </View>
+
+            <View style={styles.iterationCard}>
+              <RotateCcw size={rf(30)} color="#2B70DD" />
+              <Text style={styles.statValue}>
+                {totalIterations}
+              </Text>
+              <Text style={styles.statLabel}>
+                Total Iterations
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.heroGrid}>
+            <View style={styles.bestTimeCard}>
+              <Trophy size={rf(30)} color="#FACC15" />
+              <Text style={styles.statValue}>
+                {bestResult
+                  ? formatSeconds(bestResult.dropTime)
+                  : '--'}
+              </Text>
+              <Text style={styles.statLabel}>
+                Best Time
+              </Text>
+            </View>
+
+            <View style={styles.accuracyCard}>
+              <Crosshair size={rf(30)} color="#259F60" />
+              <Text style={styles.statValue}>
+                {accuracy}%
+              </Text>
+              <Text style={styles.statLabel}>
+                Avg Accuracy
+              </Text>
+            </View>
+          </View>
+        </LinearGradient>
+
+        <View style={styles.videoCard}>
+          <Video
+            size={rf(26)}
+            color="#C86DFF"
+            style={{
+              marginBottom:wp(-6.5),
+              marginLeft:wp(2)
+            }}
+          />
+
+          <View style={styles.videoTitleRow}>
+            <Text style={styles.videoTitle}>
+              EXPERIMENT RECORDINGS
+            </Text>
+          </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.videoTabs}
+          >
+            {parsedResults.map(
+              (item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() =>
+                    setSelectedVideo(index)
+                  }
+                  style={[
+                    styles.videoTab,
+
+                    selectedVideo === index &&
+                      styles.activeVideoTab,
+
+                  ]}
+                >
+                  <Text
+                    style={styles.videoTabText}
+                  >
+                    {bestResult?.stage === item.stage
+                      ? `🏆 ${item.stage}`
+                      : item.stage}
+                  </Text>
+                </TouchableOpacity>
+              )
+            )}
+          </ScrollView>
+
+          <View style={styles.videoPlaceholder}>
+            {currentVideo ? (
+              <VideoView
+                player={player}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: rf(14),
+                }}
+                allowsFullscreen
+                allowsPictureInPicture
+              />
+            ) : (
+              <>
+                <Text style={styles.playIcon}>
+                  ▶
+                </Text>
+
+                <Text style={styles.playText}>
+                  No Video Available
+                </Text>
+              </>
+            )}
+          </View>
+
+          <View style={styles.heightCard}>
+            <Text style={styles.heightLabel}>
+              DROP HEIGHT
+            </Text>
+
+            <Text style={styles.heightValue}>
+              {parsedResults[0]?.dropHeight ?? '--'} m
+            </Text>
+          </View>
+
+          <View style={styles.metricsCard}>
+            <Text style={styles.metricsTitle}>
+              EXPERIMENT DATA
+            </Text>
+
+            <View style={styles.metricsGrid}>
+              <View style={styles.metricBox}>
+                <Text style={styles.metricLabel}>
+                  Velocity
+                </Text>
+                <Text style={styles.metricValue}>
+                  {Number(
+                    parsedResults[selectedVideo]?.velocity || 0
+                  ).toFixed(2)} m/s
+                </Text>
+              </View>
+
+              <View style={styles.metricBox}>
+                <Text style={styles.metricLabel}>
+                  Time To Stop
+                </Text>
+                <Text style={styles.metricValue}>
+                  {formatSeconds(
+                    parsedResults[selectedVideo]?.stopMovingTime
+                  )}
+                </Text>
+              </View>
+
+              <View style={styles.metricBox}>
+                <Text style={styles.metricLabel}>
+                  Acceleration
+                </Text>
+                <Text style={styles.metricValue}>
+                  {Number(
+                    parsedResults[selectedVideo]?.acceleration || 0
+                  ).toFixed(2)}
+                </Text>
+              </View>
+
+              <View style={styles.metricBox}>
+                <Text style={styles.metricLabel}>
+                  G-Force
+                </Text>
+                <Text style={styles.metricValue}>
+                  {Number(
+                    parsedResults[selectedVideo]?.gForce || 0
+                  ).toFixed(2)} g
+                </Text>
+              </View>
+
+              <View style={styles.metricBox}>
+                <Text style={styles.metricLabel}>
+                  First Hit Time
+                </Text>
+
+                <Text style={styles.metricValue}>
+                  {formatSeconds(
+                    parsedResults[selectedVideo]?.firstHitTime
+                  )}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <LinearGradient
+          colors={[
+            '#2A0D45',
+            '#351058',
+            '#2B0A3D',
+            '#12031E',
+          ]}
+          locations={[
+            0,
+            0.35,
+            0.7,
+            1,
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.iterationSection}
+        >
+          <View style={styles.headerRow}>
+            <View style={styles.sectionTitleRow}>
+              <ChartNoAxesColumn
+                size={rf(22)}
+                color="#C86DFF"
+              />
+
+              <Text style={styles.sectionTitle}>
+                ITERATION COMPARISON
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.csvButton}
+              onPress={downloadResultsTable}
+            >
+              <Download
+                size={rf(15)}
+                color="#FFFFFF"
+              />
+
+              <Text style={styles.csvText}>
+                CSV
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {parsedResults.map(
+            (
+              item: any,
+              index: number
+            ) => (
+              <View
+                key={index}
+                style={[
+                  styles.resultCard,
+                  bestResult?.stage === item.stage &&
+                    styles.bestResultCard,
+                ]}
+              >
+                <View style={styles.resultCardInner}>
+                  <View
+                    style={
+                      styles.resultTop
+                    }
+                  >
+                    <View>
+                      <Text
+                        style={
+                          styles.resultStage
+                        }
+                      >
+                        {item.stage}
+                      </Text>
+
+                      {bestResult?.stage ===
+                        item.stage && (
+                          <View style={styles.bestResultTag}>
+                            <Star
+                              size={rf(13)}
+                              color="#FFD633"
+                              fill="#FFD633"
+                            />
+
+                            <Text style={styles.bestResultTagText}>
+                              BEST RESULT
+                            </Text>
+                          </View>
+                        )}
+                    </View>
+
+                    <Text
+                      style={
+                        styles.resultTime
+                      }
+                    >
+                      {formatSeconds(
+                        item.dropTime
+                      )}
+                    </Text>
+                  </View>
+
+                  <View
+                    style={
+                      styles.resultRow
+                    }
+                  >
+                    <View>
+                      <Text
+                        style={
+                          styles.miniLabel
+                        }
+                      >
+                        Landing Accuracy
+                      </Text>
+
+                      <Text
+                        style={[
+                          styles.resultValue,
+                          {
+                            color:
+                              item.inTarget
+                                ? '#32FF7E'
+                                : '#FF6B6B',
+                          },
+                        ]}
+                      >
+                        {item.inTarget
+                          ? 'IN TARGET'
+                          : 'OFF TARGET'}
+                      </Text>
+                    </View>
+
+                    <View>
+                      <Text
+                        style={
+                          styles.miniLabel
+                        }
+                      >
+                        Impact Force
+                      </Text>
+
+                      <Text
+                        style={[
+                          styles.resultValue,
+                          {
+                            color:
+                              item.impactForce === 'SAFE'
+                                ? '#00E84A'
+                                : item.impactForce === 'CAUTION'
+                                ? '#FFD54F'
+                                : item.impactForce === 'HIGH'
+                                ? '#FF9800'
+                                : item.impactForce === 'SEVERE'
+                                ? '#FF4D4D'
+                                : item.impactForce === 'EXTREME'
+                                ? '#A00000'
+                                : '#FFFFFF'
+                          },
+                        ]}
+                      >
+                        {item.impactForce}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.resultRow}>
+                    <View>
+                    </View>
+
+                    <View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )
+          )}
+        </LinearGradient>
+
+        <View style={styles.feedbackCard}>
+          <Image
+            source={require('@/assets/images/teacher.png')}
+            style={styles.teacherImage}
+          />
+
+          <View style={styles.feedbackContent}>
+            <Text style={styles.feedbackTitle}>
+              GREAT WORK!
+            </Text>
+
+            <Text style={styles.feedbackText}>
+              Your parachute improved significantly
+              across iterations.{' '}
+
+              <Text style={styles.highlightStage}>
+                {bestResult?.stage}
+              </Text>{' '}
+
+              achieved the best landing
+              performance with a flight time of{' '}
+
+              <Text style={styles.highlightTime}>
+                {bestResult
+                  ? formatSeconds(
+                      bestResult.dropTime
+                    )
+                  : '--'}
+              </Text>
+              .
+            </Text>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={styles.cvButton}
+          onPress={() =>
+            router.push({
+              pathname:
+                '/activities/activity1/cv-analysis',
+              params: {
+                results: JSON.stringify(
+                  parsedResults
+                ),
+              },
+            })
+          }
+        >
+          <Text style={styles.cvButtonTitle}>
+            AI MOTION ANALYSIS
+          </Text>
+
+          <Text style={styles.cvButtonSubtitle}>
+            Use Computer Vision to calculate
+            trajectory, velocity and acceleration.
           </Text>
         </TouchableOpacity>
-      )
-    )}
-  </ScrollView>
 
-<View style={styles.videoPlaceholder}>
-  {currentVideo ? (
-    <VideoView
-      player={player}
-      style={{
-        width: '100%',
-        height: '100%',
-        borderRadius: rf(14),
-      }}
-      allowsFullscreen
-      allowsPictureInPicture
-    />
-  ) : (
-    <>
-      <Text style={styles.playIcon}>
-        ▶
-      </Text>
-
-      <Text style={styles.playText}>
-        No Video Available
-      </Text>
-    </>
-  )}
-</View>
-<View style={styles.heightCard}>
-  <Text style={styles.heightLabel}>
-    DROP HEIGHT
-  </Text>
-
-  <Text style={styles.heightValue}>
-    {parsedResults[0]?.dropHeight ?? '--'} m
-  </Text>
-</View>
-<View style={styles.metricsCard}>
-
-  <Text style={styles.metricsTitle}>
-    EXPERIMENT DATA
-  </Text>
-
-  <View style={styles.metricsGrid}>
-
-
-
-    <View style={styles.metricBox}>
-      <Text style={styles.metricLabel}>
-        Velocity
-      </Text>
-      <Text style={styles.metricValue}>
-        {Number(
-          parsedResults[selectedVideo]?.velocity || 0
-        ).toFixed(2)} m/s
-      </Text>
-    </View>
-
-    <View style={styles.metricBox}>
-      <Text style={styles.metricLabel}>
-        Time To Stop
-      </Text>
-      <Text style={styles.metricValue}>
-        {formatSeconds(
-          parsedResults[selectedVideo]?.stopMovingTime
-        )}
-      </Text>
-    </View>
-
-    <View style={styles.metricBox}>
-      <Text style={styles.metricLabel}>
-        Acceleration
-      </Text>
-      <Text style={styles.metricValue}>
-        {Number(
-          parsedResults[selectedVideo]?.acceleration || 0
-        ).toFixed(2)}
-      </Text>
-    </View>
-
-    <View style={styles.metricBox}>
-      <Text style={styles.metricLabel}>
-        G-Force
-      </Text>
-      <Text style={styles.metricValue}>
-        {Number(
-          parsedResults[selectedVideo]?.gForce || 0
-        ).toFixed(2)} g
-      </Text>
-    </View>
-<View style={styles.metricBox}>
-  <Text style={styles.metricLabel}>
-    First Hit Time
-  </Text>
-
-  <Text style={styles.metricValue}>
-    {formatSeconds(
-      parsedResults[selectedVideo]?.firstHitTime
-    )}
-  </Text>
-</View>
-
-
-  </View>
-
-</View>
-</View>
-<LinearGradient
-  colors={[
-    '#2A0D45',
-    '#351058',
-    '#2B0A3D',
-    '#12031E',
-  ]}
-  locations={[
-    0,
-    0.35,
-    0.7,
-    1,
-  ]}
-  start={{ x: 0, y: 0 }}
-  end={{ x: 1, y: 1 }}
-  style={styles.iterationSection}
->
-<View style={styles.headerRow}>
-
- <View style={styles.sectionTitleRow}>
-  <ChartNoAxesColumn
-    size={rf(22)}
-    color="#C86DFF"
-  />
-
-  <Text style={styles.sectionTitle}>
-    ITERATION COMPARISON
-  </Text>
-</View>
-
-<TouchableOpacity
-  style={styles.csvButton}
-  onPress={downloadResultsTable}
->
-  <Download
-    size={rf(15)}
-    color="#FFFFFF"
-  />
-
-  <Text style={styles.csvText}>
-     CSV
-  </Text>
-</TouchableOpacity>
-
-</View>
-{parsedResults.map(
-  (
-    item: any,
-    index: number
-  ) => (
-<View
-  key={index}
-  style={[
-    styles.resultCard,
-    bestResult?.stage === item.stage &&
-      styles.bestResultCard,
-  ]}
->
-  <View style={styles.resultCardInner}>
-
-
-      <View
-        style={
-          styles.resultTop
-        }
-      >
-        <View>
-          <Text
-            style={
-              styles.resultStage
-            }
-          >
-            {item.stage}
+        <View style={styles.graphCard}>
+          <Text style={styles.graphTitle}>
+            ACCELERATION ACROSS ITERATIONS
           </Text>
 
-          {bestResult?.stage ===
-            item.stage && (
-        <View style={styles.bestResultTag}>
-<Star
-  size={rf(13)}
-  color="#FFD633"
-  fill="#FFD633"
-/>
+          <Text style={styles.graphSubtitle}>
+          Comparing landing acceleration for each prototype.
+          </Text>
 
-  <Text style={styles.bestResultTagText}>
-    BEST RESULT
-  </Text>
-</View>
-          )}
+          <View
+            style={{
+              position: 'relative',
+              marginTop: hp(1),
+            }}
+          >
+            <Text
+              style={{
+                position: 'absolute',
+                left: wp(-21),
+                top: hp(15),
+                width: wp(45),
+                transform: [{ rotate: '-90deg' }],
+                color: '#C86DFF',
+                fontSize: rf(14),
+                fontFamily: 'PixelOperator',
+                textAlign: 'center',
+                zIndex: 999,
+              }}
+            >
+              Y-Axis: Acceleration (m/s²)
+            </Text>
+
+            <LineChart
+              data={accelerationData}
+              width={width - wp(16)}
+              height={260}
+              withDots
+              withShadow={false}
+              withInnerLines={true}
+              withOuterLines={true}
+              bezier
+              chartConfig={{
+                backgroundGradientFrom:
+                  '#121127',
+
+                backgroundGradientTo:
+                  '#121127',
+
+                decimalPlaces: 2,
+
+                color: opacity =>
+                  `rgba(200,109,255,${opacity})`,
+
+                labelColor: opacity =>
+                  `rgba(255,255,255,${opacity})`,
+
+                propsForDots: {
+                  r: '5',
+                  strokeWidth: '2',
+                  stroke: '#C86DFF',
+                  
+                },
+
+                propsForLabels: {
+                  fontFamily: 'PixelBold',
+                  fontSize: 12,
+                },
+              }}
+              style={{
+                borderRadius: rf(16),
+                marginTop: hp(1),
+                paddingLeft:wp(2),
+              }}
+            />
+          </View>
+
+          <Text
+            style={{
+              color: '#C86DFF',
+              fontSize: rf(14),
+              fontFamily: 'PixelOperator',
+              textAlign: 'center',
+              marginTop: hp(1),
+            }}
+          >
+            X-Axis: Iteration Stage
+          </Text>
         </View>
 
-        <Text
-          style={
-            styles.resultTime
+        <TouchableOpacity
+          style={[
+            styles.saveButton,
+            isSaving && { opacity: 0.7 },
+          ]}
+          onPress={() => 
+            router.push({
+              pathname: '/activities/activity1/feedback',
+              params: {
+                pointsEarned: params.totalScore,
+              },
+            })
           }
+          disabled={isSaving}
         >
-          {formatSeconds(
-            item.dropTime
+          {isSaving ? (
+            <>
+              <ActivityIndicator
+                size="small"
+                color="#FFFFFF"
+              />
+              <Text style={styles.saveButtonText}>
+                SAVING RESULTS...
+              </Text>
+            </>
+          ) : (
+            <Text style={styles.saveButtonText}>
+              SAVE & REFLECT
+            </Text>
           )}
-        </Text>
-      </View>
-
-      <View
-        style={
-          styles.resultRow
-        }
-      >
-        <View>
-          <Text
-            style={
-              styles.miniLabel
-            }
-          >
-            Landing Accuracy
-          </Text>
-
-          <Text
-            style={[
-              styles.resultValue,
-
-              {
-                color:
-                  item.inTarget
-                    ? '#32FF7E'
-                    : '#FF6B6B',
-              },
-            ]}
-          >
-            {item.inTarget
-              ? 'IN TARGET'
-              : 'OFF TARGET'}
-          </Text>
-        </View>
-
-        <View>
-          <Text
-            style={
-              styles.miniLabel
-            }
-          >
-            Impact Force
-          </Text>
-
-          <Text
-            style={[
-              styles.resultValue,
-
-              {
-color:
-  item.impactForce === 'SAFE'
-    ? '#00E84A'
-    : item.impactForce === 'CAUTION'
-    ? '#FFD54F'
-    : item.impactForce === 'HIGH'
-    ? '#FF9800'
-    : item.impactForce === 'SEVERE'
-    ? '#FF4D4D'
-    : item.impactForce === 'EXTREME'
-    ? '#A00000'
-    : '#FFFFFF'
-              },
-            ]}
-          >
-{item.impactForce}     </Text>
-        </View>
-        
-      </View>
-<View style={styles.resultRow}>
-
-  <View>
-   
-
-
-  </View>
-
-  <View>
-  
-
-  </View>
-
-</View>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
-
-  </View>
-
-  )
-)
+  );
 }
-</LinearGradient>
-
-<View style={styles.feedbackCard}>
-
-  <Image
-    source={require('@/assets/images/teacher.png')}
-    style={styles.teacherImage}
-  />
-
-  <View style={styles.feedbackContent}>
-
-    <Text style={styles.feedbackTitle}>
-      GREAT WORK!
-    </Text>
-
-    <Text style={styles.feedbackText}>
-      Your parachute improved significantly
-      across iterations.{' '}
-
-      <Text style={styles.highlightStage}>
-        {bestResult?.stage}
-      </Text>{' '}
-
-      achieved the best landing
-      performance with a flight time of{' '}
-
-      <Text style={styles.highlightTime}>
-        {bestResult
-          ? formatSeconds(
-              bestResult.dropTime
-            )
-          : '--'}
-      </Text>
-      .
-    </Text>
-
-  </View>
-
-</View>
-<TouchableOpacity
-  style={styles.cvButton}
-onPress={() =>
-  router.push({
-    pathname:
-      '/activities/activity1/cv-analysis',
-    params: {
-      results: JSON.stringify(
-        parsedResults
-      ),
-    },
-  })
-}
->
-  <Text style={styles.cvButtonTitle}>
-     AI MOTION ANALYSIS
-  </Text>
-
-  <Text style={styles.cvButtonSubtitle}>
-    Use Computer Vision to calculate
-    trajectory, velocity and acceleration.
-  </Text>
-</TouchableOpacity>
-
-<View style={styles.graphCard}>
-
-  <Text style={styles.graphTitle}>
-    ACCELERATION ACROSS ITERATIONS
-  </Text>
-
-  <Text style={styles.graphSubtitle}>
-   Comparing landing acceleration for each prototype.
-  </Text>
-<View
-  style={{
-    position: 'relative',
-    marginTop: hp(1),
-  }}
->
-  <Text
-  style={{
-  position: 'absolute',
-
-  left: wp(-21),
-
-  top: hp(15),
-
-  width: wp(45),
-
-  transform: [{ rotate: '-90deg' }],
-
-  color: '#C86DFF',
-
-  fontSize: rf(14),
-
-  fontFamily: 'PixelOperator',
-
-  textAlign: 'center',
-
-  zIndex: 999,
-}}
-  >
-    Y-Axis: Acceleration (m/s²)
-  </Text>
-
-
-
-  <LineChart
-    data={accelerationData}
-    width={width - wp(16)}
-    height={260}
-    withDots
-    withShadow={false}
-    withInnerLines={true}
-    withOuterLines={true}
-    bezier
-    chartConfig={{
-      backgroundGradientFrom:
-        '#121127',
-
-      backgroundGradientTo:
-        '#121127',
-
-      decimalPlaces: 2,
-
-      color: opacity =>
-        `rgba(200,109,255,${opacity})`,
-
-      labelColor: opacity =>
-        `rgba(255,255,255,${opacity})`,
-
-      propsForDots: {
-        r: '5',
-        strokeWidth: '2',
-        stroke: '#C86DFF',
-        
-      },
-        propsForLabels: {
-    fontFamily: 'PixelBold',
-    fontSize: 12,},
-    }}
-    style={{
-      borderRadius: rf(16),
-      marginTop: hp(1),
-      paddingLeft:wp(2),
-    }}
-  />
-  </View>
-  <Text
-  style={{
-    color: '#C86DFF',
-    fontSize: rf(14),
-    fontFamily: 'PixelOperator',
-    textAlign: 'center',
-    marginTop: hp(1),
-  }}
->
-  X-Axis: Iteration Stage
-</Text>
-
-</View>
-<TouchableOpacity
-  style={[
-    styles.saveButton,
-    isSaving && { opacity: 0.7 },
-  ]}
-  onPress={saveExperiment}
-  
-  disabled={isSaving}
->
-  {isSaving ? (
-    <>
-      <ActivityIndicator
-        size="small"
-        color="#FFFFFF"
-      />
-      <Text style={styles.saveButtonText}>
-        SAVING RESULTS...
-      </Text>
-    </>
-  ) : (
-    <Text style={styles.saveButtonText}>
-      SAVE & REFLECT
-    </Text>
-  )}
-</TouchableOpacity>
-</ScrollView>
-</View>
-
-);
-}
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  backgroundColor:'#1D0E23',
+    backgroundColor:'#1D0E23',
   },
+
   content: {
     padding: wp(4),
     paddingTop: hp(12),
@@ -1132,255 +955,262 @@ const styles = StyleSheet.create({
     fontFamily: 'Pixel',
     letterSpacing: 1,
   },
+
   graphCard:{
-  backgroundColor:'#121127',
+    backgroundColor:'#121127',
 
-  borderRadius:rf(16),
+    borderRadius:rf(16),
 
-  padding:rf(16),
+    padding:rf(16),
 
-  marginTop:hp(3),
-  marginBottom:hp(3),
+    marginTop:hp(3),
+    marginBottom:hp(3),
 
-  borderWidth:1,
-  borderColor:'rgba(255,255,255,0.08)',
-},
+    borderWidth:1,
+    borderColor:'rgba(255,255,255,0.08)',
+  },
 
-graphTitle:{
-  color:'#FFFFFF',
+  graphTitle:{
+    color:'#FFFFFF',
 
-  fontSize:rf(20),
+    fontSize:rf(20),
 
-  fontFamily:'PixelBold',
+    fontFamily:'PixelBold',
 
-  textAlign:'center',
-},
+    textAlign:'center',
+  },
 
-graphSubtitle:{
-  color:'#B8BED3',
+  graphSubtitle:{
+    color:'#B8BED3',
 
-  fontSize:rf(14),
+    fontSize:rf(14),
 
-  fontFamily:'PixelOperator',
+    fontFamily:'PixelOperator',
 
-  textAlign:'center',
+    textAlign:'center',
 
-  marginTop:hp(0.5),
-  marginBottom:hp(1.5),
-},
+    marginTop:hp(0.5),
+    marginBottom:hp(1.5),
+  },
+
   saveButton: {
-  backgroundColor: '#7A4DFF',
-  borderRadius: rf(18),
-  paddingVertical: hp(2.2),
-  marginTop: hp(3),
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexDirection: 'row',
-  gap: 10,
-},
-metricsCard:{
-  marginTop: hp(2),
-
-  backgroundColor:'#121127',
-
-  borderRadius:rf(14),
-
-  padding:rf(16),
-
-  borderWidth:1,
-  borderColor:'rgba(255,255,255,0.08)',
-},
-
-metricsTitle:{
-  color:'#FFFFFF',
-
-  fontSize:rf(18),
-
-  fontFamily:'PixelBold',
-
-  marginBottom:hp(1.5),
-},
-heightCard:{
-  marginTop: hp(2),
-
-  backgroundColor:'#2B0A3D',
-
-  borderRadius:rf(14),
-
-  padding:rf(18),
-
-  alignItems:'center',
-
-  borderWidth:2,
-  borderColor:'#C86DFF',
-},
-
-heightLabel:{
-  color:'#B8BED3',
-
-  fontSize:rf(13),
-
-  fontFamily:'PixelOperator',
-},
-
-heightValue:{
-  color:'#FFFFFF',
-
-  fontSize:rf(32),
-
-  fontFamily:'PixelBold',
-
-  marginTop:hp(0.5),
-},
-metricsGrid:{
-  flexDirection:'row',
-
-  flexWrap:'wrap',
-
-  justifyContent:'space-between',
-},
-
-metricBox:{
-  width:'48%',
-
-  backgroundColor:'#1A1B35',
-
-  borderRadius:rf(10),
-
-  padding:rf(12),
-
-  marginBottom:hp(1),
-},
-
-metricLabel:{
-  color:'#9AA3D8',
-
-  fontSize:rf(12),
-
-  fontFamily:'PixelOperator',
-},
-
-metricValue:{
-  color:'#FFFFFF',
-
-  fontSize:rf(18),
-
-  fontFamily:'PixelBold',
-
-  marginTop:hp(0.5),
-},
-cvButton: {
-  marginTop: hp(3),
-
-  backgroundColor: '#121127',
-
-  borderRadius: rf(18),
-
-  padding: rf(18),
-
-  borderWidth: 2,
-  borderColor: '#6D4AFF',
-
-  shadowColor: '#6D4AFF',
-  shadowOpacity: 0.35,
-  shadowRadius: 15,
-
-  shadowOffset: {
-    width: 0,
-    height: 0,
+    backgroundColor: '#7A4DFF',
+    borderRadius: rf(18),
+    paddingVertical: hp(2.2),
+    marginTop: hp(3),
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10,
   },
 
-  elevation: 10,
-},
+  metricsCard:{
+    marginTop: hp(2),
 
-cvButtonTitle: {
-  color: '#FFFFFF',
+    backgroundColor:'#121127',
 
-  fontSize: rf(20),
+    borderRadius:rf(14),
 
-  fontFamily: 'PixelBold',
+    padding:rf(16),
 
-  textAlign: 'center',
-
-  marginBottom: hp(0.8),
-},
-
-cvButtonSubtitle: {
-  color: '#B8BED3',
-
-  fontSize: rf(14),
-
-  fontFamily: 'PixelOperator',
-
-  textAlign: 'center',
-
-  lineHeight: rf(18),
-},
-iterationSection:{
-  borderRadius:rf(18),
-
-  borderWidth:2,
-  borderColor:'rgba(255,255,255,0.08)',
-
-  padding:rf(18),
-
-  marginBottom:hp(2),
-
-  shadowColor:'#A855F7',
-  shadowOpacity:0.35,
-  shadowRadius:25,
-
-  shadowOffset:{
-    width:0,
-    height:0,
+    borderWidth:1,
+    borderColor:'rgba(255,255,255,0.08)',
   },
 
-  elevation:12,
+  metricsTitle:{
+    color:'#FFFFFF',
 
-  overflow:'hidden',
-},
-heroCard:{
-  borderRadius: rf(18),
-  padding: rf(24),
-  marginBottom: hp(3),
+    fontSize:rf(18),
 
-  borderWidth: 2,
-  borderColor: 'rgba(255,255,255,0.08)',
+    fontFamily:'PixelBold',
 
-  shadowColor:'#A855F7',
-  shadowOpacity:0.35,
-  shadowRadius:25,
-  shadowOffset:{
-    width:0,
-    height:0,
-  },
-  
-
-
-  elevation:12,
-  overflow:'hidden',
-},
-heroText:{
-  flex:1,
-  
-},
-bestResultCard:{
-  backgroundColor:'#121127',
-
-  borderWidth:2,
-  borderColor:'#FF8C1A',
-
-  shadowColor:'#FF8C1A',
-  shadowOpacity:0.45,
-  shadowRadius:12,
-
-  shadowOffset:{
-    width:0,
-    height:0,
+    marginBottom:hp(1.5),
   },
 
-  elevation:10,
-},
+  heightCard:{
+    marginTop: hp(2),
+
+    backgroundColor:'#2B0A3D',
+
+    borderRadius:rf(14),
+
+    padding:rf(18),
+
+    alignItems:'center',
+
+    borderWidth:2,
+    borderColor:'#C86DFF',
+  },
+
+  heightLabel:{
+    color:'#B8BED3',
+
+    fontSize:rf(13),
+
+    fontFamily:'PixelOperator',
+  },
+
+  heightValue:{
+    color:'#FFFFFF',
+
+    fontSize:rf(32),
+
+    fontFamily:'PixelBold',
+
+    marginTop:hp(0.5),
+  },
+
+  metricsGrid:{
+    flexDirection:'row',
+
+    flexWrap:'wrap',
+
+    justifyContent:'space-between',
+  },
+
+  metricBox:{
+    width:'48%',
+
+    backgroundColor:'#1A1B35',
+
+    borderRadius:rf(10),
+
+    padding:rf(12),
+
+    marginBottom:hp(1),
+  },
+
+  metricLabel:{
+    color:'#9AA3D8',
+
+    fontSize:rf(12),
+
+    fontFamily:'PixelOperator',
+  },
+
+  metricValue:{
+    color:'#FFFFFF',
+
+    fontSize:rf(18),
+
+    fontFamily:'PixelBold',
+
+    marginTop:hp(0.5),
+  },
+
+  cvButton: {
+    marginTop: hp(3),
+
+    backgroundColor: '#121127',
+
+    borderRadius: rf(18),
+
+    padding: rf(18),
+
+    borderWidth: 2,
+    borderColor: '#6D4AFF',
+
+    shadowColor: '#6D4AFF',
+    shadowOpacity: 0.35,
+    shadowRadius: 15,
+
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+
+    elevation: 10,
+  },
+
+  cvButtonTitle: {
+    color: '#FFFFFF',
+
+    fontSize: rf(20),
+
+    fontFamily: 'PixelBold',
+
+    textAlign: 'center',
+
+    marginBottom: hp(0.8),
+  },
+
+  cvButtonSubtitle: {
+    color: '#B8BED3',
+
+    fontSize: rf(14),
+
+    fontFamily: 'PixelOperator',
+
+    textAlign: 'center',
+
+    lineHeight: rf(18),
+  },
+
+  iterationSection:{
+    borderRadius:rf(18),
+
+    borderWidth:2,
+    borderColor:'rgba(255,255,255,0.08)',
+
+    padding:rf(18),
+
+    marginBottom:hp(2),
+
+    shadowColor:'#A855F7',
+    shadowOpacity:0.35,
+    shadowRadius:25,
+
+    shadowOffset:{
+      width:0,
+      height:0,
+    },
+
+    elevation:12,
+
+    overflow:'hidden',
+  },
+
+  heroCard:{
+    borderRadius: rf(18),
+    padding: rf(24),
+    marginBottom: hp(3),
+
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.08)',
+
+    shadowColor:'#A855F7',
+    shadowOpacity:0.35,
+    shadowRadius:25,
+    shadowOffset:{
+      width:0,
+      height:0,
+    },
+    elevation:12,
+    overflow:'hidden',
+  },
+
+  heroText:{
+    flex:1,  
+  },
+
+  bestResultCard:{
+    backgroundColor:'#121127',
+
+    borderWidth:2,
+    borderColor:'#FF8C1A',
+
+    shadowColor:'#FF8C1A',
+    shadowOpacity:0.45,
+    shadowRadius:12,
+
+    shadowOffset:{
+      width:0,
+      height:0,
+    },
+
+    elevation:10,
+  },
+
   heroTitle: {
     color: '#D8D8FF',
     fontSize: rf(20),
@@ -1402,114 +1232,120 @@ bestResultCard:{
     height: wp(14),
     resizeMode: 'contain',
   },
-heroGrid:{
-  flexDirection:'row',
-  gap: wp(3),
-  marginBottom: hp(1.5),
-},
 
-timeCard:{
-  flex:1,
-
-  backgroundColor:'rgba(237,53,157,0.12)',
-  borderWidth:1,
-  borderColor:'#ED359D',
-
-  borderRadius:rf(10),
-  padding:rf(14),
-
-  alignItems:'center',
-},
-iterationCard:{
-  flex:1,
-
-  backgroundColor:'rgba(43,112,221,0.12)',
-  borderWidth:1,
-  borderColor:'#2B70DD',
-
-  borderRadius:rf(10),
-  padding:rf(14),
-
-  alignItems:'center',
-},
-bestTimeCard:{
-  flex:1,
-
-  backgroundColor:'rgba(250,204,21,0.12)',
-  borderWidth:1,
-  borderColor:'#FACC15',
-
-  borderRadius:rf(10),
-  padding:rf(14),
-
-  alignItems:'center',
-},
-
-accuracyCard:{
-  flex:1,
-
-  backgroundColor:'rgba(37,159,96,0.12)',
-  borderWidth:1,
-  borderColor:'#259F60',
-
-  borderRadius:rf(10),
-  padding:rf(14),
-
-  alignItems:'center',
-},
-videoTab:{
-  backgroundColor:'#242630',
-
-  borderWidth:1,
-  borderColor:'rgba(255,255,255,0.12)',
-
-  borderRadius:rf(8),
-
-  paddingHorizontal:wp(3),
-  paddingVertical:hp(0.9),
-
-  marginRight:wp(2),
-
-  alignItems:'center',
-  justifyContent:'center',
-},
-
-activeVideoTab:{
-  backgroundColor:'#3A245E',
-
-  borderColor:'#C86DFF',
-
-  shadowColor:'#C86DFF',
-  shadowOpacity:0.4,
-  shadowRadius:8,
-
-  shadowOffset:{
-    width:0,
-    height:0,
+  heroGrid:{
+    flexDirection:'row',
+    gap: wp(3),
+    marginBottom: hp(1.5),
   },
 
-  elevation:6,
-},
+  timeCard:{
+    flex:1,
 
-videoTabText:{
-  color:'#D5D7E0',
-  fontSize:rf(13),
-  fontFamily:'PixelOperator',
-},
-statValue:{
-  color:'#FFFFFF',
-  fontSize:rf(22),
-  fontFamily:'PixelBold',
-  marginTop:hp(1),
-},
+    backgroundColor:'rgba(237,53,157,0.12)',
+    borderWidth:1,
+    borderColor:'#ED359D',
 
-statLabel:{
-  color:'#C6CAD5',
-  fontSize:rf(17),
-  textAlign:'center',
-  marginTop:hp(0.5),
-  fontFamily:'PixelOperator',
-},
+    borderRadius:rf(10),
+    padding:rf(14),
+
+    alignItems:'center',
+  },
+
+  iterationCard:{
+    flex:1,
+
+    backgroundColor:'rgba(43,112,221,0.12)',
+    borderWidth:1,
+    borderColor:'#2B70DD',
+
+    borderRadius:rf(10),
+    padding:rf(14),
+
+    alignItems:'center',
+  },
+
+  bestTimeCard:{
+    flex:1,
+
+    backgroundColor:'rgba(250,204,21,0.12)',
+    borderWidth:1,
+    borderColor:'#FACC15',
+
+    borderRadius:rf(10),
+    padding:rf(14),
+
+    alignItems:'center',
+  },
+
+  accuracyCard:{
+    flex:1,
+
+    backgroundColor:'rgba(37,159,96,0.12)',
+    borderWidth:1,
+    borderColor:'#259F60',
+
+    borderRadius:rf(10),
+    padding:rf(14),
+
+    alignItems:'center',
+  },
+
+  videoTab:{
+    backgroundColor:'#242630',
+
+    borderWidth:1,
+    borderColor:'rgba(255,255,255,0.12)',
+
+    borderRadius:rf(8),
+
+    paddingHorizontal:wp(3),
+    paddingVertical:hp(0.9),
+
+    marginRight:wp(2),
+
+    alignItems:'center',
+    justifyContent:'center',
+  },
+
+  activeVideoTab:{
+    backgroundColor:'#3A245E',
+
+    borderColor:'#C86DFF',
+
+    shadowColor:'#C86DFF',
+    shadowOpacity:0.4,
+    shadowRadius:8,
+
+    shadowOffset:{
+      width:0,
+      height:0,
+    },
+
+    elevation:6,
+  },
+
+  videoTabText:{
+    color:'#D5D7E0',
+    fontSize:rf(13),
+    fontFamily:'PixelOperator',
+  },
+
+  statValue:{
+    color:'#FFFFFF',
+    fontSize:rf(22),
+    fontFamily:'PixelBold',
+    marginTop:hp(1),
+  },
+
+  statLabel:{
+    color:'#C6CAD5',
+    fontSize:rf(17),
+    textAlign:'center',
+    marginTop:hp(0.5),
+    fontFamily:'PixelOperator',
+  },
+
   heroScore: {
     color: '#FFFFFF',
     fontSize: rf(70),
@@ -1524,8 +1360,6 @@ statLabel:{
     marginVertical: hp(2),
   },
 
-
-
   heroItem: {
     flex: 1,
     alignItems: 'center',
@@ -1537,48 +1371,51 @@ statLabel:{
     marginBottom: hp(0.5),
     fontFamily:'PixelOperator'
   },
-heroStatRow: {
-  flex: 1,
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: wp(3),
-},
+
+  heroStatRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(3),
+  },
+
   heroValue: {
     color: '#FFFFFF',
     fontSize: rf(24),
     fontWeight: 'bold',
     fontFamily:'PixelBold'
   },
-videoTitleRow:{
-  flexDirection:'row',
-  alignItems:'center',
-  justifyContent:'center',
-  gap: wp(1),
 
-},
-videoCard:{
-  backgroundColor:'#0A0A0F',
-
-  borderRadius:rf(16),
-
-  borderWidth:1,
-  borderColor:'#8A8A97',
-
-  padding:rf(18),
-
-  marginBottom:hp(3),
-
-  shadowColor:'#A855F7',
-  shadowOpacity:0.15,
-  shadowRadius:20,
-
-  shadowOffset:{
-    width:0,
-    height:0,
+  videoTitleRow:{
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'center',
+    gap: wp(1),
   },
 
-  elevation:12,
-},
+  videoCard:{
+    backgroundColor:'#0A0A0F',
+
+    borderRadius:rf(16),
+
+    borderWidth:1,
+    borderColor:'#8A8A97',
+
+    padding:rf(18),
+
+    marginBottom:hp(3),
+
+    shadowColor:'#A855F7',
+    shadowOpacity:0.15,
+    shadowRadius:20,
+
+    shadowOffset:{
+      width:0,
+      height:0,
+    },
+
+    elevation:12,
+  },
 
   videoTitle: {
     color: '#FFFFFF',
@@ -1587,29 +1424,31 @@ videoCard:{
     marginBottom: hp(2),
     fontFamily:'PixelBold'
   },
-videoPlaceholder:{
-  height:hp(44),
 
-  backgroundColor:'#242833',
+  videoPlaceholder:{
+    height:hp(44),
 
-  borderRadius:rf(14),
+    backgroundColor:'#242833',
 
-  borderWidth:1,
-  borderColor:'rgba(255,255,255,0.06)',
+    borderRadius:rf(14),
 
-  justifyContent:'center',
-  alignItems:'center',
-},
+    borderWidth:1,
+    borderColor:'rgba(255,255,255,0.06)',
+
+    justifyContent:'center',
+    alignItems:'center',
+  },
+
   playIcon: {
     color: '#ffffff',
     fontSize: rf(60),
   },
-  videoTabs:{
-  flexDirection:'row',
-  gap: wp(1),
-  marginBottom: hp(2),
-},
 
+  videoTabs:{
+    flexDirection:'row',
+    gap: wp(1),
+    marginBottom: hp(2),
+  },
 
   playText: {
     color: '#ffffff',
@@ -1619,75 +1458,80 @@ videoPlaceholder:{
     fontFamily:'Pixel'
   },
 
-
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: hp(2),
   },
-sectionTitle:{
-  color:'#FFFFFF',
-  fontSize:rf(21),
-  fontFamily:'PixelBold',
-  marginLeft:rf(5)
-},
-sectionTitleRow:{
-  flexDirection:'row',
-  alignItems:'center',
-  gap:wp(2),
-},
-csvButton:{
-  flexDirection:'row',
-  alignItems:'center',
-  gap:wp(2),
 
-  backgroundColor:'#7A4DFF',
-
-  borderWidth:1,
-  borderColor:'#B68CFF',
-
-  borderRadius:rf(10),
-
-  paddingHorizontal:wp(2),
-  paddingVertical:hp(0.6),
-
-  shadowColor:'#7A4DFF',
-  shadowOpacity:0.35,
-  shadowRadius:10,
-
-  shadowOffset:{
-    width:0,
-    height:0,
+  sectionTitle:{
+    color:'#FFFFFF',
+    fontSize:rf(21),
+    fontFamily:'PixelBold',
+    marginLeft:rf(5)
   },
 
-  elevation:8,
-},
+  sectionTitleRow:{
+    flexDirection:'row',
+    alignItems:'center',
+    gap:wp(2),
+  },
+
+  csvButton:{
+    flexDirection:'row',
+    alignItems:'center',
+    gap:wp(2),
+
+    backgroundColor:'#7A4DFF',
+
+    borderWidth:1,
+    borderColor:'#B68CFF',
+
+    borderRadius:rf(10),
+
+    paddingHorizontal:wp(2),
+    paddingVertical:hp(0.6),
+
+    shadowColor:'#7A4DFF',
+    shadowOpacity:0.35,
+    shadowRadius:10,
+
+    shadowOffset:{
+      width:0,
+      height:0,
+    },
+
+    elevation:8,
+  },
 
   csvText: {
     color: '#FFFFFF',
     fontSize: rf(14),
     fontWeight: 'bold',
   },
-resultCard:{
-  backgroundColor:'#5b6174',
 
-  borderRadius:rf(18),
+  resultCard:{
+    backgroundColor:'#5b6174',
 
-  padding:rf(2.7),
+    borderRadius:rf(18),
 
-  marginBottom:hp(2.2),
-},
-resultCardInner:{
-  backgroundColor:'#121127',
+    padding:rf(2.7),
 
-  borderRadius:rf(18),
+    marginBottom:hp(2.2),
+  },
 
-  padding:rf(20),
+  resultCardInner:{
+    backgroundColor:'#121127',
 
-  borderWidth:1,
-  borderColor:'rgba(255,255,255,0.05)',
-},
+    borderRadius:rf(18),
+
+    padding:rf(20),
+
+    borderWidth:1,
+    borderColor:'rgba(255,255,255,0.05)',
+  },
+
   resultTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1701,46 +1545,49 @@ resultCardInner:{
     fontWeight: 'bold',
     fontFamily:'Pixel'
   },
-bestResultTag:{
-  alignSelf:'flex-start',
 
-  flexDirection:'row',
-  alignItems:'center',
+  bestResultTag:{
+    alignSelf:'flex-start',
 
-  backgroundColor:'rgba(255,214,51,0.15)',
+    flexDirection:'row',
+    alignItems:'center',
 
-  borderWidth:1,
-  borderColor:'rgba(255,214,51,0.45)',
+    backgroundColor:'rgba(255,214,51,0.15)',
 
-  paddingHorizontal:wp(2.3),
-  paddingVertical:hp(0.6),
+    borderWidth:1,
+    borderColor:'rgba(255,214,51,0.45)',
 
-  borderRadius:rf(8),
+    paddingHorizontal:wp(2.3),
+    paddingVertical:hp(0.6),
 
-  marginTop:hp(0.9),
+    borderRadius:rf(8),
 
-  gap:wp(1.2),
-},
-bestResultTagText:{
-  color:'#FFD633',
+    marginTop:hp(0.9),
 
-  fontSize:rf(10),
+    gap:wp(1.2),
+  },
 
-  fontFamily:'PixelBold',
+  bestResultTagText:{
+    color:'#FFD633',
 
-  textShadowColor:'rgba(255,214,51,0.7)',
-  textShadowRadius:8,
-},
-resultTime:{
-  color:'#FFE95B',
+    fontSize:rf(10),
 
-  fontSize:rf(34),
+    fontFamily:'PixelBold',
 
-  fontFamily:'PixelBold',
+    textShadowColor:'rgba(255,214,51,0.7)',
+    textShadowRadius:8,
+  },
 
-  textShadowColor:'rgba(255,233,91,0.4)',
-  textShadowRadius:10,
-},
+  resultTime:{
+    color:'#FFE95B',
+
+    fontSize:rf(34),
+
+    fontFamily:'PixelBold',
+
+    textShadowColor:'rgba(255,233,91,0.4)',
+    textShadowRadius:10,
+  },
 
   resultRow: {
     flexDirection: 'row',
@@ -1760,28 +1607,29 @@ resultTime:{
     fontFamily:'PixelBold'
   },
 
-feedbackCard: {
-  backgroundColor: '#2B0A3D',
-  borderRadius: rf(16),
+  feedbackCard: {
+    backgroundColor: '#2B0A3D',
+    borderRadius: rf(16),
 
-  padding: rf(12),
+    padding: rf(12),
 
-  borderWidth: 2,
-  borderColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.08)',
 
-  flexDirection: 'row',
-  alignItems: 'center',
-},
-teacherImage: {
-  width: wp(23),
-  height: wp(23),
-  resizeMode: 'contain',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 
-},
+  teacherImage: {
+    width: wp(23),
+    height: wp(23),
+    resizeMode: 'contain',
+  },
 
-feedbackContent: {
-  flex: 1,
-},
+  feedbackContent: {
+    flex: 1,
+  },
+
   feedbackTitle: {
     color: '#FFE95B',
     fontSize: rf(24),
@@ -1807,7 +1655,6 @@ feedbackContent: {
     color: '#32FF7E',
     fontWeight: 'bold',
   },
-
 
   saveButtonText: {
     color: '#FFFFFF',
