@@ -40,6 +40,7 @@ const recorderState =
 
   const pulse = useRef(new Animated.Value(1)).current;
 const initialDb = useRef<number | null>(null);
+const hasFinished = useRef(false);
   // Handle metering updates
   useEffect(() => {
     if (recorderState.metering == null) return;
@@ -61,7 +62,11 @@ if (initialDb.current === null) {
 
 const difference = Math.abs(db - initialDb.current);
 
-if (difference >= 10) {
+if (
+  !hasFinished.current &&
+  difference >= 10
+) {
+  hasFinished.current = true;
   finishSuccess();
 }
   }, [recorderState.metering]);
@@ -104,25 +109,28 @@ async function requestPermission() {
 
 }
 
-  async function startTesting() {
-    const granted = await requestPermission();
-    if (!granted) return;
+async function startTesting() {
 
-    setStatus("testing");
-    initialDb.current = null;
-    onCompleted(false);
+  const granted = await requestPermission();
+  if (!granted) return;
 
-    setPeakDb(0);
-    setDisplayDb(0);
-    setIsTesting(true);
+  hasFinished.current = false;
 
-    try {
-      await recorder.prepareToRecordAsync();
-      recorder.record();
-    } catch (e) {
-      console.log(e);
-    }
+  setStatus("testing");
+  initialDb.current = null;
+  onCompleted(false);
+
+  setPeakDb(0);
+  setDisplayDb(0);
+  setIsTesting(true);
+
+  try {
+    await recorder.prepareToRecordAsync();
+    recorder.record();
+  } catch (e) {
+    console.log(e);
   }
+}
 
   async function stopRecorder() {
     try {
@@ -146,27 +154,20 @@ async function requestPermission() {
   }
 
 async function retry() {
-initialDb.current = null;
-  recorder.stop();
+
+  initialDb.current = null;
+  hasFinished.current = false;
 
   setStatus("idle");
-
   setIsTesting(false);
 
   setPeakDb(0);
-
   setDisplayDb(0);
 
   onCompleted(false);
 
 }
-useEffect(() => {
-  return () => {
-    try {
-      recorder.stop();
-    } catch {}
-  };
-}, [recorder]);
+
   return (
     <View style={styles.card}>
       {/* Header */}
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
   title: {
     color: "#FFD84D",
     fontSize: rf(18),
-    fontFamily: "PixelifySans-Bold",
+    fontFamily: "Pixel",
     letterSpacing: 1,
   },
   subtitle: {
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
     fontSize: rf(13),
     lineHeight: 20,
     marginBottom: 22,
-    fontFamily: "PixelifySans-Regular",
+    fontFamily: "PixelOperator",
   },
   checkBadge: {
     width: 32,
@@ -309,14 +310,14 @@ const styles = StyleSheet.create({
   dbNumber: {
     color: "#FFFFFF",
     fontSize: rf(52),
-    fontFamily: "PixelifySans-Bold",
+    fontFamily: "PixelBold",
     lineHeight: rf(56),
   },
   dbUnit: {
     color: "#BCAFFF",
     fontSize: rf(16),
     marginTop: -2,
-    fontFamily: "PixelifySans-Regular",
+    fontFamily: "PixelBold",
   },
   scaleRow: {
     flexDirection: "row",
@@ -327,7 +328,7 @@ const styles = StyleSheet.create({
   scaleText: {
     color: "#BCAFFF",
     fontSize: rf(12),
-    fontFamily: "PixelifySans-Regular",
+    fontFamily: "PixelOperator",
   },
   scaleLine: {
     flex: 1,
@@ -341,13 +342,13 @@ const styles = StyleSheet.create({
     color: "#ECE7FF",
     marginBottom: 20,
     fontSize: rf(14),
-    fontFamily: "PixelifySans-Regular",
+    fontFamily: "PixelOperator",
   },
   successText: {
     textAlign: "center",
     color: "#41E07A",
     fontSize: rf(16),
-    fontFamily: "PixelifySans-Bold",
+    fontFamily: "PixelOperator",
     marginBottom: 8,
   },
   peakText: {
@@ -355,7 +356,7 @@ const styles = StyleSheet.create({
     color: "#D8CCFF",
     fontSize: rf(13),
     marginBottom: 20,
-    fontFamily: "PixelifySans-Regular",
+    fontFamily: "PixelBold",
   },
   failedText: {
     textAlign: "center",
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
     fontSize: rf(14),
     lineHeight: 22,
     marginBottom: 20,
-    fontFamily: "PixelifySans-Regular",
+    fontFamily: "PixelOperator",
   },
   button: {
     height: 52,
@@ -386,7 +387,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
     fontSize: rf(16),
-    fontFamily: "PixelifySans-Bold",
+    fontFamily: "Pixel",
     letterSpacing: 1,
   },
 });
