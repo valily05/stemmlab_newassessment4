@@ -1,11 +1,13 @@
 import { router } from 'expo-router';
 import {
     Dimensions,
+    Image,
+    ImageSourcePropType,
     PixelRatio,
     Pressable,
     StyleSheet,
     Text,
-    View,
+    View
 } from 'react-native';
 
 
@@ -34,25 +36,26 @@ interface Props {
 export default function NotificationCard({
   notification,
 }: Props) {
-const getIcon = () => {
+
+const getIcon = (): ImageSourcePropType => {
     switch(notification.type){
         case 'team':
-            return require('../assets/images/team.png');
+            return require('../assets/images/fireicon.png');
 
         case 'leaderboard':
-            return require('../assets/images/trophy.png');
+            return require('../assets/images/fireicon.png');
 
         case 'streak':
-            return require('../assets/images/fire.png');
+            return require('../assets/images/fireicon.png');
 
         case 'rank':
-            return require('../assets/images/rank.png');
+            return require('../assets/images/fireicon.png');
 
         case 'challenge':
-            return require('../assets/images/flask.png');
+            return require('../assets/images/fireicon.png');
 
         default:
-            return require('../assets/images/bell.png');
+            return require('../assets/images/fireicon.png');
     }
 }
     
@@ -92,16 +95,19 @@ const getIcon = () => {
     >
       {/* Left Icon */}
 
-      <View
-        style={[
-          styles.iconCircle,
-          {
-            backgroundColor: getCircleColor(),
-          },
-        ]}
-      >
-        {getIcon()}
-      </View>
+<View
+  style={[
+    styles.iconCircle,
+    {
+      backgroundColor: getCircleColor(),
+    },
+  ]}
+>
+  <Image
+    source={getIcon()}
+    style={styles.icon}
+  />
+</View>
 
       {/* Middle */}
 
@@ -217,7 +223,11 @@ iconCircle: {
 
     height: hp(6),
   },
-
+icon: {
+  width: wp(9.5),
+  height: wp(9.5),
+  resizeMode: 'contain',
+},
   time: {
     color: '#BDBDD4',
 

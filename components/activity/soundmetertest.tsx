@@ -43,34 +43,39 @@ const initialDb = useRef<number | null>(null);
 const hasFinished = useRef(false);
   // Handle metering updates
   useEffect(() => {
-    if (recorderState.metering == null) return;
+  console.log("Recorder State:", recorderState);
 
-    const db = normalizeMetering(recorderState.metering);
-    setDisplayDb(db);
+  if (recorderState.metering == null) {
+    console.log("Metering is NULL");
+    return;
+  }
 
-    if (db > peakDb) {
-      setPeakDb(db);
-    }
+  console.log("Raw Metering:", recorderState.metering);
 
-if (status !== "testing") return;
+  const db = normalizeMetering(recorderState.metering);
+  console.log("Display dB:", db);
 
-// Save the very first sound level
-if (initialDb.current === null) {
-  initialDb.current = db;
-  return;
-}
+  setDisplayDb(db);
 
-const difference = Math.abs(db - initialDb.current);
+  if (db > peakDb) {
+    setPeakDb(db);
+  }
 
-if (
-  !hasFinished.current &&
-  difference >= 10
-) {
-  hasFinished.current = true;
-  finishSuccess();
-}
-  }, [recorderState.metering]);
+  if (status !== "testing") return;
 
+  if (initialDb.current === null) {
+    initialDb.current = db;
+    return;
+  }
+
+  const difference = Math.abs(db - initialDb.current);
+
+  if (!hasFinished.current && difference >= 10) {
+    hasFinished.current = true;
+    finishSuccess();
+  }
+
+}, [recorderState]);
   // Pulse Animation
   useEffect(() => {
     Animated.loop(
@@ -125,8 +130,8 @@ async function startTesting() {
   setIsTesting(true);
 
   try {
-    await recorder.prepareToRecordAsync();
-    recorder.record();
+ await recorder.prepareToRecordAsync();
+await recorder.record();
   } catch (e) {
     console.log(e);
   }
