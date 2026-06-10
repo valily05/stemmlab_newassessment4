@@ -117,7 +117,7 @@ const { theme } = useTheme();
 />
 <View
   style={[
-    styles.topInnerBlock,
+    styles.topInnerBlockk,
     { backgroundColor: theme.activityCard },
   ]}
 />
@@ -164,21 +164,28 @@ const { theme } = useTheme();
 
         {/* CATEGORY TAG */}
         <View
-          style={[
-            styles.categoryTag,
+        style={[
+    styles.categoryTag,
+    {
+        borderColor:
+            category === "Engineering"
+                ? theme.engineeringBorder
+                : category === "Environment"
+                ? theme.environmentBorder
+                : category === "Science"
+                ? theme.scienceBorder
+                : theme.technologyBorder,
 
-            category.toLowerCase() === 'engineering' &&
-              styles.engineeringTag,
-
-            category.toLowerCase() === 'environment' &&
-              styles.environmentTag,
-
-            category.toLowerCase() === 'science' &&
-              styles.scienceTag,
-
-            category.toLowerCase() === 'technology' &&
-              styles.technologyTag,
-          ]}
+        backgroundColor:
+            category === "Engineering"
+                ? theme.engineeringBackground
+                : category === "Environment"
+                ? theme.environmentBackground
+                : category === "Science"
+                ? theme.scienceBackground
+                : theme.technologyBackground,
+    },
+]}
         >
 
           <Text
@@ -233,21 +240,40 @@ const { theme } = useTheme();
 
 
             {/* DURATION */}
-            <View style={styles.statItem}>
-              <Image
+<View
+  style={[
+    styles.statItem,
+    {
+      backgroundColor: theme.activityStatBackground,
+    },
+  ]}
+>                 <Image
                 source={require('../assets/images/time.png')}
                 style={styles.statIcon}
               />
 
-              <Text style={styles.stat}>
-                {duration}
-              </Text>
+           <Text
+  style={[
+    styles.stat,
+    {
+      color: theme.activityStatText,
+    },
+  ]}
+>
+  {duration}
+</Text>
             </View>
 
    
             {/* DIFFICULTY */}
-            <View style={styles.statItem}>
-
+<View
+  style={[
+    styles.statItem,
+    {
+      backgroundColor: theme.activityStatBackground,
+    },
+  ]}
+>   
               <Image
                 source={require('../assets/images/chart.png')}
                 style={[
@@ -259,17 +285,20 @@ const { theme } = useTheme();
                 ]}
               />
 
-              <Text
-                style={[
-                  styles.stat,
+<Text
+  style={[
+    styles.stat,
+    {
+      color: theme.activityStatText,
+    },
 
-                  difficulty === 'Easy' && styles.easyText,
-                  difficulty === 'Medium' && styles.mediumText,
-                  difficulty === 'Hard' && styles.hardText,
-                ]}
-              >
-                {difficulty}
-              </Text>
+    difficulty === "Easy" && styles.easyText,
+    difficulty === "Medium" && styles.mediumText,
+    difficulty === "Hard" && styles.hardText,
+  ]}
+>
+  {difficulty}
+</Text>
 
             </View>
 

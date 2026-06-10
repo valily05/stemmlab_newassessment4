@@ -93,48 +93,38 @@ source={theme.activitiesHeroImage}
               <View style={styles.titleRow}>
 
                 {/* GRADIENT TITLE */}
-                <MaskedView
-                  maskElement={
-<Text
-  style={[
-    styles.title,
-    {
-      textShadowColor:
-        theme.activitiesTitleShadow,
-    },
-  ]}
->                      ACTIVITIES
-                    </Text>
-                  }
-                >
-
-                  <LinearGradient
-                    colors={[
-                      '#A061F5',
-                      '#8B5CF6',
-                      '#5D398F',
-                    ]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                  >
-
-                 <Text
-  style={[
-    styles.title,
-    styles.hiddenText,
-    {
-      textShadowColor:
-        theme.activitiesTitleShadow,
-    },
-  ]}
+             <MaskedView
+  maskElement={
+    <Text
+      style={[
+        styles.title,
+        {
+          textShadowColor: theme.activitiesTitleShadow,
+        },
+      ]}
+    >
+      ACTIVITIES
+    </Text>
+  }
 >
-                      ACTIVITIES
-                    </Text>
-
-                  </LinearGradient>
-
-                </MaskedView>
-
+<LinearGradient
+  colors={theme.heroGradient as [string, string, ...string[]]}
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 0 }}
+>
+    <Text
+      style={[
+        styles.title,
+        styles.hiddenText,
+        {
+          textShadowColor: theme.activitiesTitleShadow,
+        },
+      ]}
+    >
+      ACTIVITIES
+    </Text>
+  </LinearGradient>
+</MaskedView>
                 {/* STAR */}
               <Text
   style={[
@@ -170,12 +160,11 @@ source={theme.activitiesHeroImage}
           </View>
 
           {/* BOTTOM GRADIENT */}
-          <LinearGradient
-        colors={theme.activitiesBottomGradient}
-            locations={[0, 0.35, 0.6, 0.82, 1]}
-            style={styles.gradient}
-          />
-
+       <LinearGradient
+  colors={theme.activitiesBottomGradient as [string, string, ...string[]]}
+  locations={[0, 0.35, 0.6, 0.82, 1]}
+  style={styles.gradient}
+/>
         </ImageBackground>
 
         {/* CONTENT */}
