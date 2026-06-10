@@ -235,7 +235,7 @@ bannerShadow: "#C084FC",
 bannerBackground: require("../assets/images/image 112 Light.png"),
 activitiesBackground: "#F8F6FF",
 
-activitiesHeroImage: require("../assets/images/spaceshipsLight.png"),
+activitiesHeroImage: require("../assets/images/spaceshipslight.png"),
 
 activitiesTitleGradient: [
   "#8B5CF6",
