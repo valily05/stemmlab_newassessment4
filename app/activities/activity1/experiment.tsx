@@ -598,18 +598,18 @@ export default function Activity1Experiment() {
         console.log('Iteration saved', i);
       }
 
-if (teamID) {
-  console.log("Updating team streak...");
+      if (teamID) {
+        console.log("Updating team streak...");
 
-  try {
-    await updateTeamStreak(teamID);
-    console.log("Team streak updated");
-  } catch (e) {
-    console.log("TEAM STREAK ERROR:", e);
-  }
-}
+        try {
+          await updateTeamStreak(teamID);
+          console.log("Team streak updated");
+        } catch (e) {
+          console.log("TEAM STREAK ERROR:", e);
+        }
+      }
 
-console.log("Going to results page");
+      console.log("Going to results page");
 
       router.replace({
         pathname:

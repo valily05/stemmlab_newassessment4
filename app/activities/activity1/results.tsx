@@ -882,6 +882,7 @@ export default function Activity1Results() {
             router.push({
               pathname: '/activities/activity1/feedback',
               params: {
+                sessionID: params.sessionID,
                 pointsEarned: params.totalScore,
               },
             })

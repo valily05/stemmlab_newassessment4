@@ -18,6 +18,8 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 
+import { Timestamp } from 'firebase/firestore';
+
 import { activities } from '@/data/activities';
 import { saveActivityFeedback } from '@/services/firebase/activityFeedbackService';
 import { sendCompletionNotification } from '@/services/notifications/notificationService';
@@ -79,6 +81,7 @@ export default function Activity1Feedback() {
   ).current;
 
   const {
+    sessionID,
     pointsEarned,
   } = useLocalSearchParams();
 
@@ -714,13 +717,22 @@ export default function Activity1Feedback() {
                 return;
               }
 
+              await saveActivityFeedback({
+                sessionID: String(sessionID),
+                activityID: 1,
+                rating,
+                whatDidYouLike: learned,
+                whatDifficulties: improvement,
+                submittedAt: Timestamp.now(),
+              })
+
               await sendCompletionNotification(String(activity.title), Number(pointsEarned));//the score will be calculated
 
-              console.log({
-                rating,
-                learned,
-                improvement,
-              });
+              // console.log({
+              //   rating,
+              //   learned,
+              //   improvement,
+              // });
 
               router.replace('/(tabs)/homescreen');
             }}

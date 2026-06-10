@@ -38,7 +38,7 @@ export interface Iteration {
 
 export interface ActivityFeedback {
     sessionID: string;
-    activityID: string;
+    activityID: number;
     rating: number;
     whatDidYouLike: string;
     whatDifficulties: string;
