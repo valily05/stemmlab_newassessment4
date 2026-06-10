@@ -34,6 +34,7 @@ import { uploadVideoToCloudinary } from '@/services/cloudinary';
 import { auth, db } from '@/services/firebase/config';
 import { saveIteration as saveIterationToFirestore } from '@/services/firebase/iterationService';
 import { createSession } from '@/services/firebase/sessionService';
+import { updateTeamStreak } from '@/services/firebase/teamService';
 import { getUserProfile } from '@/services/firebase/userService';
 
 type ExperimentResult = {
@@ -416,8 +417,14 @@ export default function Activity1Experiment() {
 
       const profile = await getUserProfile(uid!);
 
-      if(!profile?.teamID) {
-        throw new Error('No team assigned');
+      if(!profile) {
+        throw new Error('User profile not found');
+      }
+
+      const teamID = profile?.teamID;
+
+      if(!teamID) {
+        throw new Error('Team ID missing');
       }
 
       const resultsWithUrls =
@@ -545,7 +552,7 @@ export default function Activity1Experiment() {
       console.log('Creating session');
       const sessionID = 
         await createSession({
-          teamID: profile.teamID,
+          teamID,
           activityID: 1,
           experimentTime,
           totalIterations,
@@ -589,6 +596,10 @@ export default function Activity1Experiment() {
           }
         );
         console.log('Iteration saved', i);
+      }
+
+      if(teamID) {
+        await updateTeamStreak(teamID);
       }
 
       router.replace({

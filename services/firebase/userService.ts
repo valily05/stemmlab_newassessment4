@@ -49,3 +49,37 @@ export async function updateUserProfile(uid: string, data: Partial<UserProfile>)
         throw error;
     }
 }
+
+export const updateUserStreak = async (uid: string) => {
+    const userRef = doc(db, `users`, uid);
+    const userSnap = await getDoc(userRef);
+
+    if(!userSnap.exists()) return;
+
+    const data = userSnap.data();
+
+    let streak = data.streak || 0;
+    const lastActivityDate = data.lastActivityDate;
+
+    const today = new Date();
+
+    if(!lastActivityDate) {
+        streak = 1;
+    } else {
+        const lastDate = lastActivityDate.toDate();
+
+        const diffHours =
+            (today.getTime() - lastDate.getTime())/(1000 * 60 * 60);
+
+        if (diffHours >= 24 && diffHours < 48) {
+            streak++;
+        } else if (diffHours >= 48) {
+            streak = 1;
+        }
+    }
+
+    await updateDoc(userRef, {
+        streak,
+        lastActivityDate: serverTimestamp(),
+    });
+};

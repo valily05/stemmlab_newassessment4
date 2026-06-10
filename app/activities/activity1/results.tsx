@@ -161,58 +161,32 @@ export default function Activity1Results() {
 
     return value;
   };
-//const today = new Date();
 
+  // for (
+  //   let i = 0;
+  //   i < parsedResults.length;
+  //   i++
+  // ) {
+  //   const result = parsedResults[i];
 
-// if (!lastActivityDate) {
-//   streak = 1;
-// } else {
-//   const lastDate = lastActivityDate.toDate();
+  //   if (typeof value === 'number') {
+  //     return `${(value / 1000).toFixed(2)} s`;
+  //   }
 
-//   const diffHours =
-//     (today.getTime() - lastDate.getTime()) /
-//     (1000 * 60 * 60);
+  //   const parts = value.split(':');
 
-//   if (diffHours >= 24 && diffHours < 48) {
-//     streak++;
-//   } else if (diffHours >= 48) {
-//     streak = 1;
-//   }
-//   // if diffHours < 24, streak stays the same
-// }
+  //   if (parts.length === 2) {
+  //     const minutes = Number(parts[0]);
+  //     const seconds = Number(parts[1]);
 
-// await updateDoc(userRef, {
-//   streak,
-//   lastActivityDate: serverTimestamp(),
-// });
- 
-// for (
-//   let i = 0;
-//   i < parsedResults.length;
-//   i++
-// ) {
-//   const result =
-//     parsedResults[i];
+  //     return `${(
+  //       minutes * 60 +
+  //       seconds
+  //     ).toFixed(2)} s`;
+  //   }
 
-//     if (typeof value === 'number') {
-//       return `${(value / 1000).toFixed(2)} s`;
-//     }
-
-//     const parts = value.split(':');
-
-//     if (parts.length === 2) {
-//       const minutes = Number(parts[0]);
-//       const seconds = Number(parts[1]);
-
-
-//       return `${(
-//         minutes * 60 +
-//         seconds
-//       ).toFixed(2)} s`;
-//     }
-
-//     return value;
-//   };
+  //   return value;
+  // };
 
   const downloadResultsTable = async () => {
     const csvContent = [

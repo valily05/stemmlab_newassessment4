@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "./config";
+import { updateUserStreak } from "./userService";
 
 export async function getTopTeams() {
   const q = query(
@@ -53,4 +54,23 @@ export async function getAllTeams() {
     id: doc.id,
     ...doc.data(),
   }));
+}
+
+export const getTeamMembers = async (teamID: string) => {
+  const teamRef = doc(db, `teams`, teamID);
+  const snap = await getDoc(teamRef);
+
+  if(!snap.exists()) return [];
+
+  return snap.data().members || [];
+};
+
+export const updateTeamStreak = async (teamID: string) => {
+  const members = await getTeamMembers(teamID);
+
+  if(!members||members.length===0) return;
+
+  await Promise.all(
+    members.map((uid: string) => updateUserStreak(uid))
+  );
 }
