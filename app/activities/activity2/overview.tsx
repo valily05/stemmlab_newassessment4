@@ -132,14 +132,14 @@ const canStart =
     setMaterialProgress
   }
 />
-{/* <SetupGuideCarousel
+<SetupGuideCarousel
   steps={activity.setupSteps}
   bottomComponent={
     <SoundMeterTest
       onCompleted={setSoundMeterVerified}
     />
   }
-/> */}
+/>
 
   <PixelDivider />
           <StepInstructions
