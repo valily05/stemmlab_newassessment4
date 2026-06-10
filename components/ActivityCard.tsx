@@ -1,3 +1,5 @@
+import { useTheme } from "@/context/ThemeContext";
+import { router } from 'expo-router';
 import {
   Dimensions,
   Image,
@@ -5,8 +7,6 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-
-import { router } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
@@ -28,6 +28,7 @@ const rf = (size: number) =>
 export default function ActivityCard({
   item,
 }: any) {
+ const { isDark } = useTheme();
 
   return (
 
@@ -39,10 +40,14 @@ export default function ActivityCard({
       style={styles.card}
     >
 
-      <Image
-        source={item.image}
-        style={styles.image}
-      />
+<Image
+  source={
+    isDark
+      ? item.image.dark
+      : item.image.light
+  }
+  style={styles.image}
+/>
 
 
     </TouchableOpacity>

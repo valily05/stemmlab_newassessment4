@@ -10,7 +10,10 @@ export const activities = {
     id: 1,
     group:"ENGINEERING",
     title: "PARACHUTE DROP\nCHALLENGE",
-    image: require('../assets/images/Group 227.png'),
+  image: {
+    dark: require('../assets/images/Group 227.png'),
+    light: require('../assets/images/Group 227 Light.png'),
+  },
     route: '/activities/activity1/overview',
 
     category: [
@@ -102,8 +105,10 @@ export const activities = {
     id: 2,
     group:"ENGINEERING",
     title: "SOUND POLLUTION\nHUNTER",
-    image: require('../assets/images/Group 228.png'),
-    route: '/activities/activity2/overview',
+  image: {
+    dark: require('../assets/images/Group 228.png'),
+    light: require('../assets/images/Group 228 Light.png'),
+  },    route: '/activities/activity2/overview',
 
     category: [
       "Environmental Science",
@@ -166,7 +171,10 @@ export const activities = {
     title: "HAND FAN CHALLENGE",
     group: "ENGINEERING",
 
-    image: require('@/assets/images/Group 229.png'),
+ image: {
+    dark: require('../assets/images/Group 229.png'),
+    light: require('../assets/images/Group 229 Light.png'),
+  }, 
     route: '/activities/activity3/overview',
     
     category: [
@@ -206,14 +214,7 @@ export const activities = {
   },
 };
 
-  // {
-  //   id: 3,
-  //   title: 'HAND FAN CHALLENGE',
-  //   image: require('../assets/images/fan.png'),
-  //   tags: ['Physics'],
-  //   pointsRequired: 300,
-  //   route: '/activities/hand-fan-challenge',
-  // },
+
 
   // {
   //   id: 4,
