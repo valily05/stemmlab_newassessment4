@@ -19,7 +19,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 
 import { activities } from '@/data/activities';
+import { saveActivityFeedback } from '@/services/firebase/activityFeedbackService';
 import { sendCompletionNotification } from '@/services/notifications/notificationService';
+
+const activity = activities.activity1;
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,7 +45,7 @@ const rf = (size:number) => {
   );
 };
 
-export default function ActivityFeedbackScreen() {
+export default function Activity1Feedback() {
   
   const scrollRef = useRef<ScrollView>(null);
 
@@ -76,11 +79,10 @@ export default function ActivityFeedbackScreen() {
   ).current;
 
   const {
-    activityName,
     pointsEarned,
   } = useLocalSearchParams();
 
-  console.log('activityName:', activityName);
+  //console.log('activityName:', activityName);
   console.log('pointsEarned:', pointsEarned);
 
   useEffect(() => {
@@ -583,7 +585,7 @@ export default function ActivityFeedbackScreen() {
             </MaskedView>
 
             <Text style={styles.heroText}>
-              Great job completing {activityName}.
+              Great job completing {activity.title}.
             </Text>
           </View>
 
@@ -712,7 +714,7 @@ export default function ActivityFeedbackScreen() {
                 return;
               }
 
-              await sendCompletionNotification(String(activityName), Number(pointsEarned));//the score will be calculated
+              await sendCompletionNotification(String(activity.title), Number(pointsEarned));//the score will be calculated
 
               console.log({
                 rating,
