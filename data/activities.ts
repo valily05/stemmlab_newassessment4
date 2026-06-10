@@ -1,8 +1,8 @@
 export const activities = {
 
   //TEMPLATE
-  //id:,title: "CHALLENGE",group: "",image: require(''),route: '/activities/activity.../overview',category: ["",],
-  //overview: "",objective: "",mission: "",duration: "",difficulty: "",
+  //id:,title: "CHALLENGE",group: "",image: {dark: require(''),light: require(''),},route: '/activities/activity.../overview',
+  //category: ["",],overview: "",objective: "",mission: "",duration: "",difficulty: "",
   //materials: [{name:"",quantity:"x"},],setupSteps: [{title:,image:,instruction:,bunnyTip:},],instructions: ["",],
   //safetyNotes: ["",], bunnyTip: ["",]
 
@@ -10,15 +10,15 @@ export const activities = {
     id: 1,
     group:"ENGINEERING",
     title: "PARACHUTE DROP\nCHALLENGE",
-  image: {
-    dark: require('../assets/images/Group 227.png'),
-    light: require('../assets/images/Group 227 Light.png'),
-  },
+    image: {
+      dark: require('../assets/images/Group 227.png'),
+      light: require('../assets/images/Group 227 Light.png'),
+    },
     route: '/activities/activity1/overview',
 
     category: [
-        "Engineering",
-        "Physics"
+      "Engineering",
+      "Physics"
     ],
 
     overview: "Design, build, and test a parachute for a small toy to reduce its landing speed and impact force. Teams iterate their designs under time and material constraints.",
@@ -105,10 +105,11 @@ export const activities = {
     id: 2,
     group:"ENGINEERING",
     title: "SOUND POLLUTION\nHUNTER",
-  image: {
-    dark: require('../assets/images/Group 228.png'),
-    light: require('../assets/images/Group 228 Light.png'),
-  },    route: '/activities/activity2/overview',
+    image: {
+      dark: require('../assets/images/Group 228.png'),
+      light: require('../assets/images/Group 228 Light.png'),
+    },    
+    route: '/activities/activity2/overview',
 
     category: [
       "Environmental Science",
@@ -171,10 +172,10 @@ export const activities = {
     title: "HAND FAN CHALLENGE",
     group: "ENGINEERING",
 
- image: {
-    dark: require('../assets/images/Group 229.png'),
-    light: require('../assets/images/Group 229 Light.png'),
-  }, 
+    image: {
+      dark: require('../assets/images/Group 229.png'),
+      light: require('../assets/images/Group 229 Light.png'),
+    },
     route: '/activities/activity3/overview',
     
     category: [
