@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useTheme } from "@/context/ThemeContext";
 import {
   Dimensions,
   Image,
@@ -34,14 +35,24 @@ const fp = (size: number) => {
     (width / 430) * size
   );
 };
-
 export default function SearchBar({
   search,
   setSearch,
   placeholder = 'Search...',
 }: Props) {
+
+  const { theme } = useTheme();
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.surface,
+          borderColor: theme.border,
+        },
+      ]}
+    >
       <Image
         source={require('../assets/images/search.png')}
         style={styles.searchIcon}
@@ -51,8 +62,13 @@ export default function SearchBar({
         value={search}
         onChangeText={setSearch}
         placeholder={placeholder}
-        placeholderTextColor="#ffffff"
-        style={styles.input}
+        placeholderTextColor={theme.placeholder}
+        style={[
+          styles.input,
+          {
+            color: theme.text,
+          },
+        ]}
       />
     </View>
   );
@@ -66,10 +82,10 @@ const styles = StyleSheet.create({
 
     borderRadius: wp(4),
 
-    backgroundColor: '#0D0824',
+   
 
     borderWidth: 2,
-    borderColor: '#2B1B59',
+
 
     flexDirection: 'row',
     alignItems: 'center',
@@ -89,7 +105,7 @@ const styles = StyleSheet.create({
 
     marginLeft: wp(3),
 
-    color: '#fff',
+
 
     fontFamily: 'PixelOperator',
 

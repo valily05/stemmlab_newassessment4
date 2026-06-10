@@ -1,5 +1,4 @@
-import { useState } from 'react';
-
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   Dimensions,
   Image,
@@ -9,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
 type Props = {
   title: string;
   description: string;
@@ -18,7 +16,6 @@ type Props = {
   duration: string;
   difficulty: string;
   buttonText: string;
-  image: any;
   isNew?: boolean;
   locked?: boolean;
   onPress?: () => void;
@@ -53,23 +50,31 @@ export default function ActivityChallengeCard({
   duration,
   difficulty,
   buttonText,
-  image,
   isNew,
   locked,
   onPress,
 }: Props) {
 
-  const [saved, setSaved] = useState(false);
 
   return (
 
-    <View
-      style={[
-        styles.card,
-        locked && styles.lockedCard,
-      ]}
-    >
+<View
+  style={[
+    styles.card,
+    locked && styles.lockedCard,
+  ]}
+>
 
+  <LinearGradient
+    colors={[
+      '#1B0F45',
+      '#12052F',
+      '#0D0422',
+    ]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={StyleSheet.absoluteFillObject}
+  />
       {/* OUTER PIXEL BLOCKS */}
       <View style={styles.topBlock} />
       <View style={styles.bottomBlock} />
@@ -85,40 +90,15 @@ export default function ActivityChallengeCard({
       <View style={styles.bottomInnerBlockk} />
 
       {/* NEW BADGE OR BOOKMARK */}
-      {isNew && !locked ? (
-
-        <Image
-          source={require('../assets/images/new-badge.png')}
-          style={styles.newBadgeImage}
-        />
-
-      ) : (
-
-        !locked && (
-          <TouchableOpacity
-            style={styles.bookmarkBtn}
-            onPress={() => setSaved(!saved)}
-          >
-
-            <Image
-              source={
-                saved
-                  ? require('../assets/images/bookmark.png')
-                  : require('../assets/images/bookmark-outline.png')
-              }
-              style={styles.bookmarkImage}
-            />
-
-          </TouchableOpacity>
-        )
-
-      )}
-
-      {/* IMAGE */}
-      <Image
-        source={image}
-        style={styles.cardImage}
-      />
+      
+{/* NEW BADGE */}
+{isNew && !locked && (
+  <Image
+    source={require('../assets/images/new-badge.png')}
+    style={styles.newBadgeImage}
+  />
+)}
+    
 
       {/* CONTENT */}
       <View style={styles.cardContent}>
@@ -151,6 +131,7 @@ export default function ActivityChallengeCard({
               styles.technologyTag,
           ]}
         >
+
           <Text
             style={[
               styles.categoryText,
@@ -171,7 +152,6 @@ export default function ActivityChallengeCard({
             {category}
           </Text>
         </View>
-
         {/* BOTTOM */}
         <View style={styles.bottomRow}>
 
@@ -190,8 +170,6 @@ export default function ActivityChallengeCard({
               </Text>
             </View>
 
-            {/* DIVIDER */}
-            <View style={styles.statDivider} />
 
             {/* DURATION */}
             <View style={styles.statItem}>
@@ -205,9 +183,7 @@ export default function ActivityChallengeCard({
               </Text>
             </View>
 
-            {/* DIVIDER */}
-            <View style={styles.statDivider} />
-
+   
             {/* DIFFICULTY */}
             <View style={styles.statItem}>
 
@@ -239,20 +215,25 @@ export default function ActivityChallengeCard({
           </View>
 
           {/* BUTTON */}
-       <TouchableOpacity
-  style={[
-    styles.startBtn,
-    locked && styles.lockedBtn,
-  ]}
+<TouchableOpacity
   onPress={onPress}
   disabled={locked}
 >
-
-            <Text style={styles.startText}>
-              {buttonText}
-            </Text>
-
-          </TouchableOpacity>
+  <LinearGradient
+    colors={
+      locked
+        ? ['#666666', '#555555']
+        : ['#FF79C8', '#FF4FA4']
+    }
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={styles.startBtn}
+  >
+    <Text style={styles.startText}>
+      {buttonText}
+    </Text>
+  </LinearGradient>
+</TouchableOpacity>
 
         </View>
 
@@ -266,22 +247,30 @@ export default function ActivityChallengeCard({
 const styles = StyleSheet.create({
 
   /* CARD */
-  card: {
-    marginTop: hp(2),
+card: {
+  marginTop: hp(2),
 
-    backgroundColor: '#12052F',
+  backgroundColor: '#12052F',
 
-    borderWidth: 3,
-    borderColor: '#7B4DFF',
+  borderWidth: wp(0.7),
+  borderColor: '#7B4DFF',
 
-    padding: wp(4),
+  paddingHorizontal: wp(4.5),
+  paddingVertical: hp(2),
 
-    flexDirection: 'row',
-
-    position: 'relative',
-
-    overflow: 'visible',
+  position: 'relative',
+  overflow: 'visible',
+    shadowColor: '#7B4DFF',
+  shadowOpacity: 0.18,
+  shadowRadius: wp(3),
+  shadowOffset: {
+    width: 0,
+    height: hp(0.6),
   },
+
+  elevation: 8,
+
+},
 
   /* LOCKED */
   lockedCard: {
@@ -296,8 +285,8 @@ const styles = StyleSheet.create({
 
     right: '0%',
 
-    width: 6,
-    height: 6,
+    width: wp(1.4),
+   height: wp(1.4),
 
     backgroundColor: '#7B4DFF',
   },
@@ -309,8 +298,8 @@ const styles = StyleSheet.create({
 
     left: '0%',
 
-    width: 6,
-    height: 6,
+    width: wp(1.4),
+    height: wp(1.4),
 
     backgroundColor: '#7B4DFF',
   },
@@ -322,8 +311,8 @@ const styles = StyleSheet.create({
 
     top: '0%',
 
-    width: 6,
-    height: 6,
+    width: wp(1.4),
+    height: wp(1.4),
 
     backgroundColor: '#7B4DFF',
   },
@@ -335,7 +324,7 @@ const styles = StyleSheet.create({
 
     bottom: '0%',
 
-    width: 6,
+   width: wp(1.4),
     height: 7,
 
     backgroundColor: '#7B4DFF',
@@ -383,39 +372,24 @@ const styles = StyleSheet.create({
   },
 
   /* NEW BADGE IMAGE */
-  newBadgeImage: {
-    position: 'absolute',
+newBadgeImage: {
+  position: 'absolute',
 
-    top: -hp(1.3),
-    right: wp(2.8),
+  top: -hp(1.6),
+  right: -wp(0.5),
 
-    width: wp(14),
-    height: hp(3),
+  width: wp(16),
+  height: hp(4),
 
-    resizeMode: 'contain',
+  resizeMode: 'contain',
 
-    zIndex: 100,
-  },
+  zIndex: 999,
+  elevation: 999,
+},
 
-  /* BOOKMARK */
-  bookmarkBtn: {
-    position: 'absolute',
 
-    top: hp(1.2),
-    right: wp(3),
 
-    zIndex: 99,
 
-    alignItems: 'center',
-  },
-
-  /* BOOKMARK IMAGE */
-  bookmarkImage: {
-    width: wp(5.5),
-    height: wp(5.5),
-
-    resizeMode: 'contain',
-  },
 
   /* IMAGE */
   cardImage: {
@@ -427,42 +401,50 @@ const styles = StyleSheet.create({
   },
 
   /* CONTENT */
-  cardContent: {
-    flex: 1,
-    right: 3,
-  },
+cardContent: {
+  width: '100%',
+},
 
   /* TITLE */
-  cardTitle: {
-    color: '#fff',
-    fontSize: fp(10),
-    fontFamily: 'Pixel',
-    lineHeight: hp(2.4),
-    maxWidth: '92%',
-  },
+cardTitle: {
+  color: '#fff',
+
+  fontFamily: 'Pixel',
+
+  fontSize: fp(13),
+
+  lineHeight: hp(2.8),
+
+  marginBottom: hp(0.8),
+  letterSpacing:1,
+  maxWidth: '90%',
+},
 
   /* DESCRIPTION */
-  cardDesc: {
-    marginTop: hp(0.7),
-    color: '#D7CCFF',
-    fontSize: fp(14),
-    lineHeight: hp(1.9),
-    fontFamily: 'PixelOperator',
-  },
+cardDesc: {
+  color: '#D7CCFF',
+
+  fontFamily: 'PixelOperator',
+
+  fontSize: fp(15),
+
+  lineHeight: hp(2),
+
+  marginBottom: hp(1.8),
+},
 
   /* CATEGORY TAG */
-  categoryTag: {
-    marginTop: hp(1),
+categoryTag: {
+  alignSelf: 'flex-start',
 
-    alignSelf: 'flex-start',
+  paddingHorizontal: wp(2.5),
+  paddingVertical: hp(0.5),
 
-    paddingHorizontal: wp(1.2),
-    paddingVertical: hp(0.6),
+  borderWidth: wp(0.5),
+  borderRadius: wp(1.2),
 
-    borderWidth: 2,
-
-    backgroundColor: '#1A1035',
-  },
+  marginBottom: hp(1.5),
+},
 
   /* CATEGORY TEXT */
   categoryText: {
@@ -474,22 +456,34 @@ const styles = StyleSheet.create({
   },
 
   /* ENGINEERING */
-  engineeringTag: {
-    borderColor: '#F5730C',
-    backgroundColor: '#150F31',
-    borderRadius: 4,
-  },
+engineeringTag: {
+  borderColor:'#F5730C',
+
+  backgroundColor:'#24153F',
+
+  shadowColor:'#F5730C',
+  shadowOpacity:.35,
+  shadowRadius:wp(2),
+
+  elevation:6,
+},
 
   engineeringText: {
     color: '#F5730C',
   },
 
   /* ENVIRONMENT */
-  environmentTag: {
-    borderColor: '#60BB3F',
-    backgroundColor: '#150F31',
-    borderRadius: 4,
-  },
+environmentTag: {
+  borderColor: '#60BB3F',
+
+  backgroundColor: '#1A2E16',
+
+  shadowColor: '#60BB3F',
+  shadowOpacity: 0.35,
+  shadowRadius: wp(2),
+
+  elevation: 6,
+},
 
   environmentText: {
     color: '#60BB3F',
@@ -519,53 +513,49 @@ const styles = StyleSheet.create({
   },
 
   /* BOTTOM */
-  bottomRow: {
-    marginTop: hp(1.5),
+bottomRow: {
+  flexDirection: 'row',
 
-    flexDirection: 'row',
+  justifyContent: 'space-between',
 
-    justifyContent: 'space-between',
+  alignItems: 'center',
 
-    alignItems: 'center',
-  },
+  marginTop: hp(1),
+
+  columnGap: wp(4), // Space between stats and button
+},
 
   /* STATS */
-  stats: {
-    flexDirection: 'row',
+stats: {
+  flexDirection: 'row',
 
-    alignItems: 'center',
+  alignItems: 'center',
 
-    gap: wp(1),
-  },
+
+  gap: wp(1.2),
+},
 
   /* STAT ITEM */
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(2),
-  },
+statItem: {
+  flexDirection: 'row',
+  alignItems: 'center',
 
-  /* STAT DIVIDER */
-  statDivider: {
-    width: 1,
+  backgroundColor: '#1C103D',
 
-    height: hp(1.6),
+  paddingHorizontal: wp(2.8),
+  paddingVertical: hp(0.6),
 
-    backgroundColor: '#FFFF',
+  borderRadius: wp(4),
+  gap:wp(1.2)
+},
 
-    marginHorizontal: wp(0.8),
 
-    alignSelf: 'center',
+statIcon: {
+  width: wp(3.8),
+  height: wp(3.8),
 
-    opacity: 1,
-  },
-
-  /* STAT ICON */
-  statIcon: {
-    width: wp(3.5),
-    height: wp(3.5),
-    resizeMode: 'contain',
-  },
+  resizeMode: 'contain',
+},
 
   /* EACH STAT */
   stat: {
@@ -606,33 +596,40 @@ const styles = StyleSheet.create({
     tintColor: '#FF5F5F',
   },
 
-  /* BUTTON */
-  startBtn: {
-    backgroundColor: '#FF5CA8',
+startBtn: {
 
-    paddingHorizontal: wp(3),
-    paddingVertical: hp(1.1),
+  paddingHorizontal: wp(4.5),
+  paddingVertical: hp(1.1),
 
-    borderRadius: 5,
+  borderRadius: wp(1.4),
 
-    left: 7,
+  minWidth: wp(22),
 
-    alignItems: 'center',
-    justifyContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  // ✨ Glow
+  shadowColor: '#FF5CA8',
+shadowOpacity: 0.8,
+shadowRadius: wp(5),
+  shadowOffset: {
+    width: 0,
+    height: hp(0.3),
   },
 
+  elevation: 15,
+},
   /* LOCKED BUTTON */
   lockedBtn: {
     backgroundColor: '#555',
   },
 
-  /* BUTTON TEXT */
-  startText: {
-    color: '#fff',
+startText: {
+  color: '#fff',
 
-    fontSize: fp(9),
+  fontFamily: 'Pixel',
 
-    fontFamily: 'Pixel',
-  },
+  fontSize: fp(9),
+},
 
 });

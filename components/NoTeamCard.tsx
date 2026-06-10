@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext";
 import { auth, db } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -25,7 +26,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
 const { width, height } = Dimensions.get('window');
 
 // Helper functions for responsiveness
@@ -34,6 +34,7 @@ const hp = (p: number) => PixelRatio.roundToNearestPixel((height * p) / 100);
 const rf = (s: number) => Math.round(PixelRatio.roundToNearestPixel(s * (width / 390)));
 
 export default function NoTeamCard() {
+  const { theme, isDark } = useTheme();
   const [teamCode, setTeamCode] = useState('');
   const [loading, setLoading] = useState(false);
 const inputRef = useRef<TextInput>(null);
@@ -235,20 +236,50 @@ Join a team to collaborate, compete and complete missions together!      </Text>
         <View style={styles.line} />
       </View>
 
-<TouchableOpacity
-  activeOpacity={0.85}
-  style={styles.createTeamCard}
+<LinearGradient
+  colors={
+    isDark
+      ? ["#E879F9", "#A970FF", "#6D5CFF"]
+      : ["#C084FC", "#A78BFA", "#8B5CF6"]
+  }
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 1 }}
+  style={styles.createTeamBorder}
 >
-  <View style={styles.createIcon}>
-    <Text style={styles.plus}>+</Text>
-  </View>
+  <TouchableOpacity
+    activeOpacity={0.85}
+    style={[
+      styles.createTeamBtn,
+      {
+        backgroundColor: theme.card,
+      },
+    ]}
+  >
+    <View
+      style={[
+        styles.createIcon,
+        {
+          backgroundColor: theme.primary,
+        },
+      ]}
+    >
+      <Text style={styles.plus}>+</Text>
+    </View>
 
-  <Text style={styles.createTeamText}>
-    CREATE A TEAM
-  </Text>
+    <Text
+      style={[
+        styles.createTeamText,
+        {
+          color: theme.primary,
+        },
+      ]}
+    >
+      CREATE TEAM
+    </Text>
 
-</TouchableOpacity>
 
+  </TouchableOpacity>
+</LinearGradient>
     </View>
   );
 }
@@ -350,38 +381,7 @@ featureDivider: {
   width: 1,
   backgroundColor: '#3E2A78',
 },
-jupiterPlanet: {
-  position: 'absolute',
-  top: hp(14),
-  right: wp(-24),
-  width: wp(70),
-  height: wp(60),
-},
 
-questionMark: {
-  position: 'absolute',
-  top: hp(7),
-  right: wp(19),
-  width: wp(13),
-  height: wp(17),
-  zIndex:10
-},
-
-star1: {
-  position: 'absolute',
-  left: wp(12),
-  top: hp(17),
-  width: wp(12),
-  height: wp(12),
-},
-
-star2: {
-  position: 'absolute',
-  right: wp(4),
-  top: hp(37),
-  width: wp(8),
-  height: wp(8),
-},
 
 codeBoxes: {
   flexDirection: 'row',
@@ -406,6 +406,13 @@ codeDigit: {
   fontSize: rf(25),
   fontFamily: 'PixelBold',
 },
+createTeamBorder: {
+  padding: 2,
+  borderRadius: 16,
+  width: "100%",
+},
+
+
 
 hiddenInput: {
   position: 'absolute',
@@ -459,36 +466,45 @@ createTeamCard: {
   paddingHorizontal: wp(5),
 },
 
+
+createTeamBtn: {
+  width: "100%",
+  borderRadius: 16,
+
+  paddingVertical: hp(1.8),
+
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+},
+
 createIcon: {
-  width: wp(10),
-  height: wp(10),
+  width: wp(8),
+  height: wp(8),
+
   borderRadius: 999,
-  backgroundColor: '#6F42FF',
-  justifyContent: 'center',
-  alignItems: 'center',
- marginLeft: wp(8),
+
+  justifyContent: "center",
+  alignItems: "center",
+
+  marginRight: wp(2.5), // closer to text
 },
 
 plus: {
-  color: '#FFF',
+  color: "#FFF",
+  fontFamily: "PixelOperator",
   fontSize: rf(40),
-  lineHeight: rf(32),
-  fontFamily: 'PixelOperator',
-  textAlign: 'center',
+
   includeFontPadding: false,
-  textAlignVertical: 'center',
-    transform: [{ translateY: 3 }],
-},
+  textAlignVertical: "center",
 
+  transform: [{ translateY: -6 }], // centers it vertically
+},
 createTeamText: {
-  flex: 1,
-  color: '#FFF',
-  fontFamily: 'Pixel',
-  fontSize: rf(14),
-  textAlign:'center',
-  marginRight:wp(5)
+  fontFamily: "PixelBold",
+  fontSize: wp(6),
+  letterSpacing: 1,
 },
-
 arrow: {
   color: '#FFF',
   fontSize: rf(22),

@@ -1,3 +1,5 @@
+import { DarkTheme, LightTheme } from "@/constants/theme";
+import { useTheme } from "@/context/ThemeContext";
 import { auth, db } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -41,8 +43,12 @@ const hp = (p: number) => PixelRatio.roundToNearestPixel((height * p) / 100);
 export default function HomeScreen() {
   const [userPoints, setUserPoints] = useState(0);
   const { t } = useLanguage(); // Access the translation object
+  const { isDark } = useTheme();
+
+const colors = isDark ? DarkTheme : LightTheme;
   const [search, setSearch] = useState('');
 const sendingReminder = useRef(false);
+const sendingStartReminder = useRef(false);
   const [hasTeam, setHasTeam] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -125,21 +131,50 @@ if (data.lastActivityDate) {
   const diffInHours =
     (now.getTime() - lastActivity.getTime()) /
     (1000 * 60 * 60);
+if (
+  diffInHours >= 24 &&
+  currentStreak > 0 &&
+  data.streak !== 0
+) {
+  currentStreak = 0;
+  setStreak(0);
 
-  if (
-    diffInHours >= 24 &&
-    currentStreak > 0 &&
-    data.streak !== 0
-  ) {
-    currentStreak = 0;
-    setStreak(0);
+  const userRef = doc(db, "users", uid);
 
-    updateDoc(doc(db, "users", uid), {
-      streak: 0,
-    }).catch(err =>
-      console.log("Failed to reset streak:", err)
-    );
+  await updateDoc(userRef, {
+    streak: 0,
+  });
+
+const today = new Date().toDateString();
+
+const lastStartReminder =
+  data.lastStartReminder?.toDate()?.toDateString();
+
+if (
+  lastStartReminder !== today &&
+  !sendingStartReminder.current
+) {
+  sendingStartReminder.current = true;
+
+  try {
+    await addDoc(collection(db, "notifications"), {
+      userID: uid,
+      type: "streak",
+      title: "Start your streak today!",
+      subtitle: "Complete any activity to begin your streak! 🚀",
+      route: "/activities",
+      read: false,
+      createdAt: serverTimestamp(),
+    });
+
+    await updateDoc(userRef, {
+      lastStartReminder: serverTimestamp(),
+    });
+  } finally {
+    sendingStartReminder.current = false;
   }
+}
+}
 }
 
 setStreak(currentStreak);
@@ -183,56 +218,31 @@ useEffect(() => {
     checkStreakReminder();
   }
 }, [loading]);
-useEffect(() => {
-  if (streak !== 0) return;
 
-  const timer = setTimeout(async () => {
-    const uid = auth.currentUser?.uid;
-
-    if (!uid) return;
-
-    const userRef = doc(db, "users", uid);
-    const userSnap = await getDoc(userRef);
-
-    const data = userSnap.data();
-
-    const today = new Date().toDateString();
-
-    const lastStartReminder =
-      data?.lastStartReminder?.toDate()?.toDateString();
-
-    if (lastStartReminder !== today) {
-      await addDoc(collection(db, "notifications"), {
-        userID: uid,
-        type: "streak",
-        title: "Start your streak today!",
-        subtitle: "Complete any activity to begin your streak! 🚀",
-        route: "/activities",
-        read: false,
-        createdAt: serverTimestamp(),
-      });
-
-      await updateDoc(userRef, {
-        lastStartReminder: serverTimestamp(),
-      });
-    }
-  }, 120000);
-
-  return () => clearTimeout(timer);
-}, [streak]);
   if (loading) return null;
 
   return (
-    <View style={styles.container}>
+<View
+  style={[
+    styles.container,
+    {
+      backgroundColor: colors.background,
+    },
+  ]}
+>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: hp(20) }}
       >
         <ImageBackground
-          source={require('../../assets/images/spacebg1.png')}
-          style={styles.topSection}
-          resizeMode="cover"
-        >
+  source={
+    isDark
+      ? require('../../assets/images/spacebg1.png')
+      : require('../../assets/images/spacebg1_light.png')
+  }
+  style={styles.topSection}
+  resizeMode="cover"
+>
           <View style={styles.overlay}>
             <Header
               onMenuPress={() => setIsSidebarOpen(true)}
@@ -241,8 +251,23 @@ useEffect(() => {
             <Hero />
           </View>
           <LinearGradient
-            colors={['rgba(4,6,27,0)', 'rgba(4,6,27,0.35)', 'rgba(4,6,27,0.75)', 'rgba(4,6,27,0.96)', '#04061B']}
-            locations={[0, 0.35, 0.6, 0.82, 1]}
+colors={
+  isDark
+    ? [
+        'rgba(4,6,27,0)',
+        'rgba(4,6,27,0.35)',
+        'rgba(4,6,27,0.75)',
+        'rgba(4,6,27,0.96)',
+        '#04061B',
+      ]
+    : [
+        'rgba(255,255,255,0)',
+        'rgba(255,255,255,0.35)',
+        'rgba(250,248,255,0.8)',
+        'rgba(248,246,255,0.95)',
+        '#F8F6FF',
+      ]
+}            locations={[0, 0.35, 0.6, 0.82, 1]}
             style={styles.gradient}
           />
         </ImageBackground>
@@ -268,7 +293,15 @@ useEffect(() => {
       {isSidebarOpen && (
         <View style={styles.sidebarOverlay}>
           <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsSidebarOpen(false)} />
-          <View style={styles.sidebarWrapper}>
+       <View
+  style={[
+    styles.sidebarWrapper,
+    {
+      backgroundColor: colors.background,
+      borderRightColor: colors.border,
+    },
+  ]}
+>
             <Sidebar onClose={() => setIsSidebarOpen(false)} />
           </View>
         </View>
@@ -279,10 +312,10 @@ useEffect(() => {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#07021B' },
+  container: { flex: 1 },
   topSection: { width: '100%', minHeight: hp(45), overflow: 'hidden' },
   sidebarOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, backgroundColor: 'rgba(0,0,0,0.6)' },
-  sidebarWrapper: { width: wp(60), height: '100%', backgroundColor: '#07021B', borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.1)' },
+  sidebarWrapper: { width: wp(60), height: '100%', borderRightWidth: 1 },
   overlay: { paddingHorizontal: wp(4), zIndex: 2, paddingTop: hp(1.5) },
   gradient: { position: 'absolute', bottom: 0, width: '100%', height: hp(20), zIndex: 1 },
   content: { paddingHorizontal: wp(4), marginTop: -hp(12) },

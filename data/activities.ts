@@ -1,12 +1,14 @@
 export const activities = {
 
   //TEMPLATE
-  //id:,title:,image:,route:,category: [],overview:,objective:,mission:,duration:,difficulty:,
+  //id:,title: "CHALLENGE",group: "",image: require(''),route: '/activities/activity.../overview',category: ["",],
+  //overview: "",objective: "",mission: "",duration: "",difficulty: "",
   //materials: [{name:"",quantity:"x"},],setupSteps: [{title:,image:,instruction:,bunnyTip:},],instructions: ["",],
   //safetyNotes: ["",], bunnyTip: ["",]
 
   activity1: {
     id: 1,
+    group:"ENGINEERING",
     title: "PARACHUTE DROP\nCHALLENGE",
     image: require('../assets/images/Group 227.png'),
     route: '/activities/activity1/overview',
@@ -98,6 +100,7 @@ export const activities = {
 
   activity2: {
     id: 2,
+    group:"ENGINEERING",
     title: "SOUND POLLUTION\nHUNTER",
     image: require('../assets/images/Group 228.png'),
     route: '/activities/activity2/overview',
@@ -158,11 +161,49 @@ export const activities = {
     ],
   },
 
-// activity3: {
-//   id: 3,
-//   image: require('../assets/images/Group 229.png'),
-//   route: '/activities/activity3',
-// },
+  activity3: {
+    id: 3,
+    title: "HAND FAN CHALLENGE",
+    group: "ENGINEERING",
+
+    image: require('@/assets/images/Group 229.png'),
+    route: '/activities/activity3/overview',
+    
+    category: [
+      "",
+      ""
+    ],
+
+    overview:"",
+    objective:"",
+    mission:"",
+    duration:"",
+    difficulty:"",
+    materials: [
+      {name:"",quantity:"x"},
+    ],
+
+    setupSteps: [
+      {
+        title: "",
+        image: "",
+        instruction: "",
+        bunnyTip: ""
+      },
+    ],
+    
+    instructions: [
+      "",
+    ],
+
+    safetyNotes: [
+      "",
+    ],
+    
+    bunnyTip: [
+      "",
+    ]
+  },
 };
 
   // {

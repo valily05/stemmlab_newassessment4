@@ -24,7 +24,7 @@ export default function ActivitiesResults({
 
     {
       title: 'PARACHUTE DROP CHALLENGE',
-
+ group: 'ENGINEERING', 
       description:
         'Design and test your own parachute to explore gravity, air resistance, and safe landings!',
 
@@ -38,14 +38,12 @@ export default function ActivitiesResults({
 
       buttonText: 'Start',
 
-      image: require('../assets/images/bg2.png'),
-
       route: '/activities/activity1/overview' as const,
     },
 
     {
       title: 'SOUND POLLUTION HUNTER',
-
+ group: 'ENGINEERING', 
       description:
         'Track and measure noise levels around you to discover how sound affects daily life and health.',
 
@@ -61,14 +59,13 @@ export default function ActivitiesResults({
 
       isNew: true,
 
-      image: require('../assets/images/bg2.png'),
 
       route:'/activities/activity2/overview' as const,
     },
 
     {
       title: 'HUMAN PERFORMANCE LAB',
-
+ group: 'HEALTH', 
       description:
         'Test your reflexes, balance, and reaction speed through fun experiments about the human body.',
 
@@ -84,7 +81,6 @@ export default function ActivitiesResults({
 
       locked: true,
 
-      image: require('../assets/images/bg2.png'),
     },
 
   ];
@@ -119,14 +115,9 @@ export default function ActivitiesResults({
           .toLowerCase()
           .includes(query);
 
-      const matchesCategory =
-
-        selectedCategory === 'ALL'
-
-        ||
-
-        activity.category === selectedCategory;
-
+const matchesCategory =
+  selectedCategory === 'ALL' ||
+  activity.group === selectedCategory;
       return matchesSearch && matchesCategory;
     }
   );
@@ -155,7 +146,6 @@ export default function ActivitiesResults({
 
             buttonText={activity.buttonText}
 
-            image={activity.image}
 
             isNew={activity.isNew}
 

@@ -4,11 +4,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import {
     collection,
+    doc,
     onSnapshot,
     orderBy,
     query,
     where,
-} from 'firebase/firestore';
+    writeBatch,
+} from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import {
     Dimensions,
@@ -22,7 +24,6 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-
 const { width, height } = Dimensions.get('window');
 
 const wp = (p: number) =>
@@ -57,6 +58,41 @@ const q = query(
 
   return unsubscribe;
 }, []);
+const handleMarkAllRead = async () => {
+  const batch = writeBatch(db);
+
+  notifications.forEach((notification) => {
+    if (!notification.read) {
+      batch.update(
+        doc(db, "notifications", notification.id),
+        {
+          read: true,
+        }
+      );
+    }
+  });
+
+  await batch.commit();
+};
+const getSectionTitle = (date: Date) => {
+  const today = new Date();
+  const yesterday = new Date();
+
+  yesterday.setDate(today.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  }
+
+  if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  }
+
+  return date.toLocaleDateString([], {
+    month: "long",
+    day: "numeric",
+  });
+};
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -125,11 +161,20 @@ const q = query(
         
           </ScrollView>
 
-          <Pressable style={styles.markRead}>
-            <Text style={styles.markReadText}>
-              Mark all as read
-            </Text>
-          </Pressable>
+{notifications.some((n) => !n.read) && (
+<Pressable onPress={handleMarkAllRead}>
+  <LinearGradient
+    colors={['#A970FF', '#6D5CFF']}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={styles.markRead}
+  >
+    <Text style={styles.markReadText}>
+       Mark all as read
+    </Text>
+  </LinearGradient>
+</Pressable>
+)}
 {notifications.length === 0 ? (
   <Text
     style={{
@@ -142,34 +187,78 @@ const q = query(
     No notifications yet.
   </Text>
 ) : (
-  notifications.map((item: any) => (
-    <NotificationCard
-      key={item.id}
-      notification={{
-        id: item.id,
-        title: item.title,
-        subtitle: item.subtitle,
-        type: item.type,
-        unread: !item.read,
-        route:
-  item.type === "streak"
-    ? "/activities"
-    : item.type === "leaderboard"
-    ? "/leaderboard"
-    : item.type === "team"
-    ? "/team"
-    : "/",
-        time: item.createdAt
-          ? item.createdAt
-              .toDate()
-              .toLocaleTimeString([], {
-                hour: "numeric",
-                minute: "2-digit",
-              })
-          : "",
-      }}
-    />
-  ))
+notifications.map((item: any, index: number) => {
+  const currentDate = item.createdAt?.toDate();
+  const previousDate =
+    notifications[index - 1]?.createdAt?.toDate();
+
+  const showHeader =
+    index === 0 ||
+    getSectionTitle(currentDate) !==
+      getSectionTitle(previousDate);
+
+  return (
+    <View key={item.id}>
+     {showHeader && (
+<View style={styles.sectionRow}>
+  <LinearGradient
+    colors={[
+      "transparent",
+      "#6D5CFF",
+      "#A970FF",
+    ]}
+    locations={[0, 0.5, 1]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.sectionLine}
+  />
+
+  <Text style={styles.section}>
+    {getSectionTitle(currentDate).toUpperCase()}
+  </Text>
+
+  <LinearGradient
+    colors={[
+      "#A970FF",
+      "#6D5CFF",
+      "transparent",
+    ]}
+    locations={[0, 0.5, 1]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.sectionLine}
+  />
+</View>
+)}
+
+      <NotificationCard
+        notification={{
+          id: item.id,
+          title: item.title,
+          subtitle: item.subtitle,
+          type: item.type,
+          unread: !item.read,
+          route:
+            item.type === "streak"
+              ? "/activities"
+              : item.type === "leaderboard"
+              ? "/leaderboard"
+              : item.type === "team"
+              ? "/team"
+              : "/",
+          time: item.createdAt
+            ? item.createdAt
+                .toDate()
+                .toLocaleTimeString([], {
+                  hour: "numeric",
+                  minute: "2-digit",
+                })
+            : "",
+        }}
+      />
+    </View>
+  );
+})
 )}
 
      
@@ -266,23 +355,62 @@ color: '#8E74E8',
 
   },
 
-  markRead: {
-    alignSelf: 'flex-end',
-    marginBottom: hp(2),
+markRead: {
+  alignSelf: 'flex-end',
+
+
+  paddingHorizontal: wp(4.5),
+  paddingVertical: hp(1.1),
+
+  borderRadius: 999,
+
+  borderWidth: 1,
+  borderColor: 'rgba(255,255,255,0.15)',
+
+  shadowColor: '#9B6CFF',
+  shadowOpacity: 0.35,
+  shadowRadius: 10,
+  shadowOffset: {
+    width: 0,
+    height: 3,
   },
 
-  markReadText: {
-    color: '#9B6CFF',
-    fontWeight: '600',
-        fontFamily:'PixelOperator'
+  elevation: 6,
+},
 
-  },
+markReadText: {
+  color: '#FFFFFF',
+  fontFamily: 'PixelOperator',
+  fontSize: wp(3.7),
+},
 
-  section: {
-    color: '#9B6CFF',
-    fontSize: wp(6),
-    fontWeight: '700',
-    marginBottom: hp(1.5),
-    fontFamily:'PixelBold'
-  },
+
+
+
+
+sectionRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+
+  marginTop: hp(2),
+  marginBottom: hp(2),
+},
+
+section: {
+  color: "#D8B4FE",
+  fontFamily: "PixelBold",
+  fontSize: wp(4.2),
+
+  letterSpacing: 1.2,
+
+  marginHorizontal: wp(3.5),
+},
+
+sectionLine: {
+  flex: 1,
+  height: 2,
+  borderRadius: 999,
+  opacity: 0.9,
+},
 });
