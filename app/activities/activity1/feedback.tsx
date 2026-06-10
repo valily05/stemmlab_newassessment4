@@ -1,4 +1,8 @@
+import MaskedView from '@react-native-masked-view/masked-view';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
+import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -13,10 +17,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import MaskedView from '@react-native-masked-view/masked-view';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 
 import { Timestamp } from 'firebase/firestore';
 
@@ -717,14 +717,17 @@ export default function Activity1Feedback() {
                 return;
               }
 
-              await saveActivityFeedback({
-                sessionID: String(sessionID),
-                activityID: 1,
-                rating,
-                whatDidYouLike: learned,
-                whatDifficulties: improvement,
-                submittedAt: Timestamp.now(),
-              })
+await saveActivityFeedback(
+  {
+    sessionID: String(sessionID),
+    activityID: 1,
+    rating,
+    whatDidYouLike: learned,
+    whatDifficulties: improvement,
+    submittedAt: Timestamp.now(),
+  },
+  Number(pointsEarned)
+);
 
               await sendCompletionNotification(String(activity.title), Number(pointsEarned));//the score will be calculated
 

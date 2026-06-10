@@ -11,6 +11,34 @@ type GradientColors = readonly [
 ];
 
 export const DarkTheme = {
+  teamBackground: "#07021B",
+
+teamSidebarBackground: "#07021B",
+teamSidebarBorder: "rgba(255,255,255,0.1)",
+
+teamHeroImage: require("../assets/images/teambg2.png"),
+
+teamTitleGradient: [
+  "#A061F5",
+  "#8B5CF6",
+  "#5D398F",
+] as GradientColors,
+
+teamTitleShadow: "#C66CFF",
+
+teamStar: "#EC588C",
+
+teamSubtitle: "#FFFFFF",
+
+teamBottomGradient: [
+  "rgba(4,6,27,0)",
+  "rgba(4,6,27,0.45)",
+  "rgba(4,6,27,0.85)",
+  "rgba(4,6,27,0.99)",
+  "#04061B",
+] as GradientColors,
+
+teamSectionTitle: "#B8A0FF",
   background: "#07021B",
 
   surface: "#130C36",
@@ -154,8 +182,44 @@ scienceBackground: "#150F31",
 technologyBorder: "#D176FF",
 technologyBackground: "#150F31",
 
+activityButtonText: "#FFFFFF",
 
+activityEasy: "#6DFF7A",
+activityMedium: "#FFB84D",
+activityHard: "#FF5F5F",
+
+activityEasyIcon: "#6DFF7A",
+activityMediumIcon: "#FFB84D",
+activityHardIcon: "#FF5F5F",
 };export const LightTheme = {
+  teamBackground: "#F8F6FF",
+
+teamSidebarBackground: "#FFFFFF",
+teamSidebarBorder: "#E9DFFB",
+
+teamHeroImage: require("../assets/images/teambg2_light.png"),
+
+teamTitleGradient: [
+  "#8B5CF6",
+  "#A855F7",
+  "#EC4899",
+] as GradientColors,
+
+teamTitleShadow: "#C084FC",
+
+teamStar: "#EC4899",
+
+teamSubtitle: "#5A5575",
+
+teamBottomGradient: [
+  "rgba(248,246,255,0)",
+  "rgba(248,246,255,0.45)",
+  "rgba(248,246,255,0.80)",
+  "rgba(248,246,255,0.96)",
+  "#F8F6FF",
+] as GradientColors,
+
+teamSectionTitle: "#8B5CF6",
   background: "#F8F6FF",
 
   surface: "#FFFFFF",
@@ -247,7 +311,15 @@ activitiesTitleShadow: "#C084FC",
 
 activitiesStar: "#EC4899",
 activitiesStarGlow: "#F472B6",
+activityButtonText: "#FFFFFF",
 
+activityEasy: "#22C55E",
+activityMedium: "#F59E0B",
+activityHard: "#EF4444",
+
+activityEasyIcon: "#22C55E",
+activityMediumIcon: "#F59E0B",
+activityHardIcon: "#EF4444",
 activitiesSubtitle: "#5A5575",
 
 activitiesBottomGradient: [

@@ -141,7 +141,7 @@ const { theme } = useTheme();
     
 
       {/* CONTENT */}
-      <View style={styles.cardContent}>
+<View style={styles.cardContent}>
 
         {/* TITLE */}
 <Text
@@ -208,6 +208,7 @@ const { theme } = useTheme();
             {category}
           </Text>
         </View>
+
         {/* BOTTOM */}
         <View style={styles.bottomRow}>
 
@@ -274,32 +275,40 @@ const { theme } = useTheme();
     },
   ]}
 >   
-              <Image
-                source={require('../assets/images/chart.png')}
-                style={[
-                  styles.statIcon,
-
-                  difficulty === 'Easy' && styles.easyIcon,
-                  difficulty === 'Medium' && styles.mediumIcon,
-                  difficulty === 'Hard' && styles.hardIcon,
-                ]}
-              />
+<Image
+  source={require('../assets/images/chart.png')}
+  style={[
+    styles.statIcon,
+    {
+      tintColor:
+        difficulty === "Easy"
+          ? theme.activityEasyIcon
+          : difficulty === "Medium"
+          ? theme.activityMediumIcon
+          : difficulty === "Hard"
+          ? theme.activityHardIcon
+          : undefined,
+    },
+  ]}
+/>
 
 <Text
   style={[
     styles.stat,
     {
-      color: theme.activityStatText,
+      color:
+        difficulty === "Easy"
+          ? theme.activityEasy
+          : difficulty === "Medium"
+          ? theme.activityMedium
+          : difficulty === "Hard"
+          ? theme.activityHard
+          : theme.activityStatText,
     },
-
-    difficulty === "Easy" && styles.easyText,
-    difficulty === "Medium" && styles.mediumText,
-    difficulty === "Hard" && styles.hardText,
   ]}
 >
   {difficulty}
 </Text>
-
             </View>
 
           </View>
@@ -324,8 +333,14 @@ const { theme } = useTheme();
   },
 ]}
   >
-    <Text style={styles.startText}>
-      {buttonText}
+<Text
+  style={[
+    styles.startText,
+    {
+      color: theme.activityButtonText,
+    },
+  ]}
+>      {buttonText}
     </Text>
   </LinearGradient>
 </TouchableOpacity>
@@ -661,35 +676,10 @@ statIcon: {
     fontFamily: 'PixelOperator',
   },
 
-  /* EASY TEXT */
-  easyText: {
-    color: '#6DFF7A',
-  },
+  
 
-  /* MEDIUM TEXT */
-  mediumText: {
-    color: '#FFB84D',
-  },
 
-  /* HARD TEXT */
-  hardText: {
-    color: '#FF5F5F',
-  },
 
-  /* EASY ICON */
-  easyIcon: {
-    tintColor: '#6DFF7A',
-  },
-
-  /* MEDIUM ICON */
-  mediumIcon: {
-    tintColor: '#FFB84D',
-  },
-
-  /* HARD ICON */
-  hardIcon: {
-    tintColor: '#FF5F5F',
-  },
 
 startBtn: {
 
