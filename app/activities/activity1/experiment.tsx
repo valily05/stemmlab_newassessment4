@@ -30,6 +30,8 @@ import InfoModal from '@/components/activity/InfoModal';
 import LiveTimerCard from '@/components/activity/LiveTimerCard';
 import StopwatchCard from '@/components/activity/StopwatchCard';
 
+import { activities } from '@/data/activities';
+
 import { uploadVideoToCloudinary } from '@/services/cloudinary';
 import { auth } from '@/services/firebase/config';
 import { saveIteration as saveIterationToFirestore } from '@/services/firebase/iterationService';
@@ -60,6 +62,8 @@ type ExperimentResult = {
   videoUri?: string;
   videoURL?: string;
 }
+
+const activity = activities.activity1;
 
 const { width, height } = Dimensions.get('window');
 
@@ -665,7 +669,7 @@ export default function Activity1Experiment() {
         </TouchableOpacity>
 
         <ExperimentHero
-          title="PARACHUTE DROP CHALLENGE"
+          title={activity.title}
           description={
             currentStage === 0 ? (
               <Text style={styles.heroDescription}>
