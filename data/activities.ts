@@ -9,7 +9,7 @@ export const activities = {
   activity1: {
     id: 1,
     group:"ENGINEERING",
-    title: "PARACHUTE DROP\nCHALLENGE",
+    title: "PARACHUTE DROP CHALLENGE",
     image: {
       dark: require('../assets/images/Group 227.png'),
       light: require('../assets/images/Group 227 Light.png'),
@@ -140,8 +140,8 @@ export const activities = {
       {
         title: "TEST LOCATION ACCURACY",
         instruction: "Walk to a different location and confirm the app updates your position correctly.",
-  bunnyTip:
-    "Your location helps create a map of loud and quiet places!",      },
+        bunnyTip: "Your location helps create a map of loud and quiet places!",
+      },
     ],
 
     instructions: [
@@ -189,7 +189,10 @@ export const activities = {
     duration:"",
     difficulty:"",
     materials: [
-      {name:"",quantity:"x"},
+      {
+        name:"",
+        quantity:"x"
+      },
     ],
 
     setupSteps: [
