@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext";
 import {
   Dimensions,
   Image,
@@ -8,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
 const { width, height } = Dimensions.get('window');
 // responsive scale
 const scale = (size: number) => {
@@ -45,13 +45,19 @@ const fp = (size: number) => {
 };
 
 export default function Banner() {
+  const { theme } = useTheme();
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      style={styles.container}
+    style={[
+  styles.container,
+  {
+    shadowColor: theme.bannerShadow,
+  },
+]}
     >
-      <ImageBackground
-        source={require('../assets/images/image 112.png')}
+<ImageBackground
+  source={theme.bannerBackground}
         style={styles.bg}
         imageStyle={styles.bgImage}
       >
@@ -65,11 +71,25 @@ export default function Banner() {
         {/* TEXT RIGHT */}
         <View style={styles.right}>
 
-          <Text style={styles.title}>
+     <Text
+  style={[
+    styles.title,
+    {
+      color: theme.bannerTitle,
+    },
+  ]}
+>
             KEEP EXPLORING !
           </Text>
 
-          <Text style={styles.desc}>
+          <Text
+  style={[
+    styles.desc,
+    {
+      color: theme.bannerDescription,
+    },
+  ]}
+>
             Complete activities, earn points and level up your team!
           </Text>
 
@@ -91,7 +111,6 @@ container: {
 
   marginTop: rf(-16),
 
-  shadowColor: '#8B5CF6',
   shadowOpacity: 0.2,
   shadowRadius: scale(14),
 
@@ -129,7 +148,6 @@ container: {
   },
 
   title: {
-    color: '#FACC15',
 
     fontSize: scale(14),
 
@@ -139,7 +157,6 @@ container: {
   },
 
   desc: {
-    color: '#E9D5FF',
 
     fontSize: scale(13),
 

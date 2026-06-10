@@ -4,9 +4,12 @@
  */
 
 import { Platform } from 'react-native';
+type GradientColors = readonly [
+  string,
+  string,
+  ...string[]
+];
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
 export const DarkTheme = {
   background: "#07021B",
 
@@ -37,6 +40,53 @@ export const DarkTheme = {
 
   headerTitle: "#FFFFFF",
   headerSubtitle: "#DDD6FE",
+  activityTitle: "#FFFFFF",
+activityViewAll: "#A970FF",
+
+swipeHintBackground: "rgba(255,255,255,0.85)",
+swipeHintArrow: "#894FD9",
+streakGradient: [
+  "#0A041D",
+  "#160734",
+  "#220A4D",
+  "#160734",
+  "#0A041D",
+]as GradientColors,
+
+streakBorder: "rgba(170,120,255,0.65)",
+
+streakShadow: "#7058FF",
+
+streakTitle: "#FFFFFF",
+streakSubtitle: "#E7D9FF",
+
+streakCircle: "#190038",
+streakCircleBorder: "#7A2DFF",
+
+streakCompleted: "#8426FF",
+streakCompletedBorder: "#A65CFF",
+
+streakCurrent: "#FF8A65",
+streakCurrentBorder: "#FFD84D",
+
+streakLine: "#7A2DFF",
+
+streakText: "#FFFFFF",
+
+streakPoints: "#FFFFFF",
+streakPointsLabel: "#D7C7FF",
+
+streakFooter: "#FFFFFF",
+
+lockedIconBackground: "rgba(122,45,255,0.15)",
+lockedIconBorder: "rgba(170,120,255,0.45)",
+lockedIconColor: "#B882FF",
+bannerTitle: "#FACC15",
+bannerDescription: "#E9D5FF",
+
+bannerShadow: "#8B5CF6",
+
+bannerBackground: require("../assets/images/image 112.png"),
 };export const LightTheme = {
   background: "#F8F6FF",
 
@@ -67,7 +117,56 @@ export const DarkTheme = {
 
   headerTitle: "#8B5CF6",
   headerSubtitle: "#6E7396",
+  activityTitle: "#717985",
+activityViewAll: "#8B5CF6",
+
+swipeHintBackground: "#FFFFFF",
+swipeHintArrow: "#8B5CF6",
+streakGradient: [
+  "#FFFFFF",
+  "#F8F6FF",
+  "#F2EEFF",
+  "#F8F6FF",
+  "#FFFFFF",
+] as GradientColors,
+
+streakBorder: "#D9D0FF",
+
+streakShadow: "rgba(139,92,246,0.25)",
+
+streakTitle: "#606770",
+streakSubtitle: "#6B7280",
+
+streakCircle: "#FFFFFF",
+streakCircleBorder: "#C4B5FD",
+
+streakCompleted: "#8B5CF6",
+streakCompletedBorder: "#A78BFA",
+
+streakCurrent: "#EC72C9",
+streakCurrentBorder: "#FBBF24",
+
+streakLine: "#D9D0FF",
+
+streakText: "#374151",
+
+streakPoints: "#8B5CF6",
+streakPointsLabel: "#6B7280",
+
+streakFooter: "#374151",
+
+lockedIconBackground: "#F4EEFF",
+lockedIconBorder: "#D9D0FF",
+lockedIconColor: "#8B5CF6",
+bannerTitle: "#f3d77a",
+
+bannerDescription: "#5B5B7A",
+
+bannerShadow: "#C084FC",
+
+bannerBackground: require("../assets/images/image 112 Light.png"),
 };
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */

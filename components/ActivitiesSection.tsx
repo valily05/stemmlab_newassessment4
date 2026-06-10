@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext";
 import { useState } from 'react';
 import {
   Dimensions,
@@ -8,9 +9,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import ActivityCard from './ActivityCard';
-
 import { activities } from '../data/activities';
+import ActivityCard from './ActivityCard';
 
 const { width, height } = Dimensions.get('window');
 
@@ -41,6 +41,7 @@ const fp = (size: number) => {
 export default function ActivitiesSection({
   userPoints,
 }: Props) {
+  const { theme } = useTheme();
 const [hasScrolled, setHasScrolled] =
   useState(false);
   // ADD LOCK STATE DYNAMICALLY
@@ -62,9 +63,16 @@ const activitiesWithLock = Object.values(
         {/* LEFT SIDE */}
         <View style={styles.titleWrapper}>
 
-          <Text style={styles.title}>
-            Available Activities
-          </Text>
+<Text
+  style={[
+    styles.title,
+    {
+      color: theme.activityTitle,
+    },
+  ]}
+>
+  Available Activities
+</Text>
 
           {/* POTION ICON */}
           <Image
@@ -74,9 +82,16 @@ const activitiesWithLock = Object.values(
 
         </View>
 
-        <Text style={styles.viewAll}>
-          View all ›
-        </Text>
+<Text
+  style={[
+    styles.viewAll,
+    {
+      color: theme.activityViewAll,
+    },
+  ]}
+>
+  View all ›
+</Text>
 
       </View>
 
@@ -106,9 +121,25 @@ scrollEventThrottle={16}
   </ScrollView>
 
   {!hasScrolled && (
-    <View style={styles.swipeHint}>
-<Text style={styles.swipeArrow}>»</Text>
-    </View>
+<View
+  style={[
+    styles.swipeHint,
+    {
+      backgroundColor: theme.swipeHintBackground,
+    },
+  ]}
+>
+  <Text
+    style={[
+      styles.swipeArrow,
+      {
+        color: theme.swipeHintArrow,
+      },
+    ]}
+  >
+    »
+  </Text>
+</View>
   )}
 
 </View>
@@ -140,8 +171,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    color: '#fff',
-
+ 
     fontSize: fp(20),
 
     fontFamily: 'PixelOperator',
@@ -158,7 +188,7 @@ const styles = StyleSheet.create({
   },
 
   viewAll: {
-    color: '#894FD9',
+  
 
     fontSize: fp(16),
 
@@ -168,41 +198,36 @@ scrollWrapper:{
   position:'relative',
 },
 
-swipeHint:{
-  position:'absolute',
+swipeHint: {
+  position: 'absolute',
 
-  right:wp(-4),
+  right: wp(-4),
 
-  top:'40%',
+  top: '40%',
 
-  width:fp(34),
+  width: fp(34),
+  height: fp(34),
 
-  height:fp(34),
+  borderRadius: fp(17),
 
-  borderRadius:fp(17),
+  justifyContent: 'center',
+  alignItems: 'center',
 
-  backgroundColor:'rgba(255,255,255,0.85)',
+  elevation: 6,
 
-  justifyContent:'center',
+  shadowColor: '#000',
 
-  alignItems:'center',
-
-  elevation:6,
-
-  shadowColor:'#000',
-
-  shadowOffset:{
-    width:0,
-    height:2,
+  shadowOffset: {
+    width: 0,
+    height: 2,
   },
 
-  shadowOpacity:0.15,
+  shadowOpacity: 0.15,
 
-  shadowRadius:4,
+  shadowRadius: 4,
 },
 
 swipeArrow:{
-  color:'#894FD9',
 
   fontSize:fp(26),
 
