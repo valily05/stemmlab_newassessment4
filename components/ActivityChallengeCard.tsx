@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext";
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   Dimensions,
@@ -54,40 +55,79 @@ export default function ActivityChallengeCard({
   locked,
   onPress,
 }: Props) {
-
+const { theme } = useTheme();
 
   return (
 
 <View
   style={[
     styles.card,
+    {
+      backgroundColor: theme.activityCard,
+      borderColor: theme.activityBorder,
+      shadowColor: theme.activityShadow,
+    },
     locked && styles.lockedCard,
   ]}
 >
-
   <LinearGradient
-    colors={[
-      '#1B0F45',
-      '#12052F',
-      '#0D0422',
-    ]}
+ colors={theme.activityCardGradient}
     start={{ x: 0, y: 0 }}
     end={{ x: 1, y: 1 }}
     style={StyleSheet.absoluteFillObject}
   />
       {/* OUTER PIXEL BLOCKS */}
-      <View style={styles.topBlock} />
-      <View style={styles.bottomBlock} />
-
-      <View style={styles.leftBlock} />
-      <View style={styles.rightBlock} />
+<View
+  style={[
+    styles.topBlock,
+    { backgroundColor: theme.activityBorder },
+  ]}
+/>
+   <View
+  style={[
+    styles.bottomBlock,
+    { backgroundColor: theme.activityBorder },
+  ]}
+/>
+<View
+  style={[
+    styles.leftBlock,
+    { backgroundColor: theme.activityBorder },
+  ]}
+/>
+<View
+  style={[
+    styles.rightBlock,
+    { backgroundColor: theme.activityBorder },
+  ]}
+/>
 
       {/* INNER CUT BLOCKS */}
-      <View style={styles.topInnerBlock} />
-      <View style={styles.bottomInnerBlock} />
-
-      <View style={styles.topInnerBlockk} />
-      <View style={styles.bottomInnerBlockk} />
+<View
+  style={[
+    styles.topInnerBlock,
+    { backgroundColor: theme.activityCard },
+  ]}
+/>
+<View
+  style={[
+    styles.bottomInnerBlock,
+    { backgroundColor: theme.activityCard },
+  ]}
+/>
+<View
+  style={[
+    styles.topInnerBlock,
+    { backgroundColor: theme.activityCard },
+  ]}
+/>
+<View
+  style={[
+    styles.bottomInnerBlockk,
+    { backgroundColor: theme.activityCard },
+  ]}
+/>
+ 
 
       {/* NEW BADGE OR BOOKMARK */}
       
@@ -104,12 +144,21 @@ export default function ActivityChallengeCard({
       <View style={styles.cardContent}>
 
         {/* TITLE */}
-        <Text style={styles.cardTitle}>
-          {title}
+<Text
+  style={[
+    styles.cardTitle,
+    { color: theme.activityTitle },
+  ]}
+>          {title}
         </Text>
 
         {/* DESCRIPTION */}
-        <Text style={styles.cardDesc}>
+     <Text
+  style={[
+    styles.cardDesc,
+    { color: theme.activityDescription },
+  ]}
+>
           {description}
         </Text>
 
@@ -159,14 +208,26 @@ export default function ActivityChallengeCard({
           <View style={styles.stats}>
 
             {/* RATING */}
-            <View style={styles.statItem}>
-              <Image
+<View
+  style={[
+    styles.statItem,
+    {
+      backgroundColor: theme.activityStatBackground,
+    },
+  ]}
+>              <Image
                 source={require('../assets/images/star.png')}
                 style={styles.statIcon}
               />
 
-              <Text style={styles.stat}>
-                {rating}
+<Text
+  style={[
+    styles.stat,
+    {
+      color: theme.activityStatText,
+    },
+  ]}
+>                {rating}
               </Text>
             </View>
 
@@ -220,14 +281,19 @@ export default function ActivityChallengeCard({
   disabled={locked}
 >
   <LinearGradient
-    colors={
-      locked
-        ? ['#666666', '#555555']
-        : ['#FF79C8', '#FF4FA4']
-    }
+  colors={
+  locked
+    ? theme.activityButtonDisabledGradient
+    : theme.activityButtonGradient
+}
     start={{ x: 0, y: 0 }}
     end={{ x: 1, y: 1 }}
-    style={styles.startBtn}
+  style={[
+  styles.startBtn,
+  {
+    shadowColor: theme.activityButtonShadow,
+  },
+]}
   >
     <Text style={styles.startText}>
       {buttonText}

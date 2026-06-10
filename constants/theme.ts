@@ -115,6 +115,46 @@ activitiesBottomGradient: [
 activitiesSidebarBackground: "#07021B",
 
 activitiesSidebarBorder: "rgba(255,255,255,0.10)",
+activityCard: "#12052F",
+activityBorder: "#7B4DFF",
+activityShadow: "#7B4DFF",
+
+activityCardGradient: [
+  "#1B0F45",
+  "#12052F",
+  "#0D0422",
+] as GradientColors,
+
+activityDescription: "#D7CCFF",
+
+activityStatBackground: "#1C103D",
+activityStatText: "#F2E7FF",
+
+activityButtonGradient: [
+  "#FF79C8",
+  "#FF4FA4",
+] as GradientColors,
+
+activityButtonDisabledGradient: [
+  "#666666",
+  "#555555",
+] as GradientColors,
+
+activityButtonShadow: "#FF5CA8",
+
+engineeringBorder: "#F5730C",
+engineeringBackground: "#24153F",
+
+environmentBorder: "#60BB3F",
+environmentBackground: "#1A2E16",
+
+scienceBorder: "#59C8FF",
+scienceBackground: "#150F31",
+
+technologyBorder: "#D176FF",
+technologyBackground: "#150F31",
+
+
 };export const LightTheme = {
   background: "#F8F6FF",
 
@@ -221,6 +261,44 @@ activitiesBottomGradient: [
 activitiesSidebarBackground: "#FFFFFF",
 
 activitiesSidebarBorder: "#E9DFFB",
+activityCard: "#FFFFFF",
+activityBorder: "#D7CCFF",
+activityShadow: "rgba(139,92,246,0.18)",
+
+activityCardGradient: [
+  "#FFFFFF",
+  "#FAF7FF",
+  "#F3EEFF",
+] as GradientColors,
+
+activityDescription: "#6B7280",
+
+activityStatBackground: "#F7F3FF",
+activityStatText: "#4B5563",
+
+activityButtonGradient: [
+  "#EC72C9",
+  "#A78BFA",
+] as GradientColors,
+
+activityButtonDisabledGradient: [
+  "#D6D3D1",
+  "#C7C4C2",
+] as GradientColors,
+
+activityButtonShadow: "rgba(236,114,201,0.3)",
+
+engineeringBorder: "#F97316",
+engineeringBackground: "#FFF5E8",
+
+environmentBorder: "#22C55E",
+environmentBackground: "#ECFDF3",
+
+scienceBorder: "#38BDF8",
+scienceBackground: "#EEF8FF",
+
+technologyBorder: "#A855F7",
+technologyBackground: "#F7F0FF",
 };
 
 export const Fonts = Platform.select({
