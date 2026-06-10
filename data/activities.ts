@@ -1,4 +1,11 @@
 export const activities = {
+
+  //TEMPLATE
+  //id:,title: "CHALLENGE",group: "",image: require(''),route: '/activities/activity.../overview',category: ["",],
+  //overview: "",objective: "",mission: "",duration: "",difficulty: "",
+  //materials: [{name:"",quantity:"x"},],setupSteps: [{title:,image:,instruction:,bunnyTip:},],instructions: ["",],
+  //safetyNotes: ["",], bunnyTip: ["",]
+
   activity1: {
     id: 1,
     group:"ENGINEERING",
@@ -48,7 +55,7 @@ export const activities = {
         quantity: "x1"
       }
     ],
-
+    
     setupSteps: [
       {
         title: 'PREPARE THE PLASTIC BAG',
@@ -77,11 +84,12 @@ export const activities = {
     ],
 
     referencePhoto: require('@/assets/images/referenceSetup.png'),
-  safetyNotes: [
-  "Ensure the drop area is clear of people",
-  "Use a stable elevated surface",
-  "Handle scissors with care",
-],
+
+    safetyNotes: [
+      "Ensure the drop area is clear of people",
+      "Use a stable elevated surface",
+      "Handle scissors with care",
+    ],
 
     bunnyTip: [
       "Use a ruler in frame for scale",
@@ -89,7 +97,6 @@ export const activities = {
       "Identify when the object leaves the surface for bounce calculation"
     ],
   },
-
 
   activity2: {
     id: 2,
@@ -103,13 +110,10 @@ export const activities = {
       "Data Analysis"
     ],
 
-overview:
-  "Investigate noise levels in different locations and identify sources of sound pollution.",
+    overview: "Investigate noise levels in different locations and identify sources of sound pollution.",
+    objective: "Measure and compare noise levels in different environments to investigate sound pollution.",
 
-objective:
-  "Measure and compare noise levels in different environments to investigate sound pollution.",
-  mission: "Compare noise levels in different locations.",
-
+    mission: "Compare noise levels in different locations.",
     duration: "20 Minutes",
     difficulty: "Easy",
 
@@ -123,18 +127,14 @@ objective:
     setupSteps: [
       {
         title: "TEST THE SOUND METER",
-        instruction:
-      "Clap your hands once to make sure the sound meter detects sound correctly.",
- bunnyTip:
-  "A loud clap should cause the sound level to \nincrease."
-   },
+        instruction: "Clap your hands once to make sure the sound meter detects sound correctly.",
+        bunnyTip: "A loud clap should cause the sound level to \nincrease."
+      },
 
       {
         title: "TEST LOCATION ACCURACY",
-        instruction:
-    "Walk to a different location and confirm the app updates your position correctly.",
-    bunnyTip:    "Try moving to a nearby area and check\nif your location changes!",
-
+        instruction: "Walk to a different location and confirm the app updates your position correctly.",
+        bunnyTip: "Try moving to a nearby area and check\nif your location changes!",
       },
     ],
 
@@ -161,12 +161,49 @@ objective:
     ],
   },
 
-activity3: {
-  id: 3,
-  group:"ENGINEERING",
-  image: require('../assets/images/Group 229.png'),
-  route: '/activities/activity3',
-},
+  activity3: {
+    id: 3,
+    title: "HAND FAN CHALLENGE",
+    group: "ENGINEERING",
+
+    image: require('@/assets/images/Group 229.png'),
+    route: '/activities/activity3/overview',
+    
+    category: [
+      "",
+      ""
+    ],
+
+    overview:"",
+    objective:"",
+    mission:"",
+    duration:"",
+    difficulty:"",
+    materials: [
+      {name:"",quantity:"x"},
+    ],
+
+    setupSteps: [
+      {
+        title: "",
+        image: "",
+        instruction: "",
+        bunnyTip: ""
+      },
+    ],
+    
+    instructions: [
+      "",
+    ],
+
+    safetyNotes: [
+      "",
+    ],
+    
+    bunnyTip: [
+      "",
+    ]
+  },
 };
 
   // {
