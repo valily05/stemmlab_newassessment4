@@ -53,11 +53,15 @@ export default function SearchBar({
         },
       ]}
     >
-      <Image
-        source={require('../assets/images/search.png')}
-        style={styles.searchIcon}
-      />
-
+<Image
+  source={require('../assets/images/search.png')}
+  style={[
+    styles.searchIcon,
+    {
+      tintColor: theme.placeholder,
+    },
+  ]}
+/>
       <TextInput
         value={search}
         onChangeText={setSearch}

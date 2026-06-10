@@ -1,3 +1,8 @@
+import {
+  useCameraPermissions,
+} from 'expo-camera';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -12,11 +17,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { router } from 'expo-router';
-import {
-  useCameraPermissions,
-} from 'expo-camera';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import { Timestamp } from 'firebase/firestore';
 
@@ -31,7 +31,7 @@ import LiveTimerCard from '@/components/activity/LiveTimerCard';
 import StopwatchCard from '@/components/activity/StopwatchCard';
 
 import { uploadVideoToCloudinary } from '@/services/cloudinary';
-import { auth, db } from '@/services/firebase/config';
+import { auth } from '@/services/firebase/config';
 import { saveIteration as saveIterationToFirestore } from '@/services/firebase/iterationService';
 import { createSession } from '@/services/firebase/sessionService';
 import { updateTeamStreak } from '@/services/firebase/teamService';
