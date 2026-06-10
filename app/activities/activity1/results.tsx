@@ -96,7 +96,7 @@ export default function Activity1Results() {
   let parsedResults: any[] = [];
 
   try {
-    if (params.esults) {
+    if (params.results) {
       parsedResults = JSON.parse(
         params.results as string
       );
@@ -158,7 +158,7 @@ export default function Activity1Results() {
         seconds
       ).toFixed(2)} s`;
     }
-    
+
     return value;
   };
 //const today = new Date();
