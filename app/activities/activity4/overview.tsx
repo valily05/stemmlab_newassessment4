@@ -132,7 +132,7 @@ export default function Activity4Overview() {
                     />
 
                     <ReferenceSetupCard
-                        image={require('')}//change this
+                        image={require('@/assets/images/miffyspace.png')}//change this
                     />
 
                     <SafetyNotes

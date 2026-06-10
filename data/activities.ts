@@ -226,8 +226,8 @@ export const activities = {
     group: "ENGINEERING",
 
     image: {
-      dark: require('@/assets/images/earthquake.png'),
-      light: require(''),
+      //dark: require('@/assets/images/earthquake.png'),
+      //light: require(''),
     },
     route: '/activities/activity4/overview',
 
@@ -275,7 +275,7 @@ export const activities = {
     setupSteps: [
       {
         title: "PREPARE THE ANTI-VIBRATION LAYER",
-        image: require(""),
+        //image: require(""),
         instruction: "Fold papers or cardboards",
         bunnyTip: "",
       },
