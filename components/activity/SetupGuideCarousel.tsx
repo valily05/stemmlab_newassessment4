@@ -51,7 +51,7 @@ const rf = (size: number) => {
 
 interface Step {
   title: string;
-  image: any;
+  image?: any;
   instruction: string;
   bunnyTip?: string;
 }
