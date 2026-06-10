@@ -2,9 +2,12 @@ export const activities = {
 
   //TEMPLATE
   //id:,title: "CHALLENGE",group: "",image: {dark: require(''),light: require(''),},route: '/activities/activity.../overview',
-  //category: ["",],overview: "",objective: "",mission: "",duration: "",difficulty: "",
-  //materials: [{name:"",quantity:"x"},],setupSteps: [{title:,image:,instruction:,bunnyTip:},],instructions: ["",],
-  //safetyNotes: ["",], bunnyTip: ["",]
+  //category: ["",],
+  //overview: "",objective: "",
+  //mission: "",duration: "20 Minutes",difficulty: "",
+  //materials: [{name: "",quantity: "x"},],
+  //setupSteps: [{title: "PREPARE",image: require('@/assets/images/setup2.png'),instruction: "Cut",bunnyTip: "Make"},],
+  //instructions: ["Drop ...",],safetyNotes: ["Ensure ...",],bunnyTip: ["Use ...",]
 
   activity1: {
     id: 1,
@@ -179,8 +182,8 @@ export const activities = {
     route: '/activities/activity3/overview',
     
     category: [
-      "",
-      ""
+      "Physics",
+      "Air Movement"
     ],
 
     overview:"",
@@ -216,18 +219,99 @@ export const activities = {
       "",
     ]
   },
+
+  activity4: {
+    id: 4,
+    title: 'EARTHQUAKE-RESISTANT STRUCTURE',
+    group: "ENGINEERING",
+
+    image: {
+      //dark: require('@/assets/images/earthquake.png'),
+      //light: require(''),
+    },
+    route: '/activities/activity4/overview',
+
+    category: [
+      'Engineering', 
+      'Earth Science'
+    ],
+
+    //pointsRequired: 450,
+    
+    overview: "Design structures that withstand vibration, simulating earthquakes.",
+    objective: "",
+
+    mission: "",
+    duration: "20 Minutes",
+    difficulty: "",
+
+    materials: [
+      {
+        name:"STEMM LAB ON MOBILE PHONE",
+        quantity:"x1"
+      },
+      {
+        name:"CARDBOARD",
+        quantity:"x2-5"
+      },
+      {
+        name:"PAPER",
+        quantity:"x1-5"
+      },
+      {
+        name:"SCISSORS",
+        quantity:"x1"
+      },
+      {
+        name:"STICKY TAPE",
+        quantity:"x1"
+      },
+      {
+        name:"PLASTIC / PAPER CUPS",
+        quantity:"x4-8"
+      },
+    ],
+    
+    setupSteps: [
+      {
+        title: "PREPARE THE ANTI-VIBRATION LAYER",
+        //image: require(""),
+        instruction: "Fold papers or cardboards",
+        bunnyTip: "",
+      },
+      // {
+      //   title: "PREPARE THE ANTI-VIBRATION LAYER",
+      //   image: require(""),
+      //   instruction: "Fold papers or cardboards",
+      //   bunnyTip: "",
+      // },
+    ],
+    
+    instructions: [
+      "Build an anti-vibration layer by folding paper/cardboard",
+      "Place a flat cardboard platform on top",
+      "Place the phone in the centre and activate vibration mode on the STEMM Lab",
+      "Modify the structure to reduce movement",
+      "Upload results and reflections",
+    ],
+
+    safetyNotes: [
+      "Place the phone securely",
+      "Build a stable base",
+      "Keep the phone protected",
+      "Clear the surrounding area",
+      "Handle scissors with care"
+    ],
+    
+    bunnyTip: [
+      "",
+    ]
+  },
+
 };
 
 
-
-  // {
-  //   id: 4,
-  //   title: 'EARTHQUAKE-RESISTANT STRUCTURE',
-  //   image: require('../assets/images/earthquake.png'),
-  //   tags: ['Engineering', 'Earth Science'],
-  //   pointsRequired: 450,
-  //   route: '/activities/earthquake-resistant-structure',
-  // },
+  // 
 
   // {
   //   id: 5,
