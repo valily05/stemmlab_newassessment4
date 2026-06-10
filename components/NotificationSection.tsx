@@ -1,3 +1,4 @@
+import { useTheme } from '@/context/ThemeContext';
 import { StyleSheet, Text, View } from 'react-native';
 import NotificationCard from './NotificationCard';
 
@@ -20,9 +21,18 @@ export default function NotificationSection({
   title,
   notifications,
 }: Props) {
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>{title}</Text>
+      <Text 
+        style={[
+          styles.heading, 
+          { color: theme.activityTitle || '#A970FF' }
+        ]}
+      >
+        {title}
+      </Text>
 
       {notifications.map((item) => (
         <NotificationCard
@@ -40,7 +50,6 @@ const styles = StyleSheet.create({
   },
 
   heading: {
-    color: '#A970FF',
     fontSize: 24,
     fontWeight: '700',
     marginBottom: 16,

@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native';
 
+import { useTheme } from '@/context/ThemeContext';
+
 const { width, height } = Dimensions.get('window');
 
 const wp = (percentage: number) =>
@@ -20,7 +22,9 @@ const hp = (percentage: number) =>
 
 const rf = (size: number) => {
   const scale = width / 390;
-  return Math.round(PixelRatio.roundToNearestPixel(size * scale));
+  return Math.round(
+    PixelRatio.roundToNearestPixel(size * scale)
+  );
 };
 
 interface TeamCardProps {
@@ -36,8 +40,10 @@ export default function TeamCard({
   teamCode,
   totalPoints,
   rank,
-  memberCount
+  memberCount,
 }: TeamCardProps) {
+  const { theme, isDark } = useTheme();
+
   const [flipped, setFlipped] = useState(false);
   const flipAnim = useRef(new Animated.Value(0)).current;
 
@@ -62,186 +68,109 @@ export default function TeamCard({
     outputRange: ['180deg', '360deg'],
   });
 
+  /* ---------- LIGHT / DARK PALETTE ---------- */
+
+  const wrapperColor = isDark ? '#03050C' : '#FFFFFF';
+
+  const glassColors = isDark
+    ? [
+        'rgba(12,15,30,0.30)',
+        'rgba(8,10,22,0.50)',
+        'rgba(4,5,10,0.75)',
+      ]
+    : [
+        'rgba(255,255,255,0.95)',
+        'rgba(248,250,255,0.90)',
+        'rgba(239,244,255,0.82)',
+      ];
+
+  const borderColor = isDark
+    ? 'rgba(255,255,255,0.18)'
+    : 'rgba(148,163,184,0.18)';
+
+  const textPrimary = isDark ? '#FFFFFF' : '#1E293B';
+  const textSecondary = isDark ? '#D1C4E9' : '#64748B';
+
+  const starColor = isDark ? '#D8B4FE' : '#7C3AED';
+
+  const blueGlow = isDark
+    ? ['#1A0066', '#002082', 'transparent']
+    : ['#A5D8FF', '#D9ECFF', 'transparent'];
+
+  const cyanGlow = isDark
+    ? ['#00F5D4', '#4CC9F0', 'transparent']
+    : ['#A7F3FF', '#E7FBFF', 'transparent'];
+
+  const violetGlow = isDark
+    ? ['#7209B7', '#3A0CA3', 'transparent']
+    : ['#DCCBFF', '#F3EDFF', 'transparent'];
+
+  const pinkGlow = isDark
+    ? ['#FF007F', '#FF4797', 'transparent']
+    : ['#FFD6EA', '#FFF2F8', 'transparent'];
+
+  const magentaGlow = isDark
+    ? ['#B5179E', '#9B5DE5', 'transparent']
+    : ['#E7D6FF', '#F7F2FF', 'transparent'];
+
   return (
     <TouchableOpacity activeOpacity={1} onPress={flipCard}>
       <View style={styles.flipContainer}>
         
-        {/* ================= FRONT FACE ================= */}
+        {/* ================= FRONT ================= */}
         <Animated.View
-          style={[
-            styles.cardFace,
-            {
-              transform: [{ perspective: 1000 }, { rotateY: frontInterpolate }],
-            },
-          ]}
+          style={[styles.cardFace, { transform: [{ perspective: 1000 }, { rotateY: frontInterpolate }] }]}
         >
-          {/* Card Frame Wrapper */}
-          <View style={styles.glassWrapper}>
-            
-            {/* 1. BLUE: Deep Royal Backing */}
-            <LinearGradient
-              colors={['#1A0066', '#002082', 'rgba(0,0,0,0)']}
-              start={{ x: 0, y: 1 }}
-              end={{ x: 0.5, y: 0.5 }}
-              style={styles.frontDeepBlueBase}
-            />
+          <View style={[styles.glassWrapper, { backgroundColor: wrapperColor }]}>
+            <LinearGradient colors={blueGlow} start={{ x: 0, y: 1 }} end={{ x: 0.55, y: 0.45 }} style={styles.frontDeepBlueBase} />
+            <LinearGradient colors={cyanGlow} start={{ x: 0.1, y: 0.35 }} end={{ x: 0.5, y: 0.4 }} locations={[0, 0.4, 1]} style={styles.frontCyanGlow} />
+            <LinearGradient colors={violetGlow} start={{ x: 0.85, y: 0.35 }} end={{ x: 0.3, y: 0.25 }} style={styles.frontVioletGlow} />
+            <LinearGradient colors={pinkGlow} start={{ x: 1, y: 1 }} end={{ x: 0.45, y: 0.15 }} locations={[0, 0.35, 1]} style={styles.frontPinkGlow} />
+            <LinearGradient colors={magentaGlow} start={{ x: 1, y: 0.65 }} end={{ x: 0.2, y: 0.2 }} style={styles.frontMagentaGlow} />
 
-            {/* 2. CYAN/BLUE: Intense Neon Cyan Flare */}
-            <LinearGradient
-              colors={['#00F5D4', '#4CC9F0', 'rgba(0,0,0,0)']}
-              locations={[0, 0.4, 1]}
-              start={{ x: 0.1, y: 0.9 }}
-              end={{ x: 0.5, y: 0.4 }}
-              style={styles.frontCyanGlow}
-            />
-
-            {/* 3. PURPLE: Electric Violet Transition Ring */}
-            <LinearGradient
-              colors={['#7209B7', '#3A0CA3', 'rgba(0,0,0,0)']}
-              start={{ x: 0.8, y: 0.9 }}
-              end={{ x: 0.3, y: 0.3 }}
-              style={styles.frontVioletGlow}
-            />
-
-            {/* 4. PINK: Ultra-Saturated Hot Pink Accent Bloom */}
-            <LinearGradient
-              colors={['#FF007F', '#FF4797', 'rgba(0,0,0,0)']}
-              locations={[0, 0.35, 1]}
-              start={{ x: 0.9, y: 1 }}
-              end={{ x: 0.4, y: 0.1 }}
-              style={styles.frontPinkGlow}
-            />
-
-            {/* 5. MAGENTA: Vivid Magenta Fusion Layer */}
-            <LinearGradient
-              colors={['#B5179E', '#9B5DE5', 'rgba(0,0,0,0)']}
-              start={{ x: 1, y: 0.7 }}
-              end={{ x: 0.2, y: 0.2 }}
-              style={styles.frontMagentaGlow}
-            />
-
-            {/* 6. BASE GLASS: The Semi-Transparent Smoky Matte Base */}
-            <LinearGradient
-              colors={[
-                'rgba(12, 15, 30, 0.30)',
-                'rgba(8, 10, 22, 0.50)',
-                'rgba(4, 5, 10, 0.75)'
-              ]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.container}
-            >
-              {/* Front Content Layout */}
+            <LinearGradient colors={glassColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.container, { borderColor }]}>
               <View style={styles.frontContentContainer}>
-                <Text style={styles.label}>TEAM</Text>
-                
-                <Text style={styles.teamName} numberOfLines={1}>
-                  {teamName}
-                </Text>
-
+                <Text style={[styles.label, { color: textSecondary }]}>TEAM</Text>
+                <Text style={[styles.teamName, { color: textPrimary }]} numberOfLines={1}>{teamName}</Text>
                 <View style={styles.pointsRow}>
-                  <Text style={styles.starIcon}>✦</Text>
-                  <Text style={styles.pointsValue}>
-                    {`${(totalPoints || 0).toLocaleString()} Points`}
-                  </Text>
+                  <Text style={[styles.starIcon, { color: starColor }]}>✦</Text>
+                  <Text style={[styles.pointsValue, { color: textSecondary }]}>{(totalPoints ?? 0).toLocaleString()} Points</Text>
                 </View>
               </View>
-
-              <Text style={styles.flipHint}>Tap to view team info</Text>
+              <Text style={[styles.flipHint, { color: textSecondary }]}>Tap to view team info</Text>
             </LinearGradient>
           </View>
         </Animated.View>
 
-        {/* ================= BACK FACE ================= */}
+        {/* ================= BACK ================= */}
         <Animated.View
-          style={[
-            styles.cardBack,
-            {
-              transform: [{ perspective: 1000 }, { rotateY: backInterpolate }],
-            },
-          ]}
+          style={[styles.cardBack, { transform: [{ perspective: 1000 }, { rotateY: backInterpolate }] }]}
         >
-          {/* Card Frame Wrapper */}
-          <View style={styles.glassWrapper}>
-            
-            {/* INVERTED MESH CHANNELS FOR THE BACK SIDE */}
-            <LinearGradient
-              colors={['#1A0066', '#002082', 'rgba(0,0,0,0)']}
-              start={{ x: 1, y: 1 }}
-              end={{ x: 0.5, y: 0.5 }}
-              style={styles.backDeepBlueBase}
-            />
-            <LinearGradient
-              colors={['#00F5D4', '#4CC9F0', 'rgba(0,0,0,0)']}
-              locations={[0, 0.4, 1]}
-              start={{ x: 0.9, y: 0.9 }}
-              end={{ x: 0.5, y: 0.4 }}
-              style={styles.backCyanGlow}
-            />
-            <LinearGradient
-              colors={['#7209B7', '#3A0CA3', 'rgba(0,0,0,0)']}
-              start={{ x: 0.2, y: 0.9 }}
-              end={{ x: 0.7, y: 0.3 }}
-              style={styles.backVioletGlow}
-            />
-            <LinearGradient
-              colors={['#FF007F', '#FF4797', 'rgba(0,0,0,0)']}
-              locations={[0, 0.35, 1]}
-              start={{ x: 0.1, y: 1 }}
-              end={{ x: 0.6, y: 0.1 }}
-              style={styles.backPinkGlow}
-            />
-            <LinearGradient
-              colors={['#B5179E', '#9B5DE5', 'rgba(0,0,0,0)']}
-              start={{ x: 0, y: 0.7 }}
-              end={{ x: 0.8, y: 0.2 }}
-              style={styles.backMagentaGlow}
-            />
+          <View style={[styles.glassWrapper, { backgroundColor: wrapperColor }]}>
+            <LinearGradient colors={blueGlow} start={{ x: 1, y: 1 }} end={{ x: 0, y: 0 }} style={styles.backDeepBlueBase} />
+            <LinearGradient colors={cyanGlow} start={{ x: 0.9, y: 0.9 }} end={{ x: 0.1, y: 0.1 }} locations={[0, 0.4, 1]} style={styles.backCyanGlow} />
+            <LinearGradient colors={violetGlow} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.backVioletGlow} />
+            <LinearGradient colors={pinkGlow} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} locations={[0, 0.35, 1]} style={styles.backPinkGlow} />
+            <LinearGradient colors={magentaGlow} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.backMagentaGlow} />
 
-            {/* BASE GLASS: Same Smoked Matte overlay texture */}
-            <LinearGradient
-              colors={[
-                'rgba(12, 15, 30, 0.30)',
-                'rgba(8, 10, 22, 0.50)',
-                'rgba(4, 5, 10, 0.75)'
-              ]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.container}
-            >
+            <LinearGradient colors={glassColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.container, { borderColor }]}>
               <View style={styles.backContentContainer}>
-                <Text style={styles.backTitle}>TEAM INFO</Text>
-
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Team Name</Text>
-                  <Text style={styles.infoValue} numberOfLines={1}>
-                    {teamName || 'STEMM LAB'}
-                  </Text>
+                <Text style={[styles.backTitle, { color: textPrimary }]}>TEAM INFO</Text>
+                
+                <View style={[styles.infoRow, { borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)' }]}>
+                  <Text style={[styles.infoLabel, { color: textSecondary }]}>Team Code</Text>
+                  <Text style={[styles.infoValue, { color: textPrimary }]}>{teamCode}</Text>
                 </View>
-
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Members</Text>
-                  <Text style={styles.infoValue}>
-                    {`${memberCount} / 4`}
-                  </Text>
+                <View style={[styles.infoRow, { borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)' }]}>
+                  <Text style={[styles.infoLabel, { color: textSecondary }]}>Members</Text>
+                  <Text style={[styles.infoValue, { color: textPrimary }]}>{memberCount} / 4</Text>
                 </View>
-
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Total Points</Text>
-                  <Text style={styles.infoValue}>
-                    {(totalPoints ?? 12450).toLocaleString()}
-                  </Text>
-                </View>
-
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Current Rank</Text>
-                  <Text style={styles.infoValue}>
-                    {`#${rank ?? 1}`}
-                  </Text>
+                <View style={[styles.infoRow, { borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)' }]}>
+                  <Text style={[styles.infoLabel, { color: textSecondary }]}>Rank</Text>
+                  <Text style={[styles.infoValue, { color: textPrimary }]}>#{rank}</Text>
                 </View>
               </View>
-
-              <Text style={styles.backHint}>Tap to flip back</Text>
+              <Text style={[styles.backHint, { color: textSecondary }]}>Tap to flip back</Text>
             </LinearGradient>
           </View>
         </Animated.View>
@@ -278,10 +207,8 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: rf(26),
     overflow: 'hidden',
-    backgroundColor: '#03050c',
   },
   starIcon: {
-    color: '#D8B4FE',
     fontSize: rf(18),
     marginRight: wp(2),
     fontFamily: 'Pixel',
@@ -291,7 +218,6 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: wp(6.5),
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.18)',
     borderRadius: rf(26),
     justifyContent: 'space-between',
   },
@@ -302,30 +228,25 @@ const styles = StyleSheet.create({
     marginTop: hp(1.5),
   },
   label: {
-    color: '#D1C4E9',
     fontSize: rf(20),
     fontFamily: 'PixelOperator',
     letterSpacing: 0.5,
     marginBottom: hp(0.9),
   },
   teamName: {
-    color: '#FFF',
     fontSize: rf(24),
     fontFamily: 'Pixel',
     textTransform: 'uppercase',
     marginBottom: hp(1),
-    textShadowColor: 'rgba(255, 255, 255, 0.1)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
   pointsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-        marginTop:rf(7)
-
+    marginTop: rf(7),
   },
   pointsValue: {
-    color: '#D1C4E9',
     fontSize: rf(15.5),
     fontFamily: 'PixelOperator',
     fontWeight: '500',
@@ -341,25 +262,21 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: rf(3.5),
     height: '100%',
-    backgroundColor: '#F5E6FF',
     borderRadius: rf(1),
   },
   sparkleHorizontal: {
     position: 'absolute',
     width: '100%',
     height: rf(3.5),
-    backgroundColor: '#F5E6FF',
     borderRadius: rf(1),
   },
   sparkleCenter: {
     position: 'absolute',
     width: rf(5.5),
     height: rf(5.5),
-    backgroundColor: '#FFF',
     transform: [{ rotate: '45deg' }],
   },
   flipHint: {
-    color: '#D1C4E9',
     fontSize: rf(13),
     fontFamily: 'PixelOperator',
   },
@@ -460,7 +377,6 @@ const styles = StyleSheet.create({
     marginTop: hp(0.5),
   },
   backTitle: {
-    color: '#FFF',
     fontSize: rf(20),
     fontFamily: 'Pixel',
     textTransform: 'uppercase',
@@ -474,16 +390,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: hp(0.8),
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
   },
   infoLabel: {
-    color: '#B3A5D1', 
     fontSize: rf(14),
     fontFamily: 'PixelOperator',
     fontWeight: '500',
   },
   infoValue: {
-    color: '#FFFFFF', 
     fontSize: rf(14),
     fontFamily: 'PixelBold',
     textAlign: 'right',
@@ -491,7 +404,6 @@ const styles = StyleSheet.create({
   },
   backHint: {
     alignSelf: 'center',
-    color: '#D1C4E9',
     fontSize: rf(13),
     fontFamily: 'PixelOperator',
     marginTop: hp(1.5),

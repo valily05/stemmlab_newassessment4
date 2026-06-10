@@ -87,6 +87,7 @@ export default function Activity1Feedback() {
 
   //console.log('activityName:', activityName);
   console.log('pointsEarned:', pointsEarned);
+console.log("Updating Firebase...");
 
   useEffect(() => {
     Animated.loop(
