@@ -140,8 +140,8 @@ export const activities = {
       {
         title: "TEST LOCATION ACCURACY",
         instruction: "Walk to a different location and confirm the app updates your position correctly.",
-        bunnyTip: "Try moving to a nearby area and check\nif your location changes!",
-      },
+  bunnyTip:
+    "Your location helps create a map of loud and quiet places!",      },
     ],
 
     instructions: [

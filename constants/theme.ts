@@ -87,6 +87,34 @@ bannerDescription: "#E9D5FF",
 bannerShadow: "#8B5CF6",
 
 bannerBackground: require("../assets/images/image 112.png"),
+activitiesBackground: "#07021B",
+
+activitiesHeroImage: require("../assets/images/spaceships.png"),
+
+activitiesTitleGradient: [
+  "#A061F5",
+  "#8B5CF6",
+  "#5D398F",
+] as GradientColors,
+
+activitiesTitleShadow: "#C66CFF",
+
+activitiesStar: "#EC588C",
+activitiesStarGlow: "#FF4FC3",
+
+activitiesSubtitle: "#FFFFFF",
+
+activitiesBottomGradient: [
+  "rgba(4,6,27,0)",
+  "rgba(4,6,27,0.35)",
+  "rgba(4,6,27,0.75)",
+  "rgba(4,6,27,0.96)",
+  "#04061B",
+] as GradientColors,
+
+activitiesSidebarBackground: "#07021B",
+
+activitiesSidebarBorder: "rgba(255,255,255,0.10)",
 };export const LightTheme = {
   background: "#F8F6FF",
 
@@ -165,6 +193,34 @@ bannerDescription: "#5B5B7A",
 bannerShadow: "#C084FC",
 
 bannerBackground: require("../assets/images/image 112 Light.png"),
+activitiesBackground: "#F8F6FF",
+
+activitiesHeroImage: require("../assets/images/spaceshipsLight.png"),
+
+activitiesTitleGradient: [
+  "#8B5CF6",
+  "#A855F7",
+  "#EC4899",
+] as GradientColors,
+
+activitiesTitleShadow: "#C084FC",
+
+activitiesStar: "#EC4899",
+activitiesStarGlow: "#F472B6",
+
+activitiesSubtitle: "#5A5575",
+
+activitiesBottomGradient: [
+  "rgba(248,246,255,0)",
+  "rgba(248,246,255,0.45)",
+  "rgba(248,246,255,0.80)",
+  "rgba(248,246,255,0.96)",
+  "#F8F6FF",
+] as GradientColors,
+
+activitiesSidebarBackground: "#FFFFFF",
+
+activitiesSidebarBorder: "#E9DFFB",
 };
 
 export const Fonts = Platform.select({

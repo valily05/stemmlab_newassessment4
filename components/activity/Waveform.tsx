@@ -1,19 +1,19 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useMemo } from "react";
 import {
-    Animated,
-    Easing,
-    StyleSheet,
-    View,
+  Animated,
+  Easing,
+  StyleSheet,
+  View,
 } from "react-native";
-
 type Props = {
   value: number;
   testing: boolean;
 };
 
-const BAR_COUNT = 29;
-const MIN_HEIGHT = 8;
-const MAX_HEIGHT = 82;
+const BAR_COUNT = 19;
+const MIN_HEIGHT = 12;
+const MAX_HEIGHT = 95;
 
 export default function Waveform({
   value,
@@ -76,12 +76,12 @@ export default function Waveform({
         );
 
       // smooth curve
-      const curve =
-        Math.pow(falloff, 0.65);
+const curve =
+Math.pow(falloff,1.8);
 
       // tiny random wobble
-      const wobble =
-        (Math.random() - 0.5) * 4;
+const wobble =
+(Math.random()-0.5)*2;
 
       const target =
 
@@ -104,7 +104,7 @@ export default function Waveform({
           target
         ),
 
-        duration: 60,
+        duration: 120,
 
         easing: Easing.linear,
 
@@ -121,29 +121,35 @@ export default function Waveform({
   ]);  return (
     <View style={styles.container}>
 
-      {bars.map((bar, index) => {
+{bars.map((bar, index) => {
+  const center = (BAR_COUNT - 1) / 2;
+  const distance = Math.abs(index - center);
 
-        const center = (BAR_COUNT - 1) / 2;
-        const distance = Math.abs(index - center);
+  const opacity =
+    0.4 + (1 - distance / center) * 0.6;
 
-        const opacity =
-          0.45 +
-          (1 - distance / center) * 0.55;
-
-        return (
-          <Animated.View
-            key={index}
-            style={[
-              styles.bar,
-              {
-                height: bar,
-                opacity,
-              },
-            ]}
-          />
-        );
-
-      })}
+  return (
+    <Animated.View
+      key={index}
+      style={{
+        height: bar,
+        opacity,
+        marginHorizontal: 2,
+      }}
+    >
+      <LinearGradient
+colors={
+  index % 2 === 0
+    ? ["#FF6BCB", "#A855F7"]
+    : ["#FF82D6", "#8B5CF6"]
+}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.bar}
+      />
+    </Animated.View>
+  );
+})}
 
     </View>
   );
@@ -151,43 +157,20 @@ export default function Waveform({
 
 const styles = StyleSheet.create({
 
-  container: {
+container: {
+  height: 110,
 
-    height: 100,
+  flexDirection: "row",
 
-    flexDirection: "row",
+  alignItems: "center",
 
-    justifyContent: "space-between",
-
-    alignItems: "flex-end",
-
-    marginVertical: 18,
-
-    paddingHorizontal: 4,
-
-  },
-
-  bar: {
-
-    width: 5,
-
-    borderRadius: 999,
-
-    backgroundColor: "#A67DFF",
-
-    shadowColor: "#9C6CFF",
-
-    shadowOpacity: 0.7,
-
-    shadowRadius: 8,
-
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-
-    elevation: 6,
-
-  },
+  justifyContent: "center",
+},
+bar: {
+  width: 5,
+  height: "100%",
+  borderRadius: 999,
+  marginHorizontal:2,
+},
 
 });

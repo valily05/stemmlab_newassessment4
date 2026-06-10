@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import MaskedView from '@react-native-masked-view/masked-view';
 
+import Sidebar from '@/components/SideBar';
+import { useTheme } from "@/context/ThemeContext";
 import { auth } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -14,8 +16,6 @@ import {
   Text,
   View
 } from 'react-native';
-
-import Sidebar from '@/components/SideBar';
 import ActivitiesResults from '../../components/ActivitiesResults';
 import BottomNavbar from '../../components/BottomNavBar';
 import CategoryTabs from '../../components/CategoryTabs';
@@ -46,7 +46,7 @@ const rf = (size: number) => {
 };
 
 export default function Activities() {
-
+const { theme } = useTheme();
   const [search, setSearch] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] =
@@ -54,7 +54,14 @@ export default function Activities() {
 
   return (
 
-    <View style={styles.container}>
+<View
+  style={[
+    styles.container,
+    {
+      backgroundColor: theme.activitiesBackground,
+    },
+  ]}
+>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -65,7 +72,7 @@ export default function Activities() {
 
         {/* HERO SECTION */}
         <ImageBackground
-          source={require('../../assets/images/spaceships.png')}
+source={theme.activitiesHeroImage}
           style={styles.topSection}
           resizeMode="cover"
         >
@@ -88,8 +95,15 @@ export default function Activities() {
                 {/* GRADIENT TITLE */}
                 <MaskedView
                   maskElement={
-                    <Text style={styles.title}>
-                      ACTIVITIES
+<Text
+  style={[
+    styles.title,
+    {
+      textShadowColor:
+        theme.activitiesTitleShadow,
+    },
+  ]}
+>                      ACTIVITIES
                     </Text>
                   }
                 >
@@ -104,12 +118,16 @@ export default function Activities() {
                     end={{ x: 1, y: 0 }}
                   >
 
-                    <Text
-                      style={[
-                        styles.title,
-                        styles.hiddenText,
-                      ]}
-                    >
+                 <Text
+  style={[
+    styles.title,
+    styles.hiddenText,
+    {
+      textShadowColor:
+        theme.activitiesTitleShadow,
+    },
+  ]}
+>
                       ACTIVITIES
                     </Text>
 
@@ -118,14 +136,30 @@ export default function Activities() {
                 </MaskedView>
 
                 {/* STAR */}
-                <Text style={styles.star}>
+              <Text
+  style={[
+    styles.star,
+    {
+      color: theme.activitiesStar,
+      textShadowColor:
+        theme.activitiesStarGlow,
+    },
+  ]}
+>
                   ✦
                 </Text>
 
               </View>
 
               {/* SUBTITLE */}
-              <Text style={styles.subtitle}>
+          <Text
+  style={[
+    styles.subtitle,
+    {
+      color: theme.activitiesSubtitle,
+    },
+  ]}
+>
                 Explore fun challenges , missions,
                 {'\n'}
                 and hands on activities.
@@ -137,13 +171,7 @@ export default function Activities() {
 
           {/* BOTTOM GRADIENT */}
           <LinearGradient
-            colors={[
-              'rgba(4,6,27,0)',
-              'rgba(4,6,27,0.35)',
-              'rgba(4,6,27,0.75)',
-              'rgba(4,6,27,0.96)',
-              '#04061B',
-            ]}
+        colors={theme.activitiesBottomGradient}
             locations={[0, 0.35, 0.6, 0.82, 1]}
             style={styles.gradient}
           />
@@ -181,7 +209,18 @@ export default function Activities() {
  {isSidebarOpen && (
         <View style={styles.sidebarOverlay}>
           <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsSidebarOpen(false)} />
-          <View style={styles.sidebarWrapper}>
+      <View
+  style={[
+    styles.sidebarWrapper,
+    {
+      backgroundColor:
+        theme.activitiesSidebarBackground,
+
+      borderRightColor:
+        theme.activitiesSidebarBorder,
+    },
+  ]}
+>
             <Sidebar onClose={() => setIsSidebarOpen(false)} />
           </View>
         </View>
@@ -199,7 +238,6 @@ const styles = StyleSheet.create({
   /* SCREEN */
   container: {
     flex: 1,
-    backgroundColor: '#07021B',
   },
 
   /* HERO SECTION */
@@ -210,8 +248,8 @@ const styles = StyleSheet.create({
 
     overflow: 'hidden',
   },
-  sidebarOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, backgroundColor: 'rgba(0,0,0,0.6)' },
-  sidebarWrapper: { width: wp(60), height: '100%', backgroundColor: '#07021B', borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.1)' },
+  sidebarOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999,  },
+  sidebarWrapper: { width: wp(60), height: '100%', backgroundColor: '#07021B', borderRightWidth: 1,},
   /* OVERLAY */
   overlay: {
     paddingHorizontal: wp(4),
@@ -239,7 +277,6 @@ const styles = StyleSheet.create({
 
     fontFamily: 'Pixel',
 
-    textShadowColor: '#C66CFF',
 
     textShadowRadius: wp(2.5),
   },
@@ -255,9 +292,6 @@ star: {
 
   fontSize: rf(24),
 
-  color: '#EC588C',
-
-  textShadowColor: '#FF4FC3',
 
   textShadowOffset: {
     width: 0,
@@ -273,7 +307,7 @@ star: {
   subtitle: {
     marginTop: hp(1.2),
 
-    color: '#FFFFFF',
+  
 
     fontSize: rf(16),
 

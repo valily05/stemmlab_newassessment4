@@ -58,12 +58,12 @@ interface Step {
 
 interface Props {
   steps: Step[];
-  bottomComponent?: ReactNode;
+  renderBottomComponent?: (index: number) => ReactNode;
 }
 
 export default function SetupGuideCarousel({
   steps,
-  bottomComponent,
+  renderBottomComponent,
 }: Props) {
 
   const [activeIndex, setActiveIndex] =
@@ -223,22 +223,23 @@ export default function SetupGuideCarousel({
 
           }}
 
-          renderItem={({ item }) => {
-
+renderItem={({ item, index: stepIndex }) => {
             return (
 
-              <View style={styles.card}>
+        <View style={styles.card}>
 
-                <Text style={styles.cardTitle}>
-                  {item.title}
-                </Text>
 
-                <Image
-                  source={item.image}
-                  style={styles.image}
-                />
+  <Text style={styles.cardTitle}>
+    {item.title}
+  </Text>
+{renderBottomComponent?.(stepIndex)}
 
-                {/* INSTRUCTION */}
+{item.image && (
+  <Image
+    source={item.image}
+    style={styles.image}
+  />
+)}
 {/* INSTRUCTION */}
 <View style={styles.instructionRow}>
 
@@ -252,7 +253,6 @@ export default function SetupGuideCarousel({
 
 </View>
 
-{bottomComponent}
 
 {/* TIP */}
                 {item.bunnyTip && (
