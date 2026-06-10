@@ -18,10 +18,10 @@ export interface SessionInsight {
 
 export interface Session {
     teamID: string;
-    activityID: string;
-    experimentTime: Timestamp;
-    totalIterations: number;
-    pointsEarned: number;
+    activityID: number;//int
+    experimentTime: number;//int in seconds
+    totalIterations: number;//int
+    pointsEarned: number;//int
     completedAt: Timestamp;
     
     insights: SessionInsight;
@@ -30,10 +30,10 @@ export interface Session {
 //Iteration
 //Stored in: sessions/{sessionId}/iterations
 export interface Iteration {
-    iterationNo: number;
+    iterationNo: number;//int
     videoURL?: string;
 
-    [key: string]: any;
+    data: Record<string, any>;
 }
 
 export interface ActivityFeedback {
