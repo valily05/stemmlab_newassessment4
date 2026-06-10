@@ -26,8 +26,10 @@ const rf = (size: number) => {
 };
 
 export default function SoundMeterTest({ onCompleted }: Props) {
-  const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-const recorderState =
+const recorder = useAudioRecorder({
+  ...RecordingPresets.HIGH_QUALITY,
+  isMeteringEnabled: true,
+});const recorderState =
     useAudioRecorderState(
         recorder,
         50
@@ -43,8 +45,9 @@ const initialDb = useRef<number | null>(null);
 const hasFinished = useRef(false);
   // Handle metering updates
   useEffect(() => {
-  console.log("Recorder State:", recorderState);
-
+console.log(
+  JSON.stringify(recorderState, null, 2)
+);
   if (recorderState.metering == null) {
     console.log("Metering is NULL");
     return;
@@ -130,8 +133,10 @@ async function startTesting() {
   setIsTesting(true);
 
   try {
- await recorder.prepareToRecordAsync();
-await recorder.record();
+await recorder.prepareToRecordAsync({
+  ...RecordingPresets.HIGH_QUALITY,
+  isMeteringEnabled: true,
+});await recorder.record();
   } catch (e) {
     console.log(e);
   }
