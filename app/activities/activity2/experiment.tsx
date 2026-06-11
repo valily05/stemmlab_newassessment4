@@ -174,7 +174,7 @@ const detectLocation = async () => {
             height: hp(20),
             right: -wp(9),
           }}
-          activityNumber={2}
+          activityID={2}
 description={
   currentStage === 0 ? (
     <Text style={styles.heroDescription}>

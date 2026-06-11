@@ -100,7 +100,7 @@ export default function Activity1Prediction() {
                 </TouchableOpacity>
 
 <ExperimentHero
-  activityNumber={2}
+  activityID={2}
     title={activity.title}
     image={require('@/assets/images/sound-bunny.png')}
     imageStyle={{

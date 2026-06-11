@@ -644,7 +644,7 @@ export default function Activity1Experiment() {
         </TouchableOpacity>
 
         <ExperimentHero
-          activityNumber={1}
+          activityID={1}
           title={activity.title}
           description={
             currentStage === 0 ? (
