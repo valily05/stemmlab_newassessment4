@@ -1,8 +1,3 @@
-import {
-  useCameraPermissions,
-} from 'expo-camera';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -17,6 +12,11 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import {
+  useCameraPermissions,
+} from 'expo-camera';
 
 import { Timestamp } from 'firebase/firestore';
 
@@ -180,31 +180,6 @@ export default function Activity1Experiment() {
 
   const [bounced, setBounced] =
     useState<boolean | null>(null);
-
-  useEffect(() => {
-    const checkTeam = async () => {
-      const uid = auth.currentUser?.uid;
-
-      if(!uid) return;
-
-      const profile = await getUserProfile(uid);
-
-      if(!profile?.teamID) {
-        Alert.alert(
-          'Join a Team First',
-          'You must join a team before starting activities.',
-          [
-            {
-              text: 'Go to Teams',
-              onPress: () => router.replace('/team')
-            },
-          ]
-        );
-      }
-    };
-
-    checkTeam();
-  }, []);
 
   useEffect(() => {
     let interval: ReturnType<

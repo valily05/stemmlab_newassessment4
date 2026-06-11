@@ -1,7 +1,6 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
+  Alert,
   Dimensions,
   ImageBackground,
   PixelRatio,
@@ -9,6 +8,8 @@ import {
   StyleSheet,
   View
 } from 'react-native';
+import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import ActivityHeader from '@/components/activity/ActivityHeader';
 import ActivityHero from '@/components/activity/ActivityHero';
@@ -23,6 +24,9 @@ import StepInstructions from '@/components/activity/StepInstructions';
 import PixelDivider from '@/components/PixelDivider';
 
 import { activities } from '@/data/activities';
+
+import { auth } from '@/services/firebase/config';
+import { getUserProfile } from '@/services/firebase/userService';
 
 const activity = activities.activity1;
 
@@ -70,6 +74,31 @@ export default function Activity1Overview() {
 
   const canStart =
     progress === 100;
+
+  useEffect(() => {
+    const checkTeam = async () => {
+      const uid = auth.currentUser?.uid;
+
+      if(!uid) return;
+
+      const profile = await getUserProfile(uid);
+
+      if(!profile?.teamID) {
+        Alert.alert(
+          'Join a Team First',
+          'You must join a team before starting activities.',
+          [
+            {
+              text: 'Go to Teams',
+              onPress: () => router.replace('/team')
+            },
+          ]
+        );
+      }
+    };
+
+    checkTeam();
+  }, []);
 
   return (
     <View style={styles.container}>
