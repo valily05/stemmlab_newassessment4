@@ -1,5 +1,6 @@
 // components/activity/RecordingExperimentCard.tsx
 
+import { saveIteration } from "@/services/firebase/iterationService";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
     RecordingPresets,
@@ -8,6 +9,7 @@ import {
     useAudioRecorder,
     useAudioRecorderState,
 } from "expo-audio";
+import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import {
     Dimensions,
@@ -41,19 +43,24 @@ interface Props {
   stage: string;
   iteration: number;
   onNext: () => void;
-}
 
+  isLastIteration: boolean;
+  onFinishLocation: () => void;
+}
 export default function RecordingExperimentCard({
   sessionID,
   locationID,
   stage,
   iteration,
   onNext,
+  isLastIteration,
+  onFinishLocation,
 }: Props) {
-const recorder = useAudioRecorder(
-  RecordingPresets.HIGH_QUALITY
-);
-const recorderState = useAudioRecorderState(recorder, 100);
+  const recorder = useAudioRecorder(
+    RecordingPresets.HIGH_QUALITY
+  );
+
+  const recorderState = useAudioRecorderState(recorder, 100);
   
 
   const [recording, setRecording] =
@@ -73,22 +80,25 @@ const recorderState = useAudioRecorderState(recorder, 100);
 useEffect(() => {
   if (!recording) return;
 
-  if (recorderState.metering == null) return;
 
-  const db = Math.max(
-    0,
-    recorderState.metering + 100
-  );
-
-  setSoundLevel(db);
-
+  // Always update timer
   setRecordingTime(
-    Math.floor(recorderState.durationMillis / 1000)
+    Math.floor((recorderState.durationMillis ?? 0) / 1000)
   );
+
+  // Update dB only if metering exists
+  if (recorderState.metering != null) {
+    const db = Math.max(
+      0,
+      recorderState.metering + 100
+    );
+
+    setSoundLevel(db);
+  }
 }, [
-  recorderState.metering,
-  recorderState.durationMillis,
   recording,
+  recorderState.durationMillis,
+  recorderState.metering,
 ]);
 
 async function startRecording() {
@@ -119,28 +129,31 @@ async function stopRecording() {
 
   setRecordedUri(recorder.uri ?? null);
 }
-  async function saveIteration() {
-
+async function handleSaveIteration() {
     setSaving(true);
 
     try {
+await saveIteration(
+  sessionID,
+  {
+    iterationNo: iteration,
 
-      /**
-       * TODO
-       *
-       * saveIteration(sessionID,{
-       * locationID,
-       * iterationNo: iteration,
-       * action: stage,
-       * duration: recordingTime,
-       * averageDecibel: ...
-       * maxDecibel: ...
-       * audioURL: ...
-       * createdAt: Timestamp.now()
-       * })
-       */
-
-      onNext();
+    data: {
+      action: stage,
+      duration: recordingTime,
+      averageDecibel: soundLevel,
+      maxDecibel: soundLevel,
+      audioURL: recordedUri,
+      createdAt: Timestamp.now(),
+    },
+  },
+  locationID
+);
+if (isLastIteration) {
+    onFinishLocation();
+} else {
+    onNext();
+}
 
     } catch (e) {
 
@@ -312,7 +325,7 @@ recording
 
             style={styles.saveButton}
 
-            onPress={saveIteration}
+onPress={handleSaveIteration}
 
             disabled={saving}
 

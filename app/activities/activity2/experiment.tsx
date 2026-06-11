@@ -17,6 +17,7 @@ import ExperimentHero from '@/components/activity/ExperimentHero';
 import ExperimentStats from '@/components/activity/ExperimentStats';
 import ExperimentTipCard from '@/components/activity/ExperimentTipCard';
 import InfoModal from '@/components/activity/InfoModal';
+import LocationCompleteModal from '@/components/activity/LocationCompleteModal';
 import LocationHowItWorks from '@/components/activity/LocationHowItWorks';
 import RecordingExperimentCard from '@/components/activity/RecordingExperimentCard';
 import SoundExperimentCard from '@/components/activity/SoundExperimentCard';
@@ -60,13 +61,15 @@ const stages = [
 ];
 
 export default function Activity2Experiment() {
+  const [locationNumber, setLocationNumber] = useState(1);
   const [currentStage, setCurrentStage] = useState(0);
   const [sessionID, setSessionID] = useState('');
 const [locationID, setLocationID] = useState('');
   const [location, setLocation] =
   useState<Location.LocationObject | null>(null);
 const [locationName, setLocationName] = useState('');
-
+  const [showLocationComplete, setShowLocationComplete] =
+    useState(false);
 const [loadingLocation, setLoadingLocation] =
   useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -204,59 +207,65 @@ description={
     locationName={locationName}
     setLocationName={setLocationName}
     onDetectLocation={detectLocation}
-    onSaveLocation={async () => {
-      if (!locationName.trim()) {
-        Alert.alert('Please enter a location name.');
-        return;
+onSaveLocation={async () => {
+  if (!locationName.trim()) {
+    Alert.alert("Please enter a location name.");
+    return;
+  }
+
+  try {
+    let currentSessionID = sessionID;
+
+    // FIRST LOCATION ONLY
+    if (!currentSessionID) {
+      const uid = auth.currentUser?.uid;
+
+      if (!uid) {
+        throw new Error("User not logged in");
       }
 
-      try {
-        const uid = auth.currentUser?.uid;
+      const profile = await getUserProfile(uid);
 
-        if (!uid) {
-          throw new Error('User not logged in');
-        }
+      if (!profile?.teamID) {
+        throw new Error("No team found");
+      }
 
-        const profile = await getUserProfile(uid);
+      currentSessionID = await createSession({
+        activityID: 2,
+        teamID: profile.teamID,
+        experimentTime: 0,
+        totalIterations: 0,
+        pointsEarned: 0,
+        completedAt: Timestamp.now(),
+        insights: {},
+      });
 
-        if (!profile?.teamID) {
-          throw new Error('No team found');
-        }
+      setSessionID(currentSessionID);
+    }
 
-        const newSessionID = await createSession({
-          activityID: 2,
-          teamID: profile.teamID,
-          experimentTime: 0,
-          totalIterations: 0,
-          pointsEarned: 0,
-          completedAt: Timestamp.now(),
-          insights: {},
-        });
+    // EVERY LOCATION (including first one)
+    const newLocationID = await createLocation(
+      currentSessionID,
+      {
+        locationNo: locationNumber,
+        name: locationName,
+        latitude: location!.coords.latitude,
+        longitude: location!.coords.longitude,
+      }
+    );
+setLocationID(newLocationID);
 
-        setSessionID(newSessionID);
+setCurrentStage(1);
 
-        const newLocationID = await createLocation(
-          newSessionID,
-          {
-            locationNo: 1,
-            name: locationName,
-            latitude: location!.coords.latitude,
-            longitude: location!.coords.longitude,
-          }
-        );
-
-        setLocationID(newLocationID);
-
-        setCurrentStage(1);
-        setHasStarted(false);
 setLocation(null);
-setLocationName('');
 
-      } catch (e) {
-        console.log(e);
-        Alert.alert('Failed to save location.');
-      }
-    }}
+setLocationName("");
+
+  } catch (e) {
+    console.log(e);
+    Alert.alert("Failed to save location.");
+  }
+}}
     onInputFocus={() => {
       scrollRef.current?.scrollTo({
         y: hp(55),
@@ -265,20 +274,27 @@ setLocationName('');
     }}
   />
 ) : (
+
+
 <RecordingExperimentCard
   key={currentStage}
-      sessionID={sessionID}
-    locationID={locationID}
-    stage={stages[currentStage]}
-    iteration={currentStage}
-    onNext={() => {
-      if (currentStage < stages.length - 1) {
-        setCurrentStage(prev => prev + 1);
-      } else {
-        Alert.alert('Activity Complete!');
-      }
-    }}
-  />
+  sessionID={sessionID}
+  locationID={locationID}
+  stage={stages[currentStage]}
+  iteration={currentStage}
+
+  onNext={() => {
+    setCurrentStage(prev => prev + 1);
+  }}
+
+  isLastIteration={
+    currentStage === stages.length - 1
+  }
+
+  onFinishLocation={() =>
+    setShowLocationComplete(true)
+  }
+/>
 )}
 
 {currentStage === 0 && !hasStarted && (
@@ -333,6 +349,31 @@ instructions={
           setShowInfo(false)
         }
       />
+      <LocationCompleteModal
+  visible={showLocationComplete}
+onAddAnother={() => {
+
+    setShowLocationComplete(false);
+
+    setLocationNumber(prev => prev + 1);
+
+    setCurrentStage(0);
+
+    setLocation(null);
+
+    setLocationName("");
+
+    setLocationID("");
+
+ 
+}}
+
+  onFinish={() => {
+    setShowLocationComplete(false);
+
+    router.push("/activities/activity2/results");
+  }}
+/>
     </LinearGradient>
   );
 }
