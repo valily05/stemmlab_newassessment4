@@ -54,7 +54,7 @@ const rf = (size: number) => {
 
 };
 
-export default function Activity1Screen() {
+export default function Activity2Overview() {
 const [materialProgress,
   setMaterialProgress] =
   useState(0);
