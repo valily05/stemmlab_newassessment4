@@ -120,7 +120,8 @@ export const activities = {
     ],
 
     overview: "Investigate noise levels in different locations and identify sources of sound pollution.",
-objective: "Measure and compare sound levels in different environments.",
+    objective: "Measure and compare sound levels in different environments.",
+    
     mission: "Compare noise levels in different locations.",
     duration: "20 Minutes",
     difficulty: "Easy",

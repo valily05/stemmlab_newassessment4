@@ -19,7 +19,10 @@ const hp = (p: number) => PixelRatio.roundToNearestPixel(height * p / 100);
 const rf = (size: number) => Math.round(PixelRatio.roundToNearestPixel(size * (width / 390)));
 
 export default function Activity2Results() {
-    const { sessionID } = useLocalSearchParams(); 
+    const params = useLocalSearchParams();
+    const activityID = Number(params.activityID);
+    const sessionID = params.sessionID;
+
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false); // Added missing state
     const [session, setSession] = useState<any>(null);
@@ -149,8 +152,9 @@ export default function Activity2Results() {
                     style={[styles.saveButton, isSaving && { opacity: 0.7 }]}
                     onPress={() => 
                         router.push({
-                            pathname: '/activities/activity1/feedback',
+                            pathname: '/activities/activity2/feedback',
                             params: {
+                                activityID,
                                 sessionID: sessionID,
                                 pointsEarned: stats.totalPoints,
                             },

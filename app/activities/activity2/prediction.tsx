@@ -43,7 +43,7 @@ type ExperimentResult = {
     videoURL?: string;
 }
 
-const activity = activities.activity1;
+const activity = activities.activity2;
 
 const { width, height } = Dimensions.get('window');
 

@@ -374,6 +374,7 @@ onAddAnother={() => {
 router.push({
   pathname: "/activities/activity2/results",
   params: {
+    activityID: 2,
     sessionID,
   },
 });  }}
