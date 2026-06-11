@@ -123,12 +123,14 @@ const styles = StyleSheet.create({
     fontFamily: 'PixelOperator',
     fontSize: rf(20),
     marginBottom: hp(0.4),
+    
   },
 
   value: {
     color: '#FFF',
     fontFamily: 'Pixel',
     fontSize: rf(10),
+
   },
 
   divider: {

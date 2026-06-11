@@ -38,6 +38,14 @@ export default function ActivitiesLayout() {
         }}
       />
 
+          <Stack.Screen
+        name="activity1/prediction"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+
       <Stack.Screen
         name="activity2/overview"
         options={{
@@ -47,6 +55,12 @@ export default function ActivitiesLayout() {
 
       <Stack.Screen
         name="activity2/experiment"
+        options={{
+          headerShown: false,
+        }}
+      />
+            <Stack.Screen
+        name="activity2/prediction"
         options={{
           headerShown: false,
         }}

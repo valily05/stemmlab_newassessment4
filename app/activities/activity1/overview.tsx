@@ -1,3 +1,5 @@
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   Alert,
@@ -8,8 +10,6 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import ActivityHeader from '@/components/activity/ActivityHeader';
 import ActivityHero from '@/components/activity/ActivityHero';
@@ -179,7 +179,7 @@ export default function Activity1Overview() {
       pathname: '/activities/ActivityIntroScreen',
       params: {
         activityID: 1,
-        nextScreen: '/activities/activity1/experiment',
+        nextScreen: '/activities/activity1/prediction',
       },
     })
   }

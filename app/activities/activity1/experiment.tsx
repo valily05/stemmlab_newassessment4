@@ -1,3 +1,8 @@
+import {
+  useCameraPermissions,
+} from 'expo-camera';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -12,11 +17,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import {
-  useCameraPermissions,
-} from 'expo-camera';
 
 import { Timestamp } from 'firebase/firestore';
 
@@ -644,6 +644,7 @@ export default function Activity1Experiment() {
         </TouchableOpacity>
 
         <ExperimentHero
+          activityNumber={1}
           title={activity.title}
           description={
             currentStage === 0 ? (

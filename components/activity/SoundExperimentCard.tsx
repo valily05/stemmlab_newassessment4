@@ -1,224 +1,725 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import { useState } from 'react';
+// components/activity/CaptureExperimentCard.tsx
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ResizeMode, Video } from 'expo-av';
 import {
-    Dimensions,
-    PixelRatio,
-    Pressable,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  CameraView,
+  useCameraPermissions,
+} from 'expo-camera';
+import { useRef, useState } from 'react';
+import {
+  Dimensions,
+  Image,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
-
-import ExitButton from '@/components/activity/ExitButton';
-import SoundExperimentCard from '@/components/activity/SoundExperimentCard';
 
 const { width, height } = Dimensions.get('window');
 
 const wp = (percentage: number) =>
-  PixelRatio.roundToNearestPixel((width * percentage) / 100);
+  PixelRatio.roundToNearestPixel(
+    (width * percentage) / 100
+  );
 
 const hp = (percentage: number) =>
-  PixelRatio.roundToNearestPixel((height * percentage) / 100);
+  PixelRatio.roundToNearestPixel(
+    (height * percentage) / 100
+  );
 
 const rf = (size: number) => {
   const scale = width / 390;
-  return Math.round(PixelRatio.roundToNearestPixel(size * scale));
+
+  return Math.round(
+    PixelRatio.roundToNearestPixel(
+      size * scale
+    )
+  );
 };
 
-// Example actions for Activity 2 prediction
-const NOISE_ACTIONS = [
-  { id: 'clapping', label: 'Clapping Hands' },
-  { id: 'tapping', label: 'Tapping Table' },
-  { id: 'shouting', label: 'Shouting' },
-  { id: 'whispering', label: 'Whispering' },
-];
+interface Props {
+  isRecording: boolean;
+  hasStarted: boolean;
+  onStart: () => void;
+  onStop: () => void;
+  onRetry: () => void;
+  canStopRecording: boolean;
+  onStartRecording: () => void;
+  videoUri: string | null;
+  objectWeight: string;
+  setObjectWeight: (
+    value: string
+  ) => void;
+  onSaveIteration: () => void;
 
-export default function Activity2Experiment() {
-  const [hasMadePrediction, setHasMadePrediction] = useState(false);
-  const [selectedAction, setSelectedAction] = useState<string | null>(null);
+  onVideoSaved?: (
+    uri: string
+  ) => void;
+  dropHeight: string;
+  setDropHeight: (
+    value: string
+  ) => void;
+}
 
-  const handleSaveExperiment = (result: { peakDb: number; averageDb: number; duration: number }) => {
-    console.log('Experiment saved:', result);
-    // Navigate to results or next step, passing prediction and experiment data
-    router.replace({
-      pathname: '/activities/activity2/results',
-      params: {
-        predictedAction: selectedAction,
-        peakDb: result.peakDb,
-        averageDb: result.averageDb,
-        duration: result.duration,
+export default function SoundExperimentCard({
+  isRecording,
+  hasStarted,
+  onStart,
+  onStop,
+  onRetry,
+  onSaveIteration,
+  onVideoSaved,
+  canStopRecording,
+  videoUri,
+  onStartRecording,
+  dropHeight,
+  setDropHeight,
+  objectWeight,
+  setObjectWeight,
+}: Props) {
+
+  const [permission, requestPermission] =
+  useCameraPermissions();
+  const cameraRef = useRef<any>(null);
+
+  const [cameraReady, setCameraReady] =
+  useState(false);
+
+  if (hasStarted) {
+    return (
+      <View style={styles.recordingCard}>
+
+        <View style={styles.recordingHeader}>
+          <Text style={styles.recordingTitle}>
+            VIDEO RECORDING
+          </Text>
+
+        <View style={styles.recordingBadgeContainer}>
+
+  {isRecording ? (
+    <>
+      <Text style={styles.recordingIcon}>
+        ●
+      </Text>
+
+      <Text
+        style={[
+          styles.recordingBadge,
+          { color: '#FF4D4D' },
+        ]}
+      >
+        RECORDING
+      </Text>
+    </>
+  ) : videoUri ? (
+    <>
+      <Text style={styles.reviewIcon}>
+        ▶
+      </Text>
+
+      <Text
+        style={[
+          styles.recordingBadge,
+          { color: '#FFA726' },
+        ]}
+      >
+        REVIEW
+      </Text>
+    </>
+  ) : (
+    <Text
+      style={[
+        styles.recordingBadge,
+        { color: '#4CAF50' },
+      ]}
+    >
+      READY
+    </Text>
+  )}
+
+        </View>
+        </View>
+
+<View style={styles.cameraPreview}>
+
+{videoUri ? (
+  <Video
+    source={{ uri: videoUri }}
+    style={{
+      flex: 1,
+    }}
+    useNativeControls
+    resizeMode={ResizeMode.CONTAIN}
+    shouldPlay
+  />
+) : (
+<CameraView
+  ref={cameraRef}
+  style={{
+    flex: 1,
+    borderRadius: 20,
+  }}
+  facing="back"
+  mode="video"
+  onCameraReady={() => {
+    console.log('CAMERA READY');
+    setCameraReady(true);
+  }}
+/>
+)}
+
+</View>
+
+{isRecording ? (
+<TouchableOpacity
+  style={[
+    styles.stopRecordingButton,
+    !canStopRecording && {
+      opacity: 0.4,
+    },
+  ]}
+  disabled={!canStopRecording}
+onPress={() => {
+
+  console.log('STOP PRESSED');
+
+  try {
+
+    cameraRef.current?.stopRecording();
+
+    onStop();
+
+  } catch (err) {
+
+    console.log(
+      'STOP ERROR',
+      err
+    );
+
+  }
+
+}}
+>
+    <Text style={styles.stopRecordingText}>
+      <Text style={styles.stopIcon}>
+        ■
+      </Text>{' '}
+      <Text style={styles.stopLabel}>
+        STOP
+      </Text>
+    </Text>
+  </TouchableOpacity>
+
+) : (
+
+  <>
+    <TouchableOpacity
+      style={styles.startRecordingButton}
+onPress={async () => {
+
+try {
+
+  console.log('START RECORDING PRESSED');
+
+  onStartRecording();
+
+  const recordingPromise =
+    cameraRef.current?.recordAsync();
+
+recordingPromise
+  ?.then((video: any) => {
+
+    console.log(
+      'RECORDING FINISHED',
+      video
+    );
+
+      if (video?.uri) {
+
+        console.log(
+          'SETTING URI',
+          video.uri
+        );
+
+        onVideoSaved?.(
+          video.uri
+        );
+
+        onStop();
+
       }
+
+    })
+.catch((err: any) => {      console.log(
+        'RECORD ERROR',
+        err
+      );
     });
-  };
+
+} catch (err) {
+
+  console.log(err);
+
+}
+  
+}}
+    >
+      <Text style={styles.startRecordingText}>
+        <Text style={styles.playIcon}>
+          ▶
+        </Text>{' '}
+        <Text style={styles.startLabel}>
+          START
+        </Text>
+      </Text>
+    </TouchableOpacity>
+
+  </>
+
+)}
+        
+      </View>
+    );
+  }
 
   return (
-    <LinearGradient
-      colors={['#0B0820', '#14103A', '#1D1854', '#26216D', '#312C88', '#3A35A3']}
-      locations={[0, 0.50, 0.75, 0.88, 0.94, 1]}
-      start={{ x: 0.5, y: 0 }}
-      end={{ x: 0.5, y: 1 }}
-      style={styles.container}
-    >
-      <View style={styles.content}>
-        {!hasMadePrediction ? (
-          /* PREDICTION STEP */
-          <View style={styles.predictionContainer}>
-            <Text style={styles.predictionTitle}>PREDICTION</Text>
-            <Text style={styles.predictionQuestion}>
-              Which action do you think will produce the most noise?
-            </Text>
+    <View style={styles.card}>
 
-            <View style={styles.optionsList}>
-              {NOISE_ACTIONS.map((action) => (
-                <TouchableOpacity
-                  key={action.id}
-                  style={[
-                    styles.optionButton,
-                    selectedAction === action.id && styles.selectedOptionButton,
-                  ]}
-                  onPress={() => setSelectedAction(action.id)}
-                >
-                  <Text
-                    style={[
-                      styles.optionText,
-                      selectedAction === action.id && styles.selectedOptionText,
-                    ]}
-                  >
-                    {action.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+<View style={styles.header}>
+  <View style={styles.leftContent}>
+    
+    {/* Title and Required Badge on the same line */}
+    <View style={styles.titleRow}>
+      <Text
+        style={styles.title}
+        numberOfLines={1}
+      >
+        LOCATION SETUP
+      </Text>
 
-            <Pressable
-              style={[styles.confirmButton, !selectedAction && styles.disabledButton]}
-              disabled={!selectedAction}
-              onPress={() => setHasMadePrediction(true)}
-            >
-              <Text style={styles.confirmButtonText}>CONFIRM PREDICTION</Text>
-            </Pressable>
-          </View>
-        ) : (
-          /* EXPERIMENT MEASUREMENT STEP */
-          <View style={styles.experimentWrapper}>
-            <SoundExperimentCard
-              actionTitle="SOUND LEVEL EXPERIMENT"
-              onSave={handleSaveExperiment}
-            />
-            
-            <TouchableOpacity 
-              style={styles.changePredictionLink}
-              onPress={() => setHasMadePrediction(false)}
-            >
-              <Text style={styles.changePredictionText}>← Change Prediction</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        <ExitButton onPress={() => router.back()} />
+      <View style={styles.requiredBadge}>
+        <Text style={styles.requiredText}>
+          Required
+        </Text>
       </View>
-    </LinearGradient>
+    </View>
+
+    <Text style={styles.description}>
+      Detect and save your
+    {' '}
+      <Text style={styles.yellowText}>
+        current investigations
+      </Text>{' '}
+      location before measuring sound level
+    </Text>
+
+  </View>
+</View>
+
+<View style={styles.mapContainer}>
+  <Image
+    source={require('../../assets/images/map.png')}
+    style={styles.mapImage}
+  />
+</View>
+
+<TouchableOpacity
+  style={[
+    styles.startButton,
+    (
+      !dropHeight.trim() ||
+      !objectWeight.trim() ||
+      Number(dropHeight) <= 0 ||
+      Number(dropHeight) > 10 ||
+      Number(objectWeight) <= 0 ||
+      Number(objectWeight) > 5000
+    ) && {
+      opacity: 0.4,
+    },
+  ]}
+disabled={
+  !dropHeight.trim() ||
+  !objectWeight.trim() ||
+  Number(dropHeight) <= 0 ||
+  Number(dropHeight) > 10 ||
+  Number(objectWeight) <= 0 ||
+  Number(objectWeight) > 5000
+}
+  onPress={() => {
+    onStart();
+  }}
+>
+<MaterialCommunityIcons
+  name="crosshairs-gps"
+  size={rf(28)}
+  color="#FFFFFF"
+  style={{ marginRight: wp(3) }}
+/>
+<Text style={styles.startText}>
+  DETECT LOCATION
+</Text>
+      </TouchableOpacity>
+
+    </View>
+    
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    paddingTop: hp(6),
-    paddingBottom: hp(5),
-    justifyContent: 'space-between',
+leftContent: {
+  flex: 1,
+  paddingRight: wp(3),
+},
+/* New inline row container */
+titleRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '100%',
+},
+stopIcon: {
+  fontSize: rf(18),
+  color: '#FF4D8D',
+  fontFamily: 'PixelOperator',
+},
+recordingBadgeContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: wp(1),
+},
+recordingIcon: {
+  color: '#FF4D4D',
+  fontSize: rf(12),
+  fontFamily: 'PressStart2P',
+},
+reviewIcon: {
+  color: '#FFA726',
+  fontSize: rf(12),
+  fontFamily: 'PressStart2P',
+},
+recordingBadge: {
+  fontSize: rf(16),
+  fontFamily: 'PixelOperator',
+},
+
+  // ... existing styles
+
+  mapContainer: {
+    marginTop: hp(2),
+    marginBottom: hp(2),
     alignItems: 'center',
-  },
-  predictionContainer: {
-    width: '92%',
-    backgroundColor: '#1D123B',
-    borderRadius: 24,
-    padding: 24,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'rgba(168, 85, 247, 0.3)',
-    marginTop: hp(5),
-  },
-  predictionTitle: {
-    color: '#FFD94E',
-    fontFamily: 'Pixel',
-    fontSize: rf(22),
-    marginBottom: 15,
-    letterSpacing: 1,
-  },
-  predictionQuestion: {
-    color: '#FFFFFF',
-    fontFamily: 'PixelOperator',
-    fontSize: rf(18),
-    textAlign: 'center',
-    marginBottom: 25,
-    lineHeight: rf(24),
-  },
-  optionsList: {
-    width: '100%',
-    gap: 12,
-    marginBottom: 30,
-  },
-  optionButton: {
-    width: '100%',
-    paddingVertical: 16,
-    backgroundColor: '#2A1A55',
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: '#4C3575',
-    alignItems: 'center',
-  },
-  selectedOptionButton: {
-    backgroundColor: '#EC588C',
-    borderColor: '#FF8CB9',
-  },
-  optionText: {
-    color: '#C4B5FD',
-    fontFamily: 'Pixel',
-    fontSize: rf(14),
-  },
-  selectedOptionText: {
-    color: '#FFFFFF',
-  },
-  confirmButton: {
-    width: '100%',
-    paddingVertical: 18,
-    backgroundColor: '#3BCF73',
-    borderRadius: 18,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  disabledButton: {
-    backgroundColor: '#301C63',
-    opacity: 0.6,
-  },
-  confirmButtonText: {
-    color: '#FFFFFF',
-    fontFamily: 'Pixel',
-    fontSize: rf(16),
-  },
-  experimentWrapper: {
-    width: '100%',
-    flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: rf(16),
+    overflow: 'hidden',
   },
-  changePredictionLink: {
-    marginTop: 15,
-    paddingVertical: 10,
+  mapImage: {
+    width: '100%',
+    height: hp(20), // Adjust height as needed
+    resizeMode: 'cover',
   },
-  changePredictionText: {
-    color: '#C4B5FD',
-    fontFamily: 'PixelOperator',
-    fontSize: rf(16),
-  }
+
+  // ... rest of your styles
+
+stopLabel: {
+  fontSize: rf(14),
+  color: '#FF4D8D',
+  fontFamily: 'Pixel',
+},
+retryRecordingButton: {
+  marginTop: hp(1.2),
+  height: hp(5.5),
+  borderRadius: rf(10),
+  borderWidth: rf(1.5),
+  borderColor: '#FFD94E',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+heightCard: {
+  marginTop: hp(2),
+  backgroundColor: '#150F31',
+  borderWidth: rf(1.5),
+  borderColor: '#6954A6',
+  borderRadius: rf(12),
+  padding: wp(4),
+},
+errorText: {
+  color: '#FF6B6B',
+  fontSize: rf(14),
+  fontFamily: 'PixelOperator',
+  marginTop: hp(0.8),
+},
+heightLabel: {
+  color: '#FFE95B',
+  fontFamily: 'PixelBold',
+  fontSize: rf(19),
+  marginBottom: hp(1),
+},
+heightInput: {
+  height: hp(5.5),
+  backgroundColor: '#0E0B24',
+  borderRadius: rf(10),
+  paddingHorizontal: wp(4),
+  color: 'white',
+  fontFamily: 'PixelOperator',
+  fontSize: rf(15),
+},
+retryRecordingText: {
+  color: '#FFD94E',
+  fontFamily: 'Pixel',
+  fontSize: rf(14),
+},
+card: {
+  marginHorizontal: wp(5),
+  marginTop: hp(3),
+  backgroundColor: '#02032A',
+  borderRadius: rf(22),
+  padding: wp(5),
+  paddingTop: wp(6),
+  borderWidth: rf(2),
+  borderColor: '#3D438F',
+  shadowColor: '#3D438F',
+  shadowOpacity: 1,
+  shadowRadius: rf(10),
+  shadowOffset: {
+    width: 0,
+    height: 0,
+  },
+  elevation: 12,
+},
+recordControls: {
+  flexDirection: 'row',
+  gap: wp(3),
+  marginTop: hp(2),
+},
+startRecordingButton: {
+  flex: 1,
+  height: hp(5.5),
+  borderRadius: rf(10),
+  borderWidth: rf(1.5),
+  borderColor: '#00D9FF',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: hp(2),
+},
+stopRecordingButton: {
+  flex: 1,
+  height: hp(5.5),
+  borderRadius: rf(10),
+  borderWidth: rf(1.5),
+  borderColor: '#FF4D8D',
+  justifyContent: 'center',
+  alignItems: 'center',
+   marginTop: hp(2),
+},
+startRecordingText: {
+  color: '#00D9FF',
+  fontFamily: 'Pixel',
+  fontSize: rf(14),
+},
+stopRecordingText: {
+  color: '#FF4D8D',
+  fontFamily: 'Pixel',
+  fontSize: rf(14),
+},
+tipStar: {
+  color: '#FFE95B',
+  fontSize: rf(20),
+},
+header: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+},
+yellowText: {
+  color: '#FFE95B',
+},
+playIcon: {
+  fontSize: rf(18),
+  color: '#00D9FF',
+  fontFamily: 'PressStart2P',
+},
+startLabel: {
+  fontSize: rf(14),
+  color: '#00D9FF',
+  fontFamily: 'Pixel',
+},
+title: {
+  color: '#FFE95B',
+  fontSize: rf(14),
+  fontFamily: 'Pixel',
+  // Removed fixed width so it scales flexibly in flex row
+},
+requiredBadge: {
+  backgroundColor: '#FF000036',
+  paddingHorizontal: wp(3),
+  paddingVertical: hp(0.4),
+  borderRadius: rf(10),
+  left:rf(13)
+},
+requiredText: {
+  color: '#FF0000',
+  fontSize: rf(14),
+  fontFamily: 'PixelOperator',
+},
+phoneImage: {
+  width: rf(120),
+  height: rf(120),
+  resizeMode: 'contain',
+  transform: [
+    { translateX: rf(34) }
+  ],
+},
+description: {
+  color: '#FFFFFF',
+  fontSize: rf(15),
+  lineHeight: rf(18),
+  fontFamily: 'PixelOperator',
+  marginTop: hp(2),
+},
+tipCard: {
+  marginTop: hp(0),
+  backgroundColor: '#150F31',
+  borderWidth: rf(1.5),
+  borderColor: '#6954A6',
+  borderStyle: 'dashed',
+  borderRadius: rf(10),
+  paddingHorizontal: wp(4),
+  paddingVertical: hp(1.5),
+},
+tipTitle: {
+  color: '#FFE95B',
+  fontSize: rf(12),
+  fontFamily: 'Pixel',
+  marginBottom: hp(1),
+},
+tip: {
+  color: '#FFFFFF',
+  fontSize: rf(15),
+  lineHeight: rf(16),
+  fontFamily: 'PixelOperator',
+  marginBottom: hp(0.6),
+},
+howWorksContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: hp(2),
+},
+howLine: {
+  flex: 1,
+  height: rf(2),
+  backgroundColor: '#2B2F68',
+},
+howTitle: {
+  color: '#FFFFFF',
+  fontSize: rf(18),
+  fontFamily: 'PixelOperator',
+  marginHorizontal: wp(3),
+},
+stepsRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginTop: hp(2),
+},
+step: {
+  width: wp(26),
+  alignItems: 'center',
+},
+stepTitle: {
+  color: '#FFE95B',
+  fontSize: rf(19),
+  fontFamily: 'PixelOperator',
+  marginTop: hp(0.3),
+},
+stepText: {
+  color: '#FFFFFF',
+  fontSize: rf(14),
+  textAlign: 'center',
+  marginTop: hp(0.5),
+  fontFamily: 'PixelOperator',
+  width: rf(98),
+},
+startButton: {
+  height: hp(6),
+  backgroundColor: '#3E79E8',
+  borderRadius: rf(14),
+  marginTop: hp(3),
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+stepIcon: {
+  width: rf(48),
+  height: rf(48),
+  resizeMode: 'contain',
+  marginBottom: hp(1),
+},
+startButtonIcon: {
+  width: rf(22),
+  height: rf(22),
+  resizeMode: 'contain',
+  marginRight: wp(3),
+},
+startText: {
+  color: '#FFFFFF',
+  fontSize: rf(14),
+  fontFamily: 'Pixel',
+},
+recordingCard: {
+  marginHorizontal: wp(5),
+  marginTop: hp(3),
+  backgroundColor: '#02032A',
+  borderRadius: rf(22),
+  padding: wp(5),
+  borderWidth: rf(2),
+  borderColor: '#3D438F',
+  shadowColor: '#3D438F',
+  shadowOpacity: 1,
+  shadowRadius: rf(18),
+  shadowOffset: {
+    width: 0,
+    height: 0,
+  },
+  elevation: 15,
+},
+recordingHeader: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+},
+recordingTitle: {
+  color: '#FFE95B',
+  fontSize: rf(20),
+  fontFamily: 'PixelBold',
+},
+cameraPreview: {
+  height: hp(35),
+  overflow: 'hidden',
+  borderRadius: rf(18),
+  marginTop: hp(2),
+},
+cameraIcon: {
+  width: rf(80),
+  height: rf(80),
+  resizeMode: 'contain',
+},
+stopButton: {
+  height: hp(6),
+  borderRadius: rf(14),
+  backgroundColor: '#FF4D4D',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: hp(2),
+},
+saveButton: {
+  flex: 1,
+  height: hp(6),
+  borderRadius: rf(14),
+  backgroundColor: '#27AE60',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+buttonText: {
+  color: '#FFFFFF',
+  fontSize: rf(13),
+  fontFamily: 'Pixel',
+},
 });

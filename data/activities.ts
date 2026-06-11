@@ -142,7 +142,7 @@ objective: "Measure and compare sound levels in different environments.",
       {
         title: "TEST LOCATION ACCURACY",
         instruction: "Walk to a different location and confirm the app updates your position correctly.",
-        bunnyTip: "Your location helps create a map of loud and quiet places!",
+        bunnyTip: "Your location helps create a map of loud and \n quiet places!",
       },
     ],
 

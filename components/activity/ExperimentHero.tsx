@@ -1,6 +1,8 @@
 import {
   Dimensions,
   Image,
+  ImageSourcePropType,
+  ImageStyle,
   PixelRatio,
   StyleSheet,
   Text,
@@ -34,13 +36,19 @@ const rf = (size: number) => {
 import { ReactNode } from 'react';
 
 interface Props {
+  activityNumber: number;
   title: string;
   description: ReactNode;
+  image?: ImageSourcePropType;
+  imageStyle?: ImageStyle;
 }
 
 export default function ExperimentHero({
+  activityNumber,
   title,
   description,
+  image,
+  imageStyle,
 }: Props) {
   return (
     <View style={styles.container}>
@@ -66,9 +74,9 @@ export default function ExperimentHero({
 
         <View style={styles.left}>
 
-          <Text style={styles.activity}>
-            ACTIVITY #1
-          </Text>
+<Text style={styles.activity}>
+  ACTIVITY #{activityNumber}
+</Text>
 
           <Text style={styles.title}>
             {title}
@@ -79,10 +87,13 @@ export default function ExperimentHero({
 
         </View>
 
-        <Image
-          source={require('../../assets/images/parachute-bunny.png')}
-          style={styles.image}
-        />
+<Image
+  source={
+    image ??
+    require('../../assets/images/parachute-bunny.png')
+  }
+  style={[styles.image, imageStyle]}
+/>
 
       </View>
 
@@ -138,7 +149,8 @@ descriptionContainer: {
     fontSize: rf(16),
     lineHeight: rf(25),
     fontFamily: 'Pixel',
-    width: wp(90),
+    width: wp(80),
+
   },
 
   description: {

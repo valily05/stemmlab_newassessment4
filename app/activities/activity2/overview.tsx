@@ -213,7 +213,7 @@ const readinessMessage =
       params: {
         activityID: 2,
         nextScreen:
-          '/activities/activity2/experiment',
+          '/activities/activity2/prediction',
       },
     })
   }
