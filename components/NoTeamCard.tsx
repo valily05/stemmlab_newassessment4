@@ -1,6 +1,7 @@
 import { useTheme } from "@/context/ThemeContext";
 import { auth, db } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import {
   addDoc,
   arrayUnion,
@@ -71,10 +72,10 @@ export default function NoTeamCard() {
       const teamName = teamData.teamName;
       const userData = userSnap.data();
 
-const username =
-  userData?.fullName ||
-  auth.currentUser?.displayName ||
-  "A teammate";
+      const username =
+        userData?.fullName ||
+        auth.currentUser?.displayName ||
+        "A teammate";
 
       // Max 4 members per team
       if (currentMembers.length >= 4) {
@@ -374,6 +375,7 @@ const username =
       >
         <TouchableOpacity
           activeOpacity={0.85}
+          onPress={() => router.push('/createteam')}
           style={[
             styles.createTeamBtn,
             {
