@@ -80,12 +80,28 @@ export default function ActivitiesLayout() {
         }}
       />
 
-        <Stack.Screen
+      <Stack.Screen
         name="activity2/overview"
         options={{
           headerShown: false,
         }}
       />
+
+      <Stack.Screen
+        name="activity2/feedback"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="activity2/experiment"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      
     </Stack>
   );
 }

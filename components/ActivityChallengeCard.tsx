@@ -38,6 +38,8 @@ const fp = (size: number) => {
   return PixelRatio.roundToNearestPixel((width / 430) * size);
 };
 
+
+
 export default function ActivityChallengeCard({
   title,
   description,
@@ -52,6 +54,7 @@ export default function ActivityChallengeCard({
 }: Props) {
   const { theme } = useTheme();
   const type = category.toUpperCase();
+
 
   return (
     <View
