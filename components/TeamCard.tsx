@@ -79,39 +79,40 @@ export default function TeamCard({
         'rgba(4,5,10,0.75)',
       ]
     : [
-        'rgba(255,255,255,0.95)',
-        'rgba(248,250,255,0.90)',
-        'rgba(239,244,255,0.82)',
+        'rgba(253,242,248,0.95)',
+        'rgba(240,253,250,0.90)',
+        'rgba(243,232,255,0.85)',
       ];
 
   const borderColor = isDark
     ? 'rgba(255,255,255,0.18)'
-    : 'rgba(148,163,184,0.18)';
+    : 'rgba(217, 70, 239, 0.4)';
 
   const textPrimary = isDark ? '#FFFFFF' : '#1E293B';
   const textSecondary = isDark ? '#D1C4E9' : '#64748B';
 
-  const starColor = isDark ? '#D8B4FE' : '#7C3AED';
+  const starColor = isDark ? '#D8B4FE' : '#9333EA';
 
+  // Softened RGBA glows for dark mode, vibrant/pastel pops for light mode (including pastel purple)
   const blueGlow = isDark
-    ? ['#1A0066', '#002082', 'transparent']
-    : ['#A5D8FF', '#D9ECFF', 'transparent'];
+    ? ['rgba(26,0,102,0.6)', 'rgba(0,32,130,0.4)', 'transparent'] as const
+    : ['#FCE7F3', '#BFDBFE', 'transparent'] as const;
 
   const cyanGlow = isDark
-    ? ['#00F5D4', '#4CC9F0', 'transparent']
-    : ['#A7F3FF', '#E7FBFF', 'transparent'];
+    ? ['rgba(0,245,212,0.5)', 'rgba(76,201,240,0.3)', 'transparent'] as const
+    : ['#A7F3D0', '#99F6E4', 'transparent'] as const;
 
   const violetGlow = isDark
-    ? ['#7209B7', '#3A0CA3', 'transparent']
-    : ['#DCCBFF', '#F3EDFF', 'transparent'];
+    ? ['rgba(114,9,183,0.5)', 'rgba(58,12,163,0.3)', 'transparent'] as const
+    : ['#DDD6FE', '#C084FC', 'transparent'] as const;
 
   const pinkGlow = isDark
-    ? ['#FF007F', '#FF4797', 'transparent']
-    : ['#FFD6EA', '#FFF2F8', 'transparent'];
+    ? ['rgba(255,0,127,0.5)', 'rgba(255,71,151,0.3)', 'transparent'] as const
+    : ['#FECDD3', '#FBCFE8', 'transparent'] as const;
 
   const magentaGlow = isDark
-    ? ['#B5179E', '#9B5DE5', 'transparent']
-    : ['#E7D6FF', '#F7F2FF', 'transparent'];
+    ? ['rgba(181,23,158,0.5)', 'rgba(155,93,229,0.3)', 'transparent'] as const
+    : ['#E9D5FF', '#F472B6', 'transparent'] as const;
 
   return (
     <TouchableOpacity activeOpacity={1} onPress={flipCard}>
@@ -147,11 +148,11 @@ export default function TeamCard({
           style={[styles.cardBack, { transform: [{ perspective: 1000 }, { rotateY: backInterpolate }] }]}
         >
           <View style={[styles.glassWrapper, { backgroundColor: wrapperColor }]}>
-            <LinearGradient colors={blueGlow} start={{ x: 1, y: 1 }} end={{ x: 0, y: 0 }} style={styles.backDeepBlueBase} />
-            <LinearGradient colors={cyanGlow} start={{ x: 0.9, y: 0.9 }} end={{ x: 0.1, y: 0.1 }} locations={[0, 0.4, 1]} style={styles.backCyanGlow} />
-            <LinearGradient colors={violetGlow} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.backVioletGlow} />
-            <LinearGradient colors={pinkGlow} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} locations={[0, 0.35, 1]} style={styles.backPinkGlow} />
-            <LinearGradient colors={magentaGlow} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.backMagentaGlow} />
+            <LinearGradient colors={blueGlow} start={{ x: 0, y: 1 }} end={{ x: 0.55, y: 0.45 }} style={styles.frontDeepBlueBase} />
+            <LinearGradient colors={cyanGlow} start={{ x: 0.1, y: 0.35 }} end={{ x: 0.5, y: 0.4 }} locations={[0, 0.4, 1]} style={styles.frontCyanGlow} />
+            <LinearGradient colors={violetGlow} start={{ x: 0.85, y: 0.35 }} end={{ x: 0.3, y: 0.25 }} style={styles.frontVioletGlow} />
+            <LinearGradient colors={pinkGlow} start={{ x: 1, y: 1 }} end={{ x: 0.45, y: 0.15 }} locations={[0, 0.35, 1]} style={styles.frontPinkGlow} />
+            <LinearGradient colors={magentaGlow} start={{ x: 1, y: 0.65 }} end={{ x: 0.2, y: 0.2 }} style={styles.frontMagentaGlow} />
 
             <LinearGradient colors={glassColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.container, { borderColor }]}>
               <View style={styles.backContentContainer}>
@@ -320,51 +321,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -hp(10),
     right: -wp(30),
-    width: wp(85),
-    height: wp(85),
-    borderRadius: wp(42.5),
-    opacity: 0.9,
-  },
-  backDeepBlueBase: {
-    position: 'absolute',
-    bottom: -hp(10),
-    right: -wp(10),
-    width: wp(65),
-    height: wp(65),
-    borderRadius: wp(32.5),
-    opacity: 0.9,
-  },
-  backCyanGlow: {
-    position: 'absolute',
-    bottom: -hp(15),
-    right: -wp(20),
-    width: wp(72),
-    height: wp(72),
-    borderRadius: wp(36),
-    opacity: 0.95,
-  },
-  backVioletGlow: {
-    position: 'absolute',
-    bottom: -hp(15),
-    left: -wp(15),
-    width: wp(90),
-    height: wp(90),
-    borderRadius: wp(45),
-    opacity: 0.85,
-  },
-  backPinkGlow: {
-    position: 'absolute',
-    bottom: -hp(22),
-    left: -wp(10),
-    width: wp(80),
-    height: wp(80),
-    borderRadius: wp(40),
-    opacity: 0.95,
-  },
-  backMagentaGlow: {
-    position: 'absolute',
-    bottom: -hp(10),
-    left: -wp(30),
     width: wp(85),
     height: wp(85),
     borderRadius: wp(42.5),

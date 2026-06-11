@@ -206,6 +206,9 @@ export default function SetupGuideCarousel({
           pagingEnabled
           data={steps}
           showsHorizontalScrollIndicator={false}
+          disableIntervalMomentum
+          style={{width: width -wp(6)}}
+          snapToAlignment='start'
           keyExtractor={(_, index) =>
             index.toString()
           }
@@ -418,23 +421,16 @@ const styles = StyleSheet.create({
   },
 
   /* FRAME */
-  frameWrapper: {
-    width: width - wp(6),
+frameWrapper: {
+  width: width - wp(6),
+  alignSelf: "center",
+  borderWidth: wp(1.4),
+  borderColor: "#5711BE",
+  backgroundColor: "#150F31",
+  paddingTop: hp(2),
+  paddingBottom: hp(3),
 
-    alignSelf: 'center',
-
-    borderWidth: wp(1.4),
-
-    borderColor: '#5711BE',
-
-    backgroundColor: '#150F31',
-
-    paddingTop: hp(2),
-
-    paddingBottom: hp(3),
-
-    position: 'relative',
-  },
+},
 
   /* OUTER PIXEL CORNERS */
   edgeBox: {
@@ -557,12 +553,10 @@ const styles = StyleSheet.create({
   },
 
   /* CARD */
-  card: {
-    width: width - wp(6),
-
-    paddingHorizontal: wp(5),
-  },
-
+card: {
+  width: width - wp(6),
+  paddingHorizontal: wp(5),
+},
   /* CARD TITLE */
   cardTitle: {
     color: '#F8EC4D',

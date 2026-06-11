@@ -1,9 +1,9 @@
 import {
-    Dimensions,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 const { width } = Dimensions.get('window');
@@ -26,11 +26,14 @@ const rf = (size: number) => {
 
 interface Props {
   progress: number;
+  subtitle?: string;
 }
 
 export default function ProgressBar({
   progress,
+  subtitle
 }: Props) {
+
 
   return (
 
@@ -61,13 +64,12 @@ export default function ProgressBar({
 
       </View>
 
-      <Text style={styles.subtitle}>
-
-        {progress === 100
-          ? '🚀 READY FOR LAUNCH'
-          : 'Complete all requirements'}
-
-      </Text>
+<Text style={styles.subtitle}>
+  {subtitle ??
+    (progress === 80
+      ? '🚀 READY FOR LAUNCH'
+      : 'Complete all requirements')}
+</Text>
 
     </View>
 

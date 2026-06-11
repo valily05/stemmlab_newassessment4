@@ -71,11 +71,10 @@ export default function NoTeamCard() {
       const teamName = teamData.teamName;
       const userData = userSnap.data();
 
-      const username =
-        userData?.displayName ||
-        userData?.username ||
-        auth.currentUser?.displayName ||
-        "A teammate";
+const username =
+  userData?.fullName ||
+  auth.currentUser?.displayName ||
+  "A teammate";
 
       // Max 4 members per team
       if (currentMembers.length >= 4) {

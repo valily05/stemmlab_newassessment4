@@ -107,7 +107,7 @@ export const activities = {
   activity2: {
     id: 2,
     group:"ENGINEERING",
-    title: "SOUND POLLUTION\nHUNTER",
+    title: "SOUND POLLUTION HUNTER",
     image: {
       dark: require('../assets/images/Group 228.png'),
       light: require('../assets/images/Group 228 Light.png'),
@@ -120,8 +120,7 @@ export const activities = {
     ],
 
     overview: "Investigate noise levels in different locations and identify sources of sound pollution.",
-    objective: "Measure and compare noise levels in different environments to investigate sound pollution.",
-
+objective: "Measure and compare sound levels in different environments.",
     mission: "Compare noise levels in different locations.",
     duration: "20 Minutes",
     difficulty: "Easy",

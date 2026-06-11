@@ -27,6 +27,7 @@ import { activities } from '@/data/activities';
 
 const activity = activities.activity2;
 
+
 const { width, height } = Dimensions.get('window');
 
 /* RESPONSIVE HELPERS */
@@ -68,15 +69,41 @@ const [safetyComplete,
   useState(false);
   const [locationVerified, setLocationVerified] =
   useState(false);
-const progress =
-  Math.round(
-    materialProgress * 0.5 +
-    (safetyComplete ? 50 : 0)
-  );
+const progress = Math.round(
+  materialProgress * 0.3 +
+  (soundMeterVerified ? 20 : 0) +
+  (locationVerified ? 20 : 0) +
+  (safetyComplete ? 30 : 0)
+);
 const canStart =
-  progress === 100;
+  materialProgress >= 80 
+  // &&
+  // soundMeterVerified &&
+  // locationVerified &&
+  // safetyComplete;
 
+  const missingSteps = [];
 
+if (materialProgress !== 100) {
+  missingSteps.push("Materials");
+}
+
+if (!soundMeterVerified) {
+  missingSteps.push("Sound Meter");
+}
+
+if (!locationVerified) {
+  missingSteps.push("Location");
+}
+
+if (!safetyComplete) {
+  missingSteps.push("Safety");
+}
+
+const readinessMessage =
+  canStart
+    ? "🚀 READY FOR LAUNCH"
+    : `Complete: ${missingSteps.join(", ")}`;
   return (
 
     <View style={styles.container}>
@@ -184,10 +211,7 @@ const canStart =
     router.push({
       pathname: '/activities/ActivityIntroScreen',
       params: {
-        activityNumber: 2,
-        title: 'SOUND POLLUTION HUNTER',
-        objective:
-          'Measure and compare noise levels in different environments to investigate sound pollution and its impact on daily life.',
+        activityID: 2,
         nextScreen:
           '/activities/activity2/experiment',
       },
@@ -199,6 +223,7 @@ const canStart =
       </ScrollView>
 <ProgressBar
   progress={progress}
+  subtitle={readinessMessage}
 />
     </View>
 
