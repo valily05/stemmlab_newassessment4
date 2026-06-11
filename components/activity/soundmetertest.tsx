@@ -41,42 +41,37 @@ const recorder = useAudioRecorder({
   const [status, setStatus] = useState<"idle" | "testing" | "success" | "failed">("idle");
 
   const pulse = useRef(new Animated.Value(1)).current;
-const initialDb = useRef<number | null>(null);
 const hasFinished = useRef(false);
   // Handle metering updates
   useEffect(() => {
-console.log(
-  JSON.stringify(recorderState, null, 2)
-);
+// console.log(
+//   JSON.stringify(recorderState, null, 2)
+// );
   if (recorderState.metering == null) {
     console.log("Metering is NULL");
     return;
   }
 
-  console.log("Raw Metering:", recorderState.metering);
+  // console.log("Raw Metering:", recorderState.metering);
 
   const db = normalizeMetering(recorderState.metering);
-  console.log("Display dB:", db);
+  // console.log("Display dB:", db);
 
   setDisplayDb(db);
 
-  if (db > peakDb) {
-    setPeakDb(db);
-  }
+setPeakDb(prev => Math.max(prev, db));
 
   if (status !== "testing") return;
 
-  if (initialDb.current === null) {
-    initialDb.current = db;
-    return;
-  }
 
-  const difference = Math.abs(db - initialDb.current);
+const currentPeak = Math.max(peakDb, db);
 
-  if (!hasFinished.current && difference >= 10) {
+setPeakDb(currentPeak);
+
+if (!hasFinished.current && currentPeak >= 40) {
     hasFinished.current = true;
     finishSuccess();
-  }
+}
 
 }, [recorderState]);
   // Pulse Animation
@@ -125,7 +120,6 @@ async function startTesting() {
   hasFinished.current = false;
 
   setStatus("testing");
-  initialDb.current = null;
   onCompleted(false);
 
   setPeakDb(0);
@@ -165,7 +159,6 @@ await recorder.prepareToRecordAsync({
 
 async function retry() {
 
-  initialDb.current = null;
   hasFinished.current = false;
 
   setStatus("idle");
@@ -228,8 +221,11 @@ to begin the microphone check.</Text>
 
       {status === "success" && (
         <View>
-          <Text style={styles.successText}>✓ Sound Meter Verified</Text>
-          <Text style={styles.peakText}>Peak Sound: {peakDb} dB</Text>
+<Text style={styles.successText}>
+  ✓ Microphone Working
+</Text>
+s 
+     <Text style={styles.peakText}>Peak Sound: {peakDb} dB</Text>
         </View>
       )}
 {status === "failed" && (
