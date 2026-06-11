@@ -1,17 +1,15 @@
 // components/activity/CaptureExperimentCard.tsx
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ResizeMode, Video } from 'expo-av';
-import {
-  CameraView,
-  useCameraPermissions,
-} from 'expo-camera';
-import { useRef, useState } from 'react';
+import * as Location from 'expo-location';
 import {
   Dimensions,
   Image,
+  KeyboardAvoidingView,
   PixelRatio,
+  Platform,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
@@ -39,372 +37,150 @@ const rf = (size: number) => {
 };
 
 interface Props {
-  isRecording: boolean;
-  hasStarted: boolean;
-  onStart: () => void;
-  onStop: () => void;
-  onRetry: () => void;
-  canStopRecording: boolean;
-  onStartRecording: () => void;
-  videoUri: string | null;
-  objectWeight: string;
-  setObjectWeight: (
-    value: string
-  ) => void;
-  onSaveIteration: () => void;
-
-  onVideoSaved?: (
-    uri: string
-  ) => void;
-  dropHeight: string;
-  setDropHeight: (
-    value: string
-  ) => void;
+  location: Location.LocationObject | null;
+  loadingLocation: boolean;
+  locationName: string;
+  setLocationName: (value: string) => void;
+  onDetectLocation: () => void | Promise<void>;
+  onSaveLocation: () => void;
+  onInputFocus: () => void;
 }
 
 export default function SoundExperimentCard({
-  isRecording,
-  hasStarted,
-  onStart,
-  onStop,
-  onRetry,
-  onSaveIteration,
-  onVideoSaved,
-  canStopRecording,
-  videoUri,
-  onStartRecording,
-  dropHeight,
-  setDropHeight,
-  objectWeight,
-  setObjectWeight,
+  location,
+  loadingLocation,
+  locationName,
+  setLocationName,
+  onDetectLocation,
+  onSaveLocation,
 }: Props) {
 
-  const [permission, requestPermission] =
-  useCameraPermissions();
-  const cameraRef = useRef<any>(null);
-
-  const [cameraReady, setCameraReady] =
-  useState(false);
-
-  if (hasStarted) {
-    return (
-      <View style={styles.recordingCard}>
-
-        <View style={styles.recordingHeader}>
-          <Text style={styles.recordingTitle}>
-            VIDEO RECORDING
-          </Text>
-
-        <View style={styles.recordingBadgeContainer}>
-
-  {isRecording ? (
-    <>
-      <Text style={styles.recordingIcon}>
-        ●
-      </Text>
-
-      <Text
-        style={[
-          styles.recordingBadge,
-          { color: '#FF4D4D' },
-        ]}
-      >
-        RECORDING
-      </Text>
-    </>
-  ) : videoUri ? (
-    <>
-      <Text style={styles.reviewIcon}>
-        ▶
-      </Text>
-
-      <Text
-        style={[
-          styles.recordingBadge,
-          { color: '#FFA726' },
-        ]}
-      >
-        REVIEW
-      </Text>
-    </>
-  ) : (
-    <Text
-      style={[
-        styles.recordingBadge,
-        { color: '#4CAF50' },
-      ]}
-    >
-      READY
-    </Text>
-  )}
-
-        </View>
-        </View>
-
-<View style={styles.cameraPreview}>
-
-{videoUri ? (
-  <Video
-    source={{ uri: videoUri }}
-    style={{
-      flex: 1,
-    }}
-    useNativeControls
-    resizeMode={ResizeMode.CONTAIN}
-    shouldPlay
-  />
-) : (
-<CameraView
-  ref={cameraRef}
-  style={{
-    flex: 1,
-    borderRadius: 20,
-  }}
-  facing="back"
-  mode="video"
-  onCameraReady={() => {
-    console.log('CAMERA READY');
-    setCameraReady(true);
-  }}
-/>
-)}
-
-</View>
-
-{isRecording ? (
-<TouchableOpacity
-  style={[
-    styles.stopRecordingButton,
-    !canStopRecording && {
-      opacity: 0.4,
-    },
-  ]}
-  disabled={!canStopRecording}
-onPress={() => {
-
-  console.log('STOP PRESSED');
-
-  try {
-
-    cameraRef.current?.stopRecording();
-
-    onStop();
-
-  } catch (err) {
-
-    console.log(
-      'STOP ERROR',
-      err
-    );
-
-  }
-
-}}
->
-    <Text style={styles.stopRecordingText}>
-      <Text style={styles.stopIcon}>
-        ■
-      </Text>{' '}
-      <Text style={styles.stopLabel}>
-        STOP
-      </Text>
-    </Text>
-  </TouchableOpacity>
-
-) : (
-
-  <>
-    <TouchableOpacity
-      style={styles.startRecordingButton}
-onPress={async () => {
-
-try {
-
-  console.log('START RECORDING PRESSED');
-
-  onStartRecording();
-
-  const recordingPromise =
-    cameraRef.current?.recordAsync();
-
-recordingPromise
-  ?.then((video: any) => {
-
-    console.log(
-      'RECORDING FINISHED',
-      video
-    );
-
-      if (video?.uri) {
-
-        console.log(
-          'SETTING URI',
-          video.uri
-        );
-
-        onVideoSaved?.(
-          video.uri
-        );
-
-        onStop();
-
-      }
-
-    })
-.catch((err: any) => {      console.log(
-        'RECORD ERROR',
-        err
-      );
-    });
-
-} catch (err) {
-
-  console.log(err);
-
-}
-  
-}}
-    >
-      <Text style={styles.startRecordingText}>
-        <Text style={styles.playIcon}>
-          ▶
-        </Text>{' '}
-        <Text style={styles.startLabel}>
-          START
-        </Text>
-      </Text>
-    </TouchableOpacity>
-
-  </>
-
-)}
-        
-      </View>
-    );
-  }
-
   return (
-    <View style={styles.card}>
-
-<View style={styles.header}>
-  <View style={styles.leftContent}>
     
-    {/* Title and Required Badge on the same line */}
-    <View style={styles.titleRow}>
-      <Text
-        style={styles.title}
-        numberOfLines={1}
-      >
-        LOCATION SETUP
-      </Text>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.cardWrapper}
+    >
+      <View style={styles.card}>
+        <View style={styles.header}>
+          <View style={styles.leftContent}>
+            
+            {/* Title and Required Badge on the same line */}
+            <View style={styles.titleRow}>
+              <Text
+                style={styles.title}
+                numberOfLines={1}
+              >
+                LOCATION SETUP
+              </Text>
 
-      <View style={styles.requiredBadge}>
-        <Text style={styles.requiredText}>
-          Required
-        </Text>
+              <View style={styles.requiredBadge}>
+                <Text style={styles.requiredText}>
+                  Required
+                </Text>
+              </View>
+            </View>
+
+            <Text style={styles.description}>
+              Detect and save your
+            {' '}
+              <Text style={styles.yellowText}>
+                current investigation
+              </Text>{' '}
+              location before measuring sound.
+            </Text>
+
+          </View>
+        </View>
+
+        <View style={styles.mapContainer}>
+          <Image
+            source={require('../../assets/images/map.png')}
+            style={styles.mapImage}
+          />
+
+          {loadingLocation && (
+            <View style={styles.coordinateOverlay}>
+              <Text style={styles.coordinateTitle}>
+                DETECTING GPS...
+              </Text>
+            </View>
+          )}
+
+          {location && (
+            <View style={styles.coordinateOverlay}>
+              <Text style={styles.coordinateText}>
+                LATITUDE: <Text style={styles.coordinateValue}>{location.coords.latitude.toFixed(6)}</Text>
+              </Text>
+
+              <Text style={styles.coordinateText}>
+                LONGTITUDE: <Text style={styles.coordinateValue}>{location.coords.longitude.toFixed(6)}</Text>
+              </Text>
+            </View>
+          )}
+        </View>
+          
+        {location && (
+          <>
+            <Text style={styles.inputLabel}>
+              LOCATION NAME
+            </Text>
+
+            <TextInput
+              style={styles.input}
+              value={locationName}
+              onChangeText={setLocationName}
+              placeholder="e.g. School Entrance"
+              placeholderTextColor="#888"
+            />
+          </>
+        )}
+
+        <TouchableOpacity
+          style={styles.startButton}
+          onPress={() => {
+            if (!location) {
+              onDetectLocation();
+            } else {
+              onSaveLocation();
+            }
+          }}
+        >
+          <MaterialCommunityIcons
+            name={location ? 'content-save' : 'crosshairs-gps'}
+            size={rf(28)}
+            color="#FFFFFF"
+            style={{ marginRight: wp(3) }}
+          />
+
+          <Text style={styles.startText}>
+            {loadingLocation
+              ? 'DETECTING...'
+              : location
+              ? 'SAVE LOCATION'
+              : 'DETECT LOCATION'}
+          </Text>
+        </TouchableOpacity>
       </View>
-    </View>
-
-    <Text style={styles.description}>
-      Detect and save your
-    {' '}
-      <Text style={styles.yellowText}>
-        current investigations
-      </Text>{' '}
-      location before measuring sound level
-    </Text>
-
-  </View>
-</View>
-
-<View style={styles.mapContainer}>
-  <Image
-    source={require('../../assets/images/map.png')}
-    style={styles.mapImage}
-  />
-</View>
-
-<TouchableOpacity
-  style={[
-    styles.startButton,
-    (
-      !dropHeight.trim() ||
-      !objectWeight.trim() ||
-      Number(dropHeight) <= 0 ||
-      Number(dropHeight) > 10 ||
-      Number(objectWeight) <= 0 ||
-      Number(objectWeight) > 5000
-    ) && {
-      opacity: 0.4,
-    },
-  ]}
-disabled={
-  !dropHeight.trim() ||
-  !objectWeight.trim() ||
-  Number(dropHeight) <= 0 ||
-  Number(dropHeight) > 10 ||
-  Number(objectWeight) <= 0 ||
-  Number(objectWeight) > 5000
-}
-  onPress={() => {
-    onStart();
-  }}
->
-<MaterialCommunityIcons
-  name="crosshairs-gps"
-  size={rf(28)}
-  color="#FFFFFF"
-  style={{ marginRight: wp(3) }}
-/>
-<Text style={styles.startText}>
-  DETECT LOCATION
-</Text>
-      </TouchableOpacity>
-
-    </View>
-    
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-leftContent: {
-  flex: 1,
-  paddingRight: wp(3),
-},
-/* New inline row container */
-titleRow: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  width: '100%',
-},
-stopIcon: {
-  fontSize: rf(18),
-  color: '#FF4D8D',
-  fontFamily: 'PixelOperator',
-},
-recordingBadgeContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: wp(1),
-},
-recordingIcon: {
-  color: '#FF4D4D',
-  fontSize: rf(12),
-  fontFamily: 'PressStart2P',
-},
-reviewIcon: {
-  color: '#FFA726',
-  fontSize: rf(12),
-  fontFamily: 'PressStart2P',
-},
-recordingBadge: {
-  fontSize: rf(16),
-  fontFamily: 'PixelOperator',
-},
-
-  // ... existing styles
-
+  cardWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  leftContent: {
+    flex: 1,
+    paddingRight: wp(3),
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
   mapContainer: {
     marginTop: hp(2),
     marginBottom: hp(2),
@@ -415,311 +191,127 @@ recordingBadge: {
   },
   mapImage: {
     width: '100%',
-    height: hp(20), // Adjust height as needed
+    height: hp(20),
     resizeMode: 'cover',
+    opacity: 0.35,
   },
-
-  // ... rest of your styles
-
-stopLabel: {
-  fontSize: rf(14),
-  color: '#FF4D8D',
-  fontFamily: 'Pixel',
-},
-retryRecordingButton: {
-  marginTop: hp(1.2),
-  height: hp(5.5),
-  borderRadius: rf(10),
-  borderWidth: rf(1.5),
-  borderColor: '#FFD94E',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-heightCard: {
-  marginTop: hp(2),
-  backgroundColor: '#150F31',
-  borderWidth: rf(1.5),
-  borderColor: '#6954A6',
-  borderRadius: rf(12),
-  padding: wp(4),
-},
-errorText: {
-  color: '#FF6B6B',
-  fontSize: rf(14),
-  fontFamily: 'PixelOperator',
-  marginTop: hp(0.8),
-},
-heightLabel: {
-  color: '#FFE95B',
-  fontFamily: 'PixelBold',
-  fontSize: rf(19),
-  marginBottom: hp(1),
-},
-heightInput: {
-  height: hp(5.5),
-  backgroundColor: '#0E0B24',
-  borderRadius: rf(10),
-  paddingHorizontal: wp(4),
-  color: 'white',
-  fontFamily: 'PixelOperator',
-  fontSize: rf(15),
-},
-retryRecordingText: {
-  color: '#FFD94E',
-  fontFamily: 'Pixel',
-  fontSize: rf(14),
-},
-card: {
-  marginHorizontal: wp(5),
-  marginTop: hp(3),
-  backgroundColor: '#02032A',
-  borderRadius: rf(22),
-  padding: wp(5),
-  paddingTop: wp(6),
-  borderWidth: rf(2),
-  borderColor: '#3D438F',
-  shadowColor: '#3D438F',
-  shadowOpacity: 1,
-  shadowRadius: rf(10),
-  shadowOffset: {
-    width: 0,
-    height: 0,
+  coordinateTitle: {
+    color: '#5CC8FF',
+    fontFamily: 'Pixel',
+    fontSize: rf(11),
+    marginBottom: hp(0.5),
   },
-  elevation: 12,
-},
-recordControls: {
-  flexDirection: 'row',
-  gap: wp(3),
-  marginTop: hp(2),
-},
-startRecordingButton: {
-  flex: 1,
-  height: hp(5.5),
-  borderRadius: rf(10),
-  borderWidth: rf(1.5),
-  borderColor: '#00D9FF',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginTop: hp(2),
-},
-stopRecordingButton: {
-  flex: 1,
-  height: hp(5.5),
-  borderRadius: rf(10),
-  borderWidth: rf(1.5),
-  borderColor: '#FF4D8D',
-  justifyContent: 'center',
-  alignItems: 'center',
-   marginTop: hp(2),
-},
-startRecordingText: {
-  color: '#00D9FF',
-  fontFamily: 'Pixel',
-  fontSize: rf(14),
-},
-stopRecordingText: {
-  color: '#FF4D8D',
-  fontFamily: 'Pixel',
-  fontSize: rf(14),
-},
-tipStar: {
-  color: '#FFE95B',
-  fontSize: rf(20),
-},
-header: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-},
-yellowText: {
-  color: '#FFE95B',
-},
-playIcon: {
-  fontSize: rf(18),
-  color: '#00D9FF',
-  fontFamily: 'PressStart2P',
-},
-startLabel: {
-  fontSize: rf(14),
-  color: '#00D9FF',
-  fontFamily: 'Pixel',
-},
-title: {
-  color: '#FFE95B',
-  fontSize: rf(14),
-  fontFamily: 'Pixel',
-  // Removed fixed width so it scales flexibly in flex row
-},
-requiredBadge: {
-  backgroundColor: '#FF000036',
-  paddingHorizontal: wp(3),
-  paddingVertical: hp(0.4),
-  borderRadius: rf(10),
-  left:rf(13)
-},
-requiredText: {
-  color: '#FF0000',
-  fontSize: rf(14),
-  fontFamily: 'PixelOperator',
-},
-phoneImage: {
-  width: rf(120),
-  height: rf(120),
-  resizeMode: 'contain',
-  transform: [
-    { translateX: rf(34) }
-  ],
-},
-description: {
-  color: '#FFFFFF',
-  fontSize: rf(15),
-  lineHeight: rf(18),
-  fontFamily: 'PixelOperator',
-  marginTop: hp(2),
-},
-tipCard: {
-  marginTop: hp(0),
-  backgroundColor: '#150F31',
-  borderWidth: rf(1.5),
-  borderColor: '#6954A6',
-  borderStyle: 'dashed',
-  borderRadius: rf(10),
-  paddingHorizontal: wp(4),
-  paddingVertical: hp(1.5),
-},
-tipTitle: {
-  color: '#FFE95B',
-  fontSize: rf(12),
-  fontFamily: 'Pixel',
-  marginBottom: hp(1),
-},
-tip: {
-  color: '#FFFFFF',
-  fontSize: rf(15),
-  lineHeight: rf(16),
-  fontFamily: 'PixelOperator',
-  marginBottom: hp(0.6),
-},
-howWorksContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginTop: hp(2),
-},
-howLine: {
-  flex: 1,
-  height: rf(2),
-  backgroundColor: '#2B2F68',
-},
-howTitle: {
-  color: '#FFFFFF',
-  fontSize: rf(18),
-  fontFamily: 'PixelOperator',
-  marginHorizontal: wp(3),
-},
-stepsRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginTop: hp(2),
-},
-step: {
-  width: wp(26),
-  alignItems: 'center',
-},
-stepTitle: {
-  color: '#FFE95B',
-  fontSize: rf(19),
-  fontFamily: 'PixelOperator',
-  marginTop: hp(0.3),
-},
-stepText: {
-  color: '#FFFFFF',
-  fontSize: rf(14),
-  textAlign: 'center',
-  marginTop: hp(0.5),
-  fontFamily: 'PixelOperator',
-  width: rf(98),
-},
-startButton: {
-  height: hp(6),
-  backgroundColor: '#3E79E8',
-  borderRadius: rf(14),
-  marginTop: hp(3),
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-stepIcon: {
-  width: rf(48),
-  height: rf(48),
-  resizeMode: 'contain',
-  marginBottom: hp(1),
-},
-startButtonIcon: {
-  width: rf(22),
-  height: rf(22),
-  resizeMode: 'contain',
-  marginRight: wp(3),
-},
-startText: {
-  color: '#FFFFFF',
-  fontSize: rf(14),
-  fontFamily: 'Pixel',
-},
-recordingCard: {
-  marginHorizontal: wp(5),
-  marginTop: hp(3),
-  backgroundColor: '#02032A',
-  borderRadius: rf(22),
-  padding: wp(5),
-  borderWidth: rf(2),
-  borderColor: '#3D438F',
-  shadowColor: '#3D438F',
-  shadowOpacity: 1,
-  shadowRadius: rf(18),
-  shadowOffset: {
-    width: 0,
-    height: 0,
+  inputLabel: {
+    color: '#ffffff',
+    fontFamily: 'PixelBold',
+    fontSize: rf(18),
+    marginTop: hp(2),
+    marginBottom: hp(1),
   },
-  elevation: 15,
-},
-recordingHeader: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-},
-recordingTitle: {
-  color: '#FFE95B',
-  fontSize: rf(20),
-  fontFamily: 'PixelBold',
-},
-cameraPreview: {
-  height: hp(35),
-  overflow: 'hidden',
-  borderRadius: rf(18),
-  marginTop: hp(2),
-},
-cameraIcon: {
-  width: rf(80),
-  height: rf(80),
-  resizeMode: 'contain',
-},
-stopButton: {
-  height: hp(6),
-  borderRadius: rf(14),
-  backgroundColor: '#FF4D4D',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginTop: hp(2),
-},
-saveButton: {
-  flex: 1,
-  height: hp(6),
-  borderRadius: rf(14),
-  backgroundColor: '#27AE60',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-buttonText: {
-  color: '#FFFFFF',
-  fontSize: rf(13),
-  fontFamily: 'Pixel',
-},
+  coordinateOverlay: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [
+      { translateX: -wp(31) }, 
+      { translateY: -hp(5) },
+    ],
+    backgroundColor: 'rgba(21, 27, 77, 0.75)',
+    borderWidth: 1.5,
+    borderColor: '#5CC8FF',
+    borderRadius: rf(12),
+    paddingHorizontal: wp(4),
+    paddingVertical: hp(1),
+    alignItems: 'flex-start',
+    width: wp(60),
+  },
+  input: {
+    backgroundColor: '#151B4D',
+    borderWidth: 2,
+    borderColor: '#3D438F',
+    borderRadius: rf(12),
+    color: '#FFFFFF',
+    fontFamily: 'PixelOperator',
+    fontSize: rf(14),
+    paddingHorizontal: wp(4),
+    height: hp(6),
+  },
+  coordinateText: {
+    color: '#FFFF', 
+    fontFamily: 'PixelBold',
+    fontSize: rf(20),
+  },
+  coordinateValue: {
+    color: '#5CC8FF',
+    fontFamily: 'PixelOperator',
+    fontSize: rf(21),
+  },
+  stopLabel: {
+    fontSize: rf(14),
+    color: '#FF4D8D',
+    fontFamily: 'Pixel',
+  },
+  card: {
+    marginHorizontal: wp(5),
+    marginTop: hp(3),
+    backgroundColor: '#02032A',
+    borderRadius: rf(22),
+    padding: wp(5),
+    paddingTop: wp(6),
+    borderWidth: rf(2),
+    borderColor: '#3D438F',
+    shadowColor: '#3D438F',
+    shadowOpacity: 1,
+    shadowRadius: rf(10),
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    elevation: 12,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  yellowText: {
+    color: '#FFE95B',
+  },
+  title: {
+    color: '#FFE95B',
+    fontSize: rf(14),
+    fontFamily: 'Pixel',
+  },
+  requiredBadge: {
+    backgroundColor: '#FF000036',
+    paddingHorizontal: wp(3),
+    paddingVertical: hp(0.4),
+    borderRadius: rf(10),
+    left: rf(13),
+  },
+  requiredText: {
+    color: '#FF0000',
+    fontSize: rf(14),
+    fontFamily: 'PixelOperator',
+  },
+  description: {
+    color: '#FFFFFF',
+    fontSize: rf(15),
+    lineHeight: rf(18),
+    fontFamily: 'PixelOperator',
+    marginTop: hp(2),
+  },
+  startButton: {
+    height: hp(6),
+    backgroundColor: '#3E79E8',
+    borderRadius: rf(14),
+    marginTop: hp(3),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  startText: {
+    color: '#FFFFFF',
+    fontSize: rf(14),
+    fontFamily: 'Pixel',
+  },
 });
