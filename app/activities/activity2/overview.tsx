@@ -13,6 +13,7 @@ import {
 import ActivityHeader from '@/components/activity/ActivityHeader';
 import ActivityHero from '@/components/activity/ActivityHero';
 import ActivityStats from '@/components/activity/ActivityStats';
+import LocationAccess from "@/components/activity/LocationAccess";
 import MaterialsChecklist from '@/components/activity/MaterialsChecklist';
 import ProgressBar from '@/components/activity/ProgressBar';
 import ReferenceSetupCard from '@/components/activity/ReferenceSetupCard';
@@ -64,6 +65,8 @@ const [safetyComplete,
   useState(false);
   const [soundMeterVerified,
   setSoundMeterVerified] =
+  useState(false);
+  const [locationVerified, setLocationVerified] =
   useState(false);
 const progress =
   Math.round(
@@ -133,13 +136,29 @@ const canStart =
     setMaterialProgress
   }
 />
+
 <SetupGuideCarousel
   steps={activity.setupSteps}
-  bottomComponent={
-    <SoundMeterTest
-      onCompleted={setSoundMeterVerified}
-    />
-  }
+  renderBottomComponent={(stepIndex) => {
+    switch (stepIndex) {
+      case 0:
+        return (
+          <SoundMeterTest
+            onCompleted={setSoundMeterVerified}
+          />
+        );
+
+      case 1:
+        return (
+          <LocationAccess
+            onCompleted={setLocationVerified}
+          />
+        );
+
+      default:
+        return null;
+    }
+  }}
 />
 
   <PixelDivider />

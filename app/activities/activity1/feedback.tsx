@@ -1,4 +1,8 @@
+import MaskedView from '@react-native-masked-view/masked-view';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
+import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -13,13 +17,14 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import MaskedView from '@react-native-masked-view/masked-view';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Rocket, Star } from 'lucide-react-native';
+
+import { Timestamp } from 'firebase/firestore';
 
 import { activities } from '@/data/activities';
+import { saveActivityFeedback } from '@/services/firebase/activityFeedbackService';
 import { sendCompletionNotification } from '@/services/notifications/notificationService';
+
+const activity = activities.activity1;
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,7 +47,7 @@ const rf = (size:number) => {
   );
 };
 
-export default function ActivityFeedbackScreen() {
+export default function Activity1Feedback() {
   
   const scrollRef = useRef<ScrollView>(null);
 
@@ -76,12 +81,13 @@ export default function ActivityFeedbackScreen() {
   ).current;
 
   const {
-    activityName,
+    sessionID,
     pointsEarned,
   } = useLocalSearchParams();
 
-  console.log('activityName:', activityName);
+  //console.log('activityName:', activityName);
   console.log('pointsEarned:', pointsEarned);
+console.log("Updating Firebase...");
 
   useEffect(() => {
     Animated.loop(
@@ -583,7 +589,7 @@ export default function ActivityFeedbackScreen() {
             </MaskedView>
 
             <Text style={styles.heroText}>
-              Great job completing {activityName}.
+              Great job completing {activity.title}.
             </Text>
           </View>
 
@@ -712,13 +718,25 @@ export default function ActivityFeedbackScreen() {
                 return;
               }
 
-              await sendCompletionNotification(String(activityName), Number(pointsEarned));//the score will be calculated
+await saveActivityFeedback(
+  {
+    sessionID: String(sessionID),
+    activityID: 1,
+    rating,
+    whatDidYouLike: learned,
+    whatDifficulties: improvement,
+    submittedAt: Timestamp.now(),
+  },
+  Number(pointsEarned)
+);
 
-              console.log({
-                rating,
-                learned,
-                improvement,
-              });
+              await sendCompletionNotification(String(activity.title), Number(pointsEarned));//the score will be calculated
+
+              // console.log({
+              //   rating,
+              //   learned,
+              //   improvement,
+              // });
 
               router.replace('/(tabs)/homescreen');
             }}
