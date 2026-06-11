@@ -3,8 +3,8 @@ export const activities = {
   //TEMPLATE
   //id:,title: "CHALLENGE",group: "",image: {dark: require(''),light: require(''),},route: '/activities/activity.../overview',
   //category: ["",],
-  //overview: "",objective: "",
-  //mission: "",duration: "20 Minutes",difficulty: "",
+  //overview: ".",objective: ".",
+  //mission: ".",duration: "20 Minutes",difficulty: "",
   //materials: [{name: "STEMM LAB ON MOBILE PHONE",quantity: "x"},],
   //setupSteps: [{title: "PREPARE",image: require('@/assets/images/setup2.png'),instruction: "Cut",bunnyTip: "Make"},],
   //instructions: ["Drop ...",],safetyNotes: ["Ensure ...",],bunnyTip: ["Use ...",]
@@ -237,12 +237,12 @@ objective: "Measure and compare sound levels in different environments.",
 
     //pointsRequired: 450,
     
-    overview: "Design structures that withstand vibration, simulating earthquakes.",
-    objective: "",
+    overview: "Design structures that withstand vibration and reduce movement during a simulated earthquake.",
+    objective: "Build and improve a structure that minimizes vibration transfer.",
 
-    mission: "",
+    mission: "Keep the phone stable during the earthquake simulation.",
     duration: "20 Minutes",
-    difficulty: "",
+    difficulty: "Medium",
 
     materials: [
       {
@@ -259,6 +259,10 @@ objective: "Measure and compare sound levels in different environments.",
       },
       {
         name:"SCISSORS",
+        quantity:"x1"
+      },
+      {
+        name:"RULER",
         quantity:"x1"
       },
       {
