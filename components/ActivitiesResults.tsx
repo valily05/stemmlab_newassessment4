@@ -115,7 +115,7 @@ export default function ActivitiesResults({
           .toLowerCase()
           .includes(query);
 
-const matchesCategory =
+      const matchesCategory =
   selectedCategory === 'ALL' ||
   activity.group === selectedCategory;
       return matchesSearch && matchesCategory;
@@ -158,7 +158,7 @@ const matchesCategory =
                 !activity.locked
               ) {
 
-                router.replace(activity.route);
+                router.push(activity.route);
 
               }
 

@@ -38,11 +38,15 @@ const rf = (size: number) => {
   return Math.round(PixelRatio.roundToNearestPixel(size * scale));
 };
 
+
+
 export default function Activities() {
   const { theme } = useTheme();
   const [search, setSearch] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
+
+
 
   return (
     <View
