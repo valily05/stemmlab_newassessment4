@@ -5,7 +5,7 @@ export const activities = {
   //category: ["",],
   //overview: "",objective: "",
   //mission: "",duration: "20 Minutes",difficulty: "",
-  //materials: [{name: "",quantity: "x"},],
+  //materials: [{name: "STEMM LAB ON MOBILE PHONE",quantity: "x"},],
   //setupSteps: [{title: "PREPARE",image: require('@/assets/images/setup2.png'),instruction: "Cut",bunnyTip: "Make"},],
   //instructions: ["Drop ...",],safetyNotes: ["Ensure ...",],bunnyTip: ["Use ...",]
 
@@ -308,34 +308,189 @@ export const activities = {
     ]
   },
 
+  activity5: {
+    id: 5,
+    title: 'HUMAN PERFORMANCE LAB',
+    group: "",
+    image: {
+      dark: require('../assets/images/human.png'),
+      //light: require(''),
+    },
+    route: '/activities/activity5/overview',
+    
+    category: [
+      'Medical Science',
+      'Biomechanics'
+    ],
+    //pointsRequired: 600,
+    
+    overview: "Investigate how the human body moves by measuring speed, smoothness, and coordination during controlled stretching activities.",
+    objective: "",
+
+    mission: "",
+    duration: "? Minutes",//change this
+    difficulty: "",
+
+    materials: [
+      {
+        name: "STEMM LAB ON MOBILE PHONE",
+        quantity: "x1"
+      },
+      {
+        name: "OPEN SPACE TO MOVE SAFELY",
+        quantity: "-"
+      },
+    ],
+
+    setupSteps: [
+      {
+        title: "PREPARE",//change
+        //image: require('@/assets/images/setup2.png'),
+        instruction: "Cut",//change
+        bunnyTip: "Make"//change
+      },
+    ],
+
+    instructions: [
+      "Hold the phone firmly in one hand and activate the App vibration sensor",
+      "Perform guided movement slowly as shown in the app and record the vibration",
+      "Repeat the activity with vibration feedback enabled",
+      "Review speed, smoothness, and range-of-motion data",
+      "Upload results and reflect as a group"
+    ],
+    
+    safetyNotes: [
+      "Hold the phone securely",
+      "Move slowly and smoothly",
+      "Do not overstretch your arm",
+      "Ensure enough space"
+    ],
+    
+    bunnyTip: [
+      "Use ...",
+    ]
+  },
+
+  activity6: {
+    id: 6,
+    title: 'REACTION BOARD CHALLENGE',
+    group: "",
+    image: {
+      //dark: require('@/assets/images/reaction.png'),
+      //light: require(''),
+    },
+    route: '/activities/activity6/overview',
+
+    category: [
+      'Neuroscience',
+      'Mathematics'
+    ],
+    //pointsRequired: 800,
+
+    overview: "Measure reaction time, coordination, and improvement through repeated digital and physical challenges.",
+    objective: "",
+
+    mission: "",
+    duration: "20 Minutes",
+    difficulty: "",
+
+    materials: [
+      {
+        name: "STEMM LAB ON MOBILE PHONE",
+        quantity: "x1"
+      },
+      {
+        name: "CLEAR WORKING SPACE",
+        quantity: "-"
+      },
+    ],
+
+    setupSteps: [
+      {
+        title: "PREPARE",
+        //image: require('@/assets/images/setup2.png'),
+        instruction: "Cut",
+        bunnyTip: "Make"
+      },
+    ],
+
+    instructions: [
+      "Drop ...",
+    ],
+    
+    safetyNotes: [
+      "Place the phone on a stable surface",
+      "Use gentle taps",
+      "Avoid rushing movements"
+    ],
+    
+    bunnyTip: [
+      "Use ...",
+    ]
+  },
+
+  activity7: {
+    id: 7,
+    title: 'BREATHING PACE TRAINER',
+    group: "",
+    image: {
+      //dark: require('@/assets/images/breathing.png'),
+      //light: require(''),
+    },
+    route: '/activities/activity7/overview',
+    
+    category: [
+      'Medical Science'
+    ],
+    //pointsRequired: 1000,
+    
+    overview: "Analyse breathing patterns at rest and after exercise.",
+    objective: "",
+
+    mission: "",
+    duration: "18 Minutes",
+    difficulty: "",
+
+    materials: [
+      {
+        name: "STEMM LAB ON MOBILE PHONE",
+        quantity: "x1"
+      },
+      {
+        name: "FLAT SURFACE / MAT",
+        quantity: "x1"
+      },
+    ],
+
+    setupSteps: [
+      {
+        title: "PREPARE",
+        //image: require('@/assets/images/setup2.png'),
+        instruction: "Cut",
+        bunnyTip: "Make"
+      },
+    ],
+
+    instructions: [
+      "Place the phone gently on the chest",
+      "Record breathing at rest",
+      "Perform light exercise\n1. Jog 1 minute on the spot\n2. 100 star jump",
+      "Record breathing again and compare results",
+      "Upload results and reflections",
+    ],
+    
+    safetyNotes: [
+      "Ensure the phone is placed gently on the chest so it does not fall or cause discomfort",
+      "Perform only light exercise to avoid injury or excessive fatigue",
+      "Make sure the floor area is clear before jogging or doing star jumps",
+      "Wear comfortable clothing and proper shoes",
+      "Stop the activity immediately if someone feels dizzy, short of breath, or unwell",
+      "Do not drop the phone while exercising",
+      "Maintain enough space between team members to avoid collisions"
+    ],
+    
+    bunnyTip: [
+      "Use ...",
+    ]
+  },
 };
-
-
-  // 
-
-  // {
-  //   id: 5,
-  //   title: 'HUMAN PERFORMANCE LAB',
-  //   image: require('../assets/images/human.png'),
-  //   tags: ['Medical Science'],
-  //   pointsRequired: 600,
-  //   route: '/activities/human-performance-lab',
-  // },
-
-  // {
-  //   id: 6,
-  //   title: 'REACTION BOARD CHALLENGE',
-  //   image: require('../assets/images/reaction.png'),
-  //   tags: ['Neuroscience', 'Mathematics'],
-  //   pointsRequired: 800,
-  //   route: '/activities/reaction-board-challenge',
-  // },
-
-  // {
-  //   id: 7,
-  //   title: 'BREATHING PACE TRAINER',
-  //   image: require('../assets/images/breathing.png'),
-  //   tags: ['Medical Science'],
-  //   pointsRequired: 1000,
-  //   route: '/activities/breathing-pace-trainer',
-  // },
