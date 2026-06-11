@@ -37,7 +37,7 @@ const rf = (
 
 interface Props {
   time: string;
-  isRecording: boolean;
+  isRecording?: boolean;
 }
 
 export default function LiveTimerCard({

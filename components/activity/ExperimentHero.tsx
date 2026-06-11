@@ -36,7 +36,7 @@ const rf = (size: number) => {
 import { ReactNode } from 'react';
 
 interface Props {
-  activityNumber: number;
+  activityID: number;
   title: string;
   description: ReactNode;
   image?: ImageSourcePropType;
@@ -44,7 +44,7 @@ interface Props {
 }
 
 export default function ExperimentHero({
-  activityNumber,
+  activityID,
   title,
   description,
   image,
@@ -75,7 +75,7 @@ export default function ExperimentHero({
         <View style={styles.left}>
 
 <Text style={styles.activity}>
-  ACTIVITY #{activityNumber}
+  ACTIVITY #{activityID}
 </Text>
 
           <Text style={styles.title}>
