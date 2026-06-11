@@ -273,13 +273,16 @@ colors={
         </ImageBackground>
 
         <View style={styles.content}>
-          <SearchBar
-            search={search}
-            setSearch={setSearch}
-            placeholder={t.placeholderSearch || "Search..."} // Language-dynamic placeholder
-          />
-          <SearchResults search={search} />
-          <ActivitiesSection userPoints={userPoints} />
+        <SearchBar
+  search={search}
+  setSearch={setSearch}
+  placeholder={t.placeholderSearch || "Search..."}
+/>
+
+{/* Only render when search has characters */}
+{search.length > 0 && <SearchResults search={search} />}
+
+<ActivitiesSection userPoints={userPoints} />
 <Streak
   hasTeam={hasTeam}
   streak={streak}

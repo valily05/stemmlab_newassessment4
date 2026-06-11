@@ -1,20 +1,30 @@
 import { addDoc, collection, } from "firebase/firestore";
 
-import { db } from "./config";
 import { Iteration } from "@/types/firestore";
+import { db } from "./config";
+export async function saveIteration(
+    sessionID: string,
+    iteration: Iteration,
+    locationID?: string
+) {
 
-export async function saveIteration(sessionID: string, iteration: Iteration) {
-    const iterationRef = collection(
-        db,
-        'sessions',
-        sessionID,
-        'iterations'
-    );
+    const path = locationID
+        ? collection(
+            db,
+            "sessions",
+            sessionID,
+            "locations",
+            locationID,
+            "iterations"
+        )
+        : collection(
+            db,
+            "sessions",
+            sessionID,
+            "iterations"
+        );
 
-    const docRef = await addDoc(
-        iterationRef,
-        iteration
-    );
+    const docRef = await addDoc(path, iteration);
 
     return docRef.id;
 }

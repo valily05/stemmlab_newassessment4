@@ -18,10 +18,15 @@ import ExperimentStats from '@/components/activity/ExperimentStats';
 import ExperimentTipCard from '@/components/activity/ExperimentTipCard';
 import InfoModal from '@/components/activity/InfoModal';
 import LocationHowItWorks from '@/components/activity/LocationHowItWorks';
+import RecordingExperimentCard from '@/components/activity/RecordingExperimentCard';
 import SoundExperimentCard from '@/components/activity/SoundExperimentCard';
 import { activities } from '@/data/activities';
+import { auth } from '@/services/firebase/config';
+import { createLocation } from '@/services/firebase/locationService';
+import { createSession } from '@/services/firebase/sessionService';
+import { getUserProfile } from '@/services/firebase/userService';
 import * as Location from 'expo-location';
-
+import { Timestamp } from 'firebase/firestore';
 
 const activity = activities.activity2;
 
@@ -49,9 +54,15 @@ const hp = (percentage: number) =>
 
 const stages = [
   'LOCATION',
+  'TALKING',
+  'DROPPING',
+  'STOMPING',
 ];
 
 export default function Activity2Experiment() {
+  const [currentStage, setCurrentStage] = useState(0);
+  const [sessionID, setSessionID] = useState('');
+const [locationID, setLocationID] = useState('');
   const [location, setLocation] =
   useState<Location.LocationObject | null>(null);
 const [locationName, setLocationName] = useState('');
@@ -161,54 +172,132 @@ const detectLocation = async () => {
             right: -wp(9),
           }}
           activityNumber={2}
-          description={
-            <Text style={styles.heroDescription}>
-              Detect and save your{' '}
-              <Text style={styles.pinkText}>
-                CURRENT LOCATION
-              </Text>{' '}
-              before measuring sound level.
-            </Text>
-          }
+description={
+  currentStage === 0 ? (
+    <Text style={styles.heroDescription}>
+      Detect and save your{' '}
+      <Text style={styles.pinkText}>
+        CURRENT LOCATION
+      </Text>{' '}
+      before measuring sound level.
+    </Text>
+  ) : (
+    <Text style={styles.heroDescription}>
+      Record the{' '}
+      <Text style={styles.pinkText}>
+        {stages[currentStage]}
+      </Text>{' '}
+      sound for this location.
+    </Text>
+  )
+}
         />
 
-        <ExperimentStats
-          timeLeft={formatCountdown(timeLeft)}
-iteration="LOCATION"
-        />
-<SoundExperimentCard
-  location={location}
-  loadingLocation={loadingLocation}
-  locationName={locationName}
-  setLocationName={setLocationName}
-  onDetectLocation={detectLocation}
-  onSaveLocation={() => {
-    if (!locationName.trim()) {
-      Alert.alert('Please enter a location name.');
-      return;
-    }
-
-    // TODO: Save location and continue
-  }}
-  onInputFocus={() => {
-    scrollRef.current?.scrollTo({
-      y: hp(55),
-      animated: true,
-    });
-  }}
+<ExperimentStats
+  timeLeft={formatCountdown(timeLeft)}
+  iteration={stages[currentStage]}
 />
+{currentStage === 0 ? (
+  <SoundExperimentCard
+    location={location}
+    loadingLocation={loadingLocation}
+    locationName={locationName}
+    setLocationName={setLocationName}
+    onDetectLocation={detectLocation}
+    onSaveLocation={async () => {
+      if (!locationName.trim()) {
+        Alert.alert('Please enter a location name.');
+        return;
+      }
 
-        {!hasStarted ? (
-          <LocationHowItWorks/>
-        ) : null}
+      try {
+        const uid = auth.currentUser?.uid;
 
-        {!hasStarted && (
-          <ExperimentTipCard
-tips={[
-  'Stay at the same spot while detecting your location. Move to a different location after completing all sound activities.',
-]}
-          />
-        )}
+        if (!uid) {
+          throw new Error('User not logged in');
+        }
+
+        const profile = await getUserProfile(uid);
+
+        if (!profile?.teamID) {
+          throw new Error('No team found');
+        }
+
+        const newSessionID = await createSession({
+          activityID: 2,
+          teamID: profile.teamID,
+          experimentTime: 0,
+          totalIterations: 0,
+          pointsEarned: 0,
+          completedAt: Timestamp.now(),
+          insights: {},
+        });
+
+        setSessionID(newSessionID);
+
+        const newLocationID = await createLocation(
+          newSessionID,
+          {
+            locationNo: 1,
+            name: locationName,
+            latitude: location!.coords.latitude,
+            longitude: location!.coords.longitude,
+          }
+        );
+
+        setLocationID(newLocationID);
+
+        setCurrentStage(1);
+        setHasStarted(false);
+setLocation(null);
+setLocationName('');
+
+      } catch (e) {
+        console.log(e);
+        Alert.alert('Failed to save location.');
+      }
+    }}
+    onInputFocus={() => {
+      scrollRef.current?.scrollTo({
+        y: hp(55),
+        animated: true,
+      });
+    }}
+  />
+) : (
+<RecordingExperimentCard
+  key={currentStage}
+      sessionID={sessionID}
+    locationID={locationID}
+    stage={stages[currentStage]}
+    iteration={currentStage}
+    onNext={() => {
+      if (currentStage < stages.length - 1) {
+        setCurrentStage(prev => prev + 1);
+      } else {
+        Alert.alert('Activity Complete!');
+      }
+    }}
+  />
+)}
+
+{currentStage === 0 && !hasStarted && (
+  <LocationHowItWorks />
+)}{currentStage === 0 ? (
+  <ExperimentTipCard
+    tips={[
+      'Stay at the same spot while detecting your location.',
+    ]}
+  />
+) : (
+  <ExperimentTipCard
+    tips={[
+      'Keep the phone close to the sound source.',
+      'Avoid covering the microphone.',
+      'Record only the requested sound.',
+    ]}
+  />
+)}
 
         <ExitButton
           onPress={() =>
@@ -219,14 +308,27 @@ tips={[
 
       <InfoModal
         visible={showInfo}
-        title="HOW TO COMPLETE THIS ACTIVITY"
-instructions={[
-  'Tap Detect Location.',
-  'Allow GPS permission.',
-  'Give your location a name.',
-  'Save the location.',
-  'Continue to the first sound activity.',
-]}
+      title={
+  currentStage === 0
+    ? "HOW TO COMPLETE THIS ACTIVITY"
+    : "HOW TO RECORD"
+}
+
+instructions={
+  currentStage === 0
+    ? [
+        'Tap Detect Location.',
+        'Allow GPS permission.',
+        'Give your location a name.',
+        'Save the location.',
+      ]
+    : [
+        'Press Start Recording.',
+        'Perform the sound.',
+        'Stop recording.',
+        'Save iteration.',
+      ]
+}
         onClose={() =>
           setShowInfo(false)
         }
