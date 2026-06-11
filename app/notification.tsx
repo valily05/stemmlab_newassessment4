@@ -4,26 +4,26 @@ import { auth, db } from '@/services/firebase/config';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import {
-  collection,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-  writeBatch,
+    collection,
+    doc,
+    onSnapshot,
+    orderBy,
+    query,
+    where,
+    writeBatch,
 } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import {
-  Dimensions,
-  Image,
-  ImageBackground,
-  PixelRatio,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Image,
+    ImageBackground,
+    PixelRatio,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -71,7 +71,25 @@ export default function NotificationPage() {
         });
         await batch.commit();
     };
+const [selectedTab, setSelectedTab] = useState<
+  "all" | "team" | "leaderboard" | "streak"
+>("all");
 
+const filteredNotifications = notifications.filter((notification) => {
+  switch (selectedTab) {
+    case "team":
+      return notification.type === "team";
+
+    case "leaderboard":
+      return notification.type === "leaderboard";
+
+    case "streak":
+      return notification.type === "streak";
+
+    default:
+      return true;
+  }
+});
     const getSectionTitle = (date: Date) => {
         const today = new Date();
         const yesterday = new Date();
@@ -142,27 +160,132 @@ export default function NotificationPage() {
                     </View>
 
                     {/* Filter */}
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={styles.filterRow}
-                    >
-                        <Pressable style={[styles.activeChip, { backgroundColor: theme.activeTabBackground || '#8B5CF6' }]}>
-                            <Text style={[styles.activeChipText, { color: theme.activeTabText || '#FFFFFF' }]}>All</Text>
-                        </Pressable>
+                   {/* Filter */}
+<ScrollView
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  contentContainerStyle={styles.filterRow}
+>
+  {/* ALL */}
+  <Pressable
+    onPress={() => setSelectedTab("all")}
+    style={[
+      styles.chip,
+      selectedTab === "all" && styles.activeChip,
+      {
+        borderColor: theme.activityBorder,
+        backgroundColor:
+          selectedTab === "all"
+            ? theme.activeTabBackground
+            : theme.tabBackground,
+      },
+    ]}
+  >
+    <Text
+      style={[
+        styles.chipText,
+        {
+          color:
+            selectedTab === "all"
+              ? theme.activeTabText
+              : theme.tabTextColor,
+        },
+      ]}
+    >
+      All
+    </Text>
+  </Pressable>
 
-                        <Pressable style={[styles.chip, { borderColor: theme.activityBorder || '#ffffff85', backgroundColor: theme.tabBackground || 'transparent' }]}>
-                            <Text style={[styles.chipText, { color: theme.tabTextColor || '#FFFFFF' }]}>Team Updates</Text>
-                        </Pressable>
+  {/* TEAM */}
+  <Pressable
+    onPress={() => setSelectedTab("team")}
+    style={[
+      styles.chip,
+      selectedTab === "team" && styles.activeChip,
+      {
+        borderColor: theme.activityBorder,
+        backgroundColor:
+          selectedTab === "team"
+            ? theme.activeTabBackground
+            : theme.tabBackground,
+      },
+    ]}
+  >
+    <Text
+      style={[
+        styles.chipText,
+        {
+          color:
+            selectedTab === "team"
+              ? theme.activeTabText
+              : theme.tabTextColor,
+        },
+      ]}
+    >
+      Team Updates
+    </Text>
+  </Pressable>
 
-                        <Pressable style={[styles.chip, { borderColor: theme.activityBorder || '#ffffff85', backgroundColor: theme.tabBackground || 'transparent' }]}>
-                            <Text style={[styles.chipText, { color: theme.tabTextColor || '#FFFFFF' }]}>Leaderboard</Text>
-                        </Pressable>
+  {/* LEADERBOARD */}
+  <Pressable
+    onPress={() => setSelectedTab("leaderboard")}
+    style={[
+      styles.chip,
+      selectedTab === "leaderboard" && styles.activeChip,
+      {
+        borderColor: theme.activityBorder,
+        backgroundColor:
+          selectedTab === "leaderboard"
+            ? theme.activeTabBackground
+            : theme.tabBackground,
+      },
+    ]}
+  >
+    <Text
+      style={[
+        styles.chipText,
+        {
+          color:
+            selectedTab === "leaderboard"
+              ? theme.activeTabText
+              : theme.tabTextColor,
+        },
+      ]}
+    >
+      Leaderboard
+    </Text>
+  </Pressable>
 
-                        <Pressable style={[styles.chip, { borderColor: theme.activityBorder || '#ffffff85', backgroundColor: theme.tabBackground || 'transparent' }]}>
-                            <Text style={[styles.chipText, { color: theme.tabTextColor || '#FFFFFF' }]}>Reminders</Text>
-                        </Pressable>
-                    </ScrollView>
+  {/* REMINDERS */}
+  <Pressable
+    onPress={() => setSelectedTab("streak")}
+    style={[
+      styles.chip,
+      selectedTab === "streak" && styles.activeChip,
+      {
+        borderColor: theme.activityBorder,
+        backgroundColor:
+          selectedTab === "streak"
+            ? theme.activeTabBackground
+            : theme.tabBackground,
+      },
+    ]}
+  >
+    <Text
+      style={[
+        styles.chipText,
+        {
+          color:
+            selectedTab === "streak"
+              ? theme.activeTabText
+              : theme.tabTextColor,
+        },
+      ]}
+    >
+      Reminders
+    </Text>
+  </Pressable>
+</ScrollView>
 
                     {notifications.some((n) => !n.read) && (
                         <Pressable onPress={handleMarkAllRead}>
@@ -179,22 +302,23 @@ export default function NotificationPage() {
                         </Pressable>
                     )}
 
-                    {notifications.length === 0 ? (
+                    {filteredNotifications.length === 0? (
                         <Text
                             style={{
                                 color: theme.activityDescription || "#B7B8D0",
                                 textAlign: "center",
-                                marginTop: hp(8),
+                                marginTop: hp(30),
                                 fontFamily: "PixelOperator",
+                                fontSize:15,
                             }}
                         >
                             No notifications yet.
                         </Text>
                     ) : (
-                        notifications.map((item: any, index: number) => {
+                       filteredNotifications.map((item, index) => {
                             const currentDate = item.createdAt?.toDate();
-                            const previousDate = notifications[index - 1]?.createdAt?.toDate();
-
+           const previousDate =
+  filteredNotifications[index - 1]?.createdAt?.toDate();
                             const showHeader =
                                 index === 0 ||
                                 getSectionTitle(currentDate) !== getSectionTitle(previousDate);
