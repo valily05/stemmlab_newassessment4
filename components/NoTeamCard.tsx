@@ -34,7 +34,7 @@ const hp = (p: number) => PixelRatio.roundToNearestPixel((height * p) / 100);
 const rf = (s: number) => Math.round(PixelRatio.roundToNearestPixel(s * (width / 390)));
 
 export default function NoTeamCard() {
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
   const [teamCode, setTeamCode] = useState('');
   const [loading, setLoading] = useState(false);
 const inputRef = useRef<TextInput>(null);
@@ -128,39 +128,80 @@ for (const memberId of currentMembers) {
         style={styles.image}
       />
 
-            <Text style={styles.subtitle}>
-You are not part of any team yet.
+<Text
+  style={[
+    styles.subtitle,
+    {
+      color: theme.noTeamSubtitle,
+    },
+  ]}
+>You are not part of any team yet.
 Join a team to collaborate, compete and complete missions together!      </Text>
-<View style={styles.featureContainer}>
-  <View style={styles.featureItem}>
+<View
+  style={[
+    styles.featureContainer,
+    {
+      borderColor: theme.noTeamFeatureBorder,
+      backgroundColor: theme.noTeamFeatureBackground,
+    },
+  ]}
+>  <View style={styles.featureItem}>
   <Image
   source={require('../assets/images/Group 267.png')}
   style={styles.collaborateIcon}
 />
 
-    <Text style={styles.featureText}>
-      Collaborate{"\n"}with peers
+<Text
+  style={[
+    styles.featureText,
+    {
+      color: theme.noTeamFeatureText,
+    },
+  ]}
+>      Collaborate{"\n"}with peers
     </Text>
   </View>
 
 <View style={styles.dashedDivider}>
   {[...Array(5)].map((_, i) => (
-    <View key={i} style={styles.dash} />
-  ))}
+<View
+  key={i}
+  style={[
+    styles.dash,
+    {
+      backgroundColor: theme.noTeamDash,
+    },
+  ]}
+/>  ))}
 </View>
   <View style={styles.featureItem}>
  <Image
   source={require('../assets/images/star.png')}
   style={styles.starIcon}
 />
-    <Text style={styles.featureText}>
+    <Text
+  style={[
+    styles.featureText,
+    {
+      color: theme.noTeamFeatureText,
+    },
+  ]}
+>
       Earn more{"\n"}points
     </Text>
   </View>
 
 <View style={styles.dashedDivider}>
   {[...Array(5)].map((_, i) => (
-    <View key={i} style={styles.dash} />
+   <View
+  key={i}
+  style={[
+    styles.dash,
+    {
+      backgroundColor: theme.noTeamDash,
+    },
+  ]}
+/>
   ))}
 </View>
   <View style={styles.featureItem}>
@@ -168,16 +209,47 @@ Join a team to collaborate, compete and complete missions together!      </Text>
   source={require('../assets/images/Group 77.png')}
   style={styles.leaderboardIcon}
 />
-    <Text style={styles.featureText}>
+  <Text
+  style={[
+    styles.featureText,
+    {
+      color: theme.noTeamFeatureText,
+    },
+  ]}
+>
       Climb ranks{"\n"}together
     </Text>
   </View>
 </View>
 <View style={styles.codeSection}>
-<Text style={styles.readyText}>
-  <Text style={styles.readyStar}>✦{"\u00A0\u00A0\u00A0"}</Text>
+<Text
+  style={[
+    styles.readyText,
+    {
+      color: theme.noTeamReadyText,
+    },
+  ]}
+>  
+<Text
+  style={[
+    styles.readyStar,
+    {
+      color: theme.noTeamReadyStar,
+    },
+  ]}
+>
+  ✦{"\u00A0\u00A0\u00A0"}</Text>
   Ready To Start Your Journey?
-  <Text style={styles.readyStar}>{"\u00A0\u00A0\u00A0"}✦</Text>
+ <Text
+  style={[
+    styles.readyStar,
+    {
+      color: theme.noTeamReadyStar,
+    },
+  ]}
+>
+  {"\u00A0\u00A0\u00A0"}✦
+</Text>
 </Text>
 
   <TouchableOpacity
@@ -186,8 +258,24 @@ Join a team to collaborate, compete and complete missions together!      </Text>
   >
     <View style={styles.codeBoxes}>
       {[0, 1, 2, 3].map((i) => (
-        <View key={i} style={styles.codeBox}>
-          <Text style={styles.codeDigit}>
+       <View
+  key={i}
+  style={[
+    styles.codeBox,
+    {
+      borderColor: theme.noTeamCodeBorder,
+      backgroundColor: theme.noTeamCodeBox,
+    },
+  ]}
+>
+          <Text
+  style={[
+    styles.codeDigit,
+    {
+      color: theme.noTeamCodeDigit,
+    },
+  ]}
+>
             {teamCode[i] || '#'}
           </Text>
         </View>
@@ -215,7 +303,7 @@ Join a team to collaborate, compete and complete missions together!      </Text>
 >
 
  <LinearGradient
-  colors={['#5B21B6', '#DB2777']}
+  colors={theme.noTeamJoinGradient}
   start={{ x: 0, y: 0 }}
   end={{ x: 1, y: 0 }}
   style={styles.joinButton}
@@ -223,25 +311,53 @@ Join a team to collaborate, compete and complete missions together!      </Text>
     {loading ? (
       <ActivityIndicator color="#FFF" />
     ) : (
-      <Text style={styles.joinButtonText}>
+    <Text
+  style={[
+    styles.joinButtonText,
+    {
+      color: theme.noTeamJoinText,
+    },
+  ]}
+>
         JOIN TEAM
       </Text>
     )}
   </LinearGradient>
 </TouchableOpacity>
 
-      <View style={styles.dividerRow}>
-        <View style={styles.line} />
-        <Text style={styles.orText}>OR</Text>
-        <View style={styles.line} />
-      </View>
+<View style={styles.dividerRow}>
+  <View
+    style={[
+      styles.line,
+      {
+        backgroundColor: theme.noTeamDivider,
+      },
+    ]}
+  />
+
+  <Text
+    style={[
+      styles.orText,
+      {
+        color: theme.noTeamOr,
+      },
+    ]}
+  >
+    OR
+  </Text>
+
+  <View
+    style={[
+      styles.line,
+      {
+        backgroundColor: theme.noTeamDivider,
+      },
+    ]}
+  />
+</View>
 
 <LinearGradient
-  colors={
-    isDark
-      ? ["#E879F9", "#A970FF", "#6D5CFF"]
-      : ["#C084FC", "#A78BFA", "#8B5CF6"]
-  }
+colors={theme.noTeamCreateGradient}
   start={{ x: 0, y: 0 }}
   end={{ x: 1, y: 1 }}
   style={styles.createTeamBorder}
