@@ -371,8 +371,12 @@ onAddAnother={() => {
   onFinish={() => {
     setShowLocationComplete(false);
 
-    router.push("/activities/activity2/results");
-  }}
+router.push({
+  pathname: "/activities/activity2/results",
+  params: {
+    sessionID,
+  },
+});  }}
 />
     </LinearGradient>
   );

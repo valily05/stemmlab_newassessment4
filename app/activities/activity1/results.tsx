@@ -1,3 +1,14 @@
+import MaskedView from '@react-native-masked-view/masked-view';
+import {
+  ChartNoAxesColumn,
+  Clock3,
+  Crosshair,
+  Download,
+  RotateCcw,
+  Star,
+  Trophy,
+  Video
+} from 'lucide-react-native';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -11,17 +22,6 @@ import {
   View
 } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-import MaskedView from '@react-native-masked-view/masked-view';
-import {
-  ChartNoAxesColumn,
-  Clock3,
-  Crosshair,
-  Download,
-  RotateCcw,
-  Star,
-  Trophy,
-  Video
-} from 'lucide-react-native';
 
 import * as FileSystem from 'expo-file-system/legacy';
 import { LinearGradient } from 'expo-linear-gradient';
