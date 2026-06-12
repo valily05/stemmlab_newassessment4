@@ -39,6 +39,8 @@ import { createSession } from '@/services/firebase/sessionService';
 import { updateTeamStreak } from '@/services/firebase/teamService';
 import { getUserProfile } from '@/services/firebase/userService';
 
+import { calculateImpactData } from '@/utils/activity1Calculations';
+
 type ExperimentResult = {
   stage: string;
 
@@ -305,43 +307,15 @@ export default function Activity1Experiment() {
     const heightMeters =
       Number(dropHeight);
 
-    const velocity = Math.sqrt(
-      2 * 9.81 * heightMeters
-    );
-
-    const acceleration =
-      velocity / contactTime;
-
-    const gForce =
-      velocity /
-      (contactTime * 9.81);
-
-    let impactForce = 'SAFE';
-
-    if (
-      gForce >= 5 &&
-      gForce < 10
-    ) {
-      impactForce = 'CAUTION';
-    }
-
-    if (
-      gForce >= 10 &&
-      gForce < 30
-    ) {
-      impactForce = 'HIGH';
-    }
-
-    if (
-      gForce >= 30 &&
-      gForce < 50
-    ) {
-      impactForce = 'SEVERE';
-    }
-
-    if (gForce >= 50) {
-      impactForce = 'EXTREME';
-    }
+    const {
+        velocity,
+        acceleration,
+        gForce,
+        impactForce,
+      } = calculateImpactData(
+        heightMeters,
+        contactTime
+      );
 
     const result = {
       stage: stages[currentStage],
