@@ -290,6 +290,7 @@ colors={
 />
      <Banner />
           <TeamRankingCard />
+          
         </View>
       </ScrollView>
 

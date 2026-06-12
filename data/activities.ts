@@ -227,7 +227,7 @@ export const activities = {
 
     image: {
       dark: require('@/assets/images/earthquake.png'),
-      light: require('@/assets/images/earthquake-Light.png'),
+      light: require('@/assets/images/earthquakeImage-Light.png'),
     },
     route: '/activities/activity4/overview',
 
