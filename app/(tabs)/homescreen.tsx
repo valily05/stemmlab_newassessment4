@@ -36,6 +36,8 @@ import Sidebar from '../../components/SideBar';
 import Streak from '../../components/streak';
 import TeamRankingCard from '../../components/TeamRankingCard';
 
+import TestBanner from "@/components/ads/TestBanner";
+
 const { width, height } = Dimensions.get('window');
 const wp = (p: number) => PixelRatio.roundToNearestPixel((width * p) / 100);
 const hp = (p: number) => PixelRatio.roundToNearestPixel((height * p) / 100);
@@ -290,6 +292,7 @@ colors={
 />
      <Banner />
           <TeamRankingCard />
+          <TestBanner />
         </View>
       </ScrollView>
 
