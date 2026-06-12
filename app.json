@@ -13,7 +13,6 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocationWhenInUseUsageDescription": "Allow STEMM Lab to access your location for STEM activities."
-
       }
     },
     "android": {
@@ -40,30 +39,31 @@
       "bundler": "metro",
       "output": "static"
     },
-"plugins": [
-  "expo-router",
-  [
-    "expo-camera",
-    {
-      "cameraPermission": "Allow STEMM Lab to access your camera."
-    }
-  ],
-  [
-    "expo-media-library",
-    {
-      "photosPermission": "Allow STEMM Lab to save experiment videos."
-    }
-  ],
-  [
-    "expo-location",
-    {
-      "locationWhenInUsePermission": "Allow STEMM Lab to access your location for STEM activities."
-    }
-  ],
-  "expo-video",
-  "expo-audio",
-  "expo-asset"
-],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow STEMM Lab to access your camera."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow STEMM Lab to save experiment videos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow STEMM Lab to access your location for STEM activities."
+        }
+      ],
+      "expo-video",
+      "expo-audio",
+      "expo-asset",
+      "react-native-google-mobile-ads"
+    ],
     "experiments": {
       "typedRoutes": true
     },
