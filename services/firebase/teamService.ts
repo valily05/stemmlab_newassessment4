@@ -1,11 +1,15 @@
 import {
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    limit,
-    orderBy,
-    query,
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
 } from "firebase/firestore";
 
 import { db } from "./config";
@@ -42,7 +46,6 @@ export async function getTeam(teamId: string) {
 }
 
 export async function getAllTeams() {
-
   const q = query(
     collection(db, "teams"),
     orderBy("totalPoints", "desc")
@@ -57,10 +60,10 @@ export async function getAllTeams() {
 }
 
 export const getTeamMembers = async (teamID: string) => {
-  const teamRef = doc(db, `teams`, teamID);
+  const teamRef = doc(db, "teams", teamID);
   const snap = await getDoc(teamRef);
 
-  if(!snap.exists()) return [];
+  if (!snap.exists()) return [];
 
   return snap.data().members || [];
 };
@@ -68,9 +71,52 @@ export const getTeamMembers = async (teamID: string) => {
 export const updateTeamStreak = async (teamID: string) => {
   const members = await getTeamMembers(teamID);
 
-  if(!members||members.length===0) return;
+  if (!members || members.length === 0) return;
 
   await Promise.all(
     members.map((uid: string) => updateUserStreak(uid))
   );
-}
+};
+
+/* ===========================
+   CREATE TEAM
+=========================== */
+
+export const createTeam = async (
+  teamCode: string,
+  teamName: string,
+  creatorId: string
+) => {
+  if (!teamName.trim()) {
+    throw new Error("Please enter a team name.");
+  }
+
+  // Check if code already exists
+  const existing = await getDocs(
+    query(
+      collection(db, "teams"),
+      where("teamCode", "==", teamCode)
+    )
+  );
+
+  if (!existing.empty) {
+    throw new Error("Team code already exists.");
+  }
+
+  // Create team
+  const teamRef = await addDoc(collection(db, "teams"), {
+    teamName,
+    teamCode,
+    creatorId,
+    members: [creatorId],
+    totalPoints: 0,
+    createdAt: serverTimestamp(),
+  });
+
+  // Update user with team ID
+  await updateDoc(doc(db, "users", creatorId), {
+    teamID: teamRef.id,
+  });
+
+  return teamRef.id;
+};

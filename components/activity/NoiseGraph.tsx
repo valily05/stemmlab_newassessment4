@@ -10,34 +10,58 @@ interface Props {
 }
 
 export default function NoiseGraph({ iterations }: Props) {
-  const max = Math.max(...iterations.map((i) => i.data?.averageDecibel ?? 0), 1);
+  const highest = Math.max(
+    ...iterations.map((i) => i.data?.averageDecibel ?? 0),
+    40
+  );
+
+  const max = Math.ceil(highest / 10) * 10;
+  
+  // Calculate dynamic widths to space out items evenly based on array length
+  const graphInnerWidth = width - wp(10) - 40 - 50; // Screen minus margins, padding, and Y-axis
+  const containerWidth = iterations.length > 0 ? graphInnerWidth / iterations.length : 60;
 
   return (
     <View style={styles.card}>
       <Text style={styles.title}>NOISE_TRENDS</Text>
-
-      <View style={styles.graph}>
-        {/* Background Grid Lines */}
-        <View style={styles.gridLines}>
-          {[...Array(4)].map((_, i) => (
-            <View key={i} style={styles.gridLine} />
-          ))}
+      
+      <View style={styles.graphContainer}>
+        {/* Y-Axis Labels */}
+        <View style={styles.yAxis}>
+          <Text style={styles.yLabel}>{max.toFixed(0)}</Text>
+          <Text style={styles.yLabel}>{(max * 0.75).toFixed(0)}</Text>
+          <Text style={styles.yLabel}>{(max * 0.5).toFixed(0)}</Text>
+          <Text style={styles.yLabel}>{(max * 0.25).toFixed(0)}</Text>
+          <Text style={styles.yLabel}>0</Text>
         </View>
 
-        {iterations.map((item, index) => {
-          const value = item.data?.averageDecibel ?? 0;
-          const barHeight = (value / max) * 140;
+        {/* Graph Body */}
+        <View style={styles.graph}>
+          {/* Background Grid Lines */}
+          <View style={styles.gridLines}>
+            {[...Array(4)].map((_, i) => (
+              <View key={i} style={styles.gridLine} />
+            ))}
+            <View style={[styles.gridLine, { backgroundColor: "rgba(75, 83, 163, 0.6)" }]} /> 
+          </View>
 
-          return (
-            <View key={index} style={styles.barContainer}>
-              <LinearGradient
-                colors={["#FFD94E", "#FF7E67"]}
-                style={[styles.bar, { height: Math.max(barHeight, 5) }]}
-              />
-              <Text style={styles.barLabel}>{item.data?.action?.charAt(0).toUpperCase()}</Text>
-            </View>
-          );
-        })}
+          {iterations.map((item, index) => {
+            const value = item.data?.averageDecibel ?? 0;
+            const barHeight = (value / max) * 140;
+
+            return (
+              <View key={index} style={[styles.barContainer, { width: containerWidth }]}>
+                <LinearGradient
+                  colors={["#FFD94E", "#FF7E67"]}
+                  style={[styles.bar, { height: Math.max(barHeight, 5) }]}
+                />
+                <Text style={styles.barLabel} numberOfLines={2}>
+                  {item.data?.action?.toUpperCase() || "N/A"}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
       </View>
     </View>
   );
@@ -45,7 +69,7 @@ export default function NoiseGraph({ iterations }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: wp(5),
+    marginHorizontal: wp(4),
     marginTop: 20,
     padding: 20,
     backgroundColor: "rgba(23, 19, 63, 0.6)",
@@ -60,12 +84,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     letterSpacing: 1,
   },
-  graph: {
+  graphContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    alignItems: "flex-end",
+  },
+  graph: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "flex-end",
     height: 180,
     paddingBottom: 10,
+    marginRight: 2,
   },
   gridLines: {
     ...StyleSheet.absoluteFillObject,
@@ -79,12 +109,13 @@ const styles = StyleSheet.create({
   },
   barContainer: {
     alignItems: "center",
-    width: wp(12),
+    justifyContent: "flex-end",
+    paddingHorizontal: 2,
   },
   bar: {
     width: 18,
-    borderRadius: 4,
-    // Add a subtle outer glow/shadow
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
     shadowColor: "#FF7E67",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
@@ -95,6 +126,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "#CBD5E1",
     fontFamily: "PixelOperator",
-    fontSize: rf(12),
+    fontSize: rf(10),
+    textAlign: "center",
+    width: "100%",
+  },
+  yAxis: {
+    height: 180,
+    justifyContent: "space-between",
+    marginRight: 8,
+    width: 30,
+    alignItems: "flex-end",
+    paddingBottom: 14,
+  },
+  yLabel: {
+    color: "#94A3B8",
+    fontFamily: "PixelOperator",
+    fontSize: rf(14),
   },
 });

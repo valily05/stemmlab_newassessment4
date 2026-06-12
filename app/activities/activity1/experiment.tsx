@@ -2,7 +2,7 @@ import {
   useCameraPermissions,
 } from 'expo-camera';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -97,6 +97,9 @@ const stages = [
 ];
 
 export default function Activity1Experiment() {
+  // Extract prediction parameter
+  const { prediction } = useLocalSearchParams();
+
   const [isUploading, setIsUploading] =
     useState(false);
 
@@ -411,11 +414,6 @@ export default function Activity1Experiment() {
       setHasStarted(false);
       setIsRecording(false);
 
-      // console.log(
-      //   'RESULTS SENT TO RESULTS PAGE:',
-      //   resultsWithUrls
-      // );
-
       const totalIterations = resultsWithUrls.length;
 
       const inTargetCount =
@@ -564,6 +562,7 @@ export default function Activity1Experiment() {
 
       console.log("Going to results page");
 
+      // Pass prediction along to results page
       router.replace({
         pathname:
           '/activities/activity1/results',
@@ -574,6 +573,7 @@ export default function Activity1Experiment() {
           accuracy,
           bestResult: JSON.stringify(bestResult),
           results: JSON.stringify(resultsWithUrls),
+          prediction: prediction as string,
         },
       });
     }
