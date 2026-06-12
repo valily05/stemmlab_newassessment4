@@ -5,7 +5,16 @@ import { router } from "expo-router";
 import { Copy } from 'lucide-react-native';
 import { useEffect, useState } from "react";
 
+import { auth, db } from "@/services/firebase/config";
+
 import {
+    doc,
+    getDoc
+} from "firebase/firestore";
+
+import { createTeam } from "@/services/firebase/teamService";
+import {
+    ActivityIndicator,
     Alert,
     Dimensions,
     Image,
@@ -35,14 +44,33 @@ export default function CreateTeamPage() {
 
     const [teamName, setTeamName] = useState("");
     const [teamCode, setTeamCode] = useState("");
+    const [loading, setLoading] = useState(false);
+const isCodeInDatabase = async (code: string) => {
+    const docRef = doc(db, "teams", code);
+    const docSnap = await getDoc(docRef);
 
-    const generateCode = () => {
-        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        let code = "STEM";
-        for (let i = 0; i < 4; i++) {
-            code += chars[Math.floor(Math.random() * chars.length)];
+    return docSnap.exists();
+};
+
+    // Generate unique 4-digit code
+    const generateCode = async () => {
+        const digits = "0123456789";
+        let code = "";
+        let exists = true;
+
+        setLoading(true);
+
+        // Loop until a completely unique 4-digit code is generated
+        while (exists) {
+            code = "";
+            for (let i = 0; i < 4; i++) {
+                code += digits[Math.floor(Math.random() * digits.length)];
+            }
+            exists = await isCodeInDatabase(code);
         }
+
         setTeamCode(code);
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -50,9 +78,33 @@ export default function CreateTeamPage() {
     }, []);
 
     const copyToClipboard = async () => {
+        if (!teamCode) return;
         await Clipboard.setStringAsync(teamCode);
         Alert.alert("Copied!", "Team ID copied to clipboard.");
     };
+
+  const handleCreateTeam = async () => {
+    const creatorId = auth.currentUser?.uid;
+
+    if (!creatorId) {
+        setLoading(false);
+        Alert.alert("Please login first.");
+        return;
+    }
+
+    await createTeam(
+        teamCode,
+        teamName,
+        creatorId
+    );
+
+    Alert.alert("Success", "Team created successfully!", [
+        {
+            text: "OK",
+            onPress: () => router.replace("/homescreen"),
+        },
+    ]);
+}; 
 
     return (
         <View
@@ -94,7 +146,6 @@ export default function CreateTeamPage() {
                     contentContainerStyle={styles.content}
                 >
                     {/* HEADER */}
-
                     <View style={styles.header}>
                         <TouchableOpacity
                             onPress={() => router.back()}
@@ -124,7 +175,6 @@ export default function CreateTeamPage() {
                     </View>
 
                     {/* HERO / HEADER IMAGE */}
-
                     <View style={styles.heroWrapper}>
                         <Image
                             source={require("../assets/images/Group 288.png")}
@@ -159,7 +209,6 @@ export default function CreateTeamPage() {
                     </View>
 
                     {/* CARD */}
-
                     <View
                         style={[
                             styles.card,
@@ -181,7 +230,6 @@ export default function CreateTeamPage() {
                         </Text>
 
                         {/* TEAM NAME */}
-
                         <Text
                             style={[
                                 styles.label,
@@ -212,7 +260,6 @@ export default function CreateTeamPage() {
                         />
 
                         {/* TEAM ID */}
-
                         <Text
                             style={[
                                 styles.label,
@@ -236,16 +283,20 @@ export default function CreateTeamPage() {
                                     },
                                 ]}
                             >
-                                <Text
-                                    style={[
-                                        styles.code,
-                                        {
-                                            color: theme.text,
-                                        },
-                                    ]}
-                                >
-                                    {teamCode}
-                                </Text>
+                                {loading ? (
+                                    <ActivityIndicator size="small" color={theme.text} />
+                                ) : (
+                                    <Text
+                                        style={[
+                                            styles.code,
+                                            {
+                                                color: theme.text,
+                                            },
+                                        ]}
+                                    >
+                                        {teamCode}
+                                    </Text>
+                                )}
                             </View>
 
                             {/* COPY BUTTON */}
@@ -266,6 +317,7 @@ export default function CreateTeamPage() {
                             {/* RANDOMIZE BUTTON */}
                             <TouchableOpacity
                                 onPress={generateCode}
+                                disabled={loading}
                                 style={[
                                     styles.actionBtn,
                                     {
@@ -284,7 +336,6 @@ export default function CreateTeamPage() {
                         </View>
 
                         {/* TIP */}
-
                         <View
                             style={[
                                 styles.tipBox,
@@ -328,9 +379,10 @@ export default function CreateTeamPage() {
                     </View>
 
                     {/* BUTTON */}
-
                     <TouchableOpacity
                         activeOpacity={0.9}
+                        onPress={handleCreateTeam}
+                        disabled={loading}
                     >
                         <LinearGradient
                             colors={
@@ -346,11 +398,15 @@ export default function CreateTeamPage() {
                             }
                             style={styles.createBtn}
                         >
-                            <Text
-                                style={styles.createText}
-                            >
-                                CREATE TEAM
-                            </Text>
+                            {loading ? (
+                                <ActivityIndicator size="small" color="#FFF" />
+                            ) : (
+                                <Text
+                                    style={styles.createText}
+                                >
+                                    CREATE TEAM
+                                </Text>
+                            )}
                         </LinearGradient>
                     </TouchableOpacity>
                 </ScrollView>
