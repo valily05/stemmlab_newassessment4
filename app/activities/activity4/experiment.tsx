@@ -593,23 +593,13 @@ export default function Activity4Experiment() {
           activityID={activity.id}
           title={activity.title}
           description={
-            currentStage === 0 ? (
-              <Text style={styles.heroDescription}>
-                Drop the toy{' '}
-                <Text style={styles.pinkText}>
-                  WITHOUT
-                </Text>{' '}
-                a parachute.
+            <Text style={styles.heroDescription}>
+              Build the{' '}
+              <Text style={styles.pinkText}>
+                ANTI-VIBRATION LAYER
               </Text>
-            ) : (
-              <Text style={styles.heroDescription}>
-                Drop the toy{' '}
-                <Text style={styles.pinkText}>
-                  WITH
-                </Text>{' '}
-                your parachute design.
-              </Text>
-            )
+              .
+            </Text>
           }
         />
 
