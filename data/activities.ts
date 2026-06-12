@@ -226,8 +226,8 @@ export const activities = {
     group: "ENGINEERING",
 
     image: {
-      dark: require('@/assets/images/earthquake.png'),
-      //light: require(''),
+      dark: require('@/assets/images/HumanPerformanceLabImage.png'),
+      light: require('@/assets/images/HumanPerformanceLabImage-Light.png'),
     },
     route: '/activities/activity4/overview',
 
