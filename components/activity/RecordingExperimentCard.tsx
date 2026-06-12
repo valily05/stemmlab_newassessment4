@@ -3,21 +3,21 @@
 import { saveIteration } from "@/services/firebase/iterationService";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
-    RecordingPresets,
-    requestRecordingPermissionsAsync,
-    setAudioModeAsync,
-    useAudioRecorder,
-    useAudioRecorderState,
+  RecordingPresets,
+  requestRecordingPermissionsAsync,
+  setAudioModeAsync,
+  useAudioRecorder,
+  useAudioRecorderState,
 } from "expo-audio";
 import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import {
-    Dimensions,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Waveform from './Waveform';
 
@@ -77,9 +77,13 @@ export default function RecordingExperimentCard({
 
   const [soundLevel, setSoundLevel] =
     useState(0);
+    const [averageDecibel, setAverageDecibel] = useState(0);
+const [maxDecibel, setMaxDecibel] = useState(0);
+const [allReadings, setAllReadings] = useState<number[]>([]);
 useEffect(() => {
   if (!recording) return;
-
+ console.log("Metering:", recorderState.metering);
+  console.log("Duration:", recorderState.durationMillis);
 
   // Always update timer
   setRecordingTime(
@@ -93,7 +97,22 @@ useEffect(() => {
       recorderState.metering + 100
     );
 
-    setSoundLevel(db);
+   setSoundLevel(db);
+
+setAllReadings(prev => {
+  const readings = [...prev, db];
+
+  const avg =
+    readings.reduce((sum, value) => sum + value, 0) /
+    readings.length;
+
+  const max = Math.max(...readings);
+
+  setAverageDecibel(avg);
+  setMaxDecibel(max);
+
+  return readings;
+});
   }
 }, [
   recording,
@@ -112,8 +131,14 @@ async function startRecording() {
     playsInSilentMode: true,
   });
 
-  await recorder.prepareToRecordAsync();
+await recorder.prepareToRecordAsync({
+  ...RecordingPresets.HIGH_QUALITY,
+  isMeteringEnabled: true,
+});
 
+setAllReadings([]);
+setAverageDecibel(0);
+setMaxDecibel(0);
   await recorder.record();
 
   setRecordedUri(null);
@@ -141,8 +166,8 @@ await saveIteration(
     data: {
       action: stage,
       duration: recordingTime,
-      averageDecibel: soundLevel,
-      maxDecibel: soundLevel,
+    averageDecibel,
+maxDecibel,
       audioURL: recordedUri,
       createdAt: Timestamp.now(),
     },
@@ -166,7 +191,9 @@ if (isLastIteration) {
   }
 
 function retryRecording() {
-
+setAllReadings([]);
+setAverageDecibel(0);
+setMaxDecibel(0);
   setRecordedUri(null);
 
   setRecording(false);
@@ -236,6 +263,21 @@ recording
   :
   {String(recordingTime % 60).padStart(2, '0')}
 </Text>
+<View style={styles.statsContainer}>
+  <View style={styles.statCard}>
+    <Text style={styles.statLabel}>AVERAGE</Text>
+    <Text style={styles.statValue}>
+      {averageDecibel.toFixed(1)} dB
+    </Text>
+  </View>
+
+  <View style={styles.statCard}>
+    <Text style={styles.statLabel}>MAX</Text>
+    <Text style={styles.statValue}>
+      {maxDecibel.toFixed(1)} dB
+    </Text>
+  </View>
+</View>
 
       {!recording && !recordedUri && (
 
@@ -385,7 +427,34 @@ const styles = StyleSheet.create({
 
     elevation: 12,
   },
+  
+statsContainer: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  marginTop: hp(2),
+},
 
+statCard: {
+  flex: 1,
+  marginHorizontal: wp(1),
+  backgroundColor: "#181044",
+  borderRadius: rf(12),
+  paddingVertical: hp(1.5),
+  alignItems: "center",
+},
+
+statLabel: {
+  color: "#B9AEFF",
+  fontFamily: "PixelOperator",
+  fontSize: rf(12),
+},
+
+statValue: {
+  color: "#FFFFFF",
+  fontFamily: "PixelBold",
+  fontSize: rf(18),
+  marginTop: hp(0.5),
+},
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

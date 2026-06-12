@@ -5,7 +5,6 @@ import { ArrowDown, Lightbulb, Shield, Sparkles, Wind } from 'lucide-react-nativ
 import { useState } from 'react';
 import {
     Dimensions,
-    Image,
     PixelRatio,
     ScrollView,
     StyleSheet,
@@ -83,19 +82,9 @@ export default function Activity1Prediction() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                <TouchableOpacity
-                    style={styles.infoButton}
-                    onPress={() => setShowInfo(true)}
-                >
-                    <Image
-                        source={require('@/assets/images/info-icon.png')}
-                        style={styles.infoIcon}
-                    />
-                </TouchableOpacity>
-
                 <ExperimentHero
                     title={activity.title}
-                      activityNumber={1}
+                    activityID={1}
                     description={
                         <Text style={styles.heroDescription}>
                             Before starting the experiment, make a prediction about which parachute design
@@ -142,13 +131,14 @@ export default function Activity1Prediction() {
                             <Text style={[styles.predictionTitle, { opacity: 0 }]}>PREDICTIONS ★</Text>
                         </LinearGradient>
                     </MaskedView>
-<Text style={styles.predictionSubtitle}>
-  Which design do you think will create
-</Text>
+                    
+                    <Text style={styles.predictionSubtitle}>
+                        Which design do you think will create
+                    </Text>
 
-<Text style={styles.highlightQuestion}>
-  the safest landing?
-</Text>
+                    <Text style={styles.highlightQuestion}>
+                        the safest landing?
+                    </Text>
 
                     <View style={styles.cardList}>
                         {/* Card 1: Without Parachute */}
@@ -264,8 +254,13 @@ export default function Activity1Prediction() {
                             ]}
                             disabled={selectedPrediction === null}
                             onPress={() => {
-                                console.log("Sending prediction:", selectedPrediction);
-                                router.push('/activities/activity1/experiment');
+                                if (selectedPrediction !== null) {
+                                    console.log("Sending prediction:", selectedPrediction);
+                                    router.push({
+                                        pathname: '/activities/activity1/experiment',
+                                        params: { prediction: selectedPrediction.toString() }
+                                    });
+                                }
                             }}
                         >
                             <LinearGradient
@@ -338,23 +333,23 @@ const styles = StyleSheet.create({
         fontSize: rf(34),
         textAlign: 'center',
     },
-highlightQuestion: {
-  color: '#FF6BCB',
-  fontFamily: 'PixelBold',
-  fontSize: rf(19),
-  textAlign: 'center',
-  marginTop: -hp(0.5),
-  marginBottom: hp(2.5),
-},
-predictionSubtitle: {
-    fontFamily: 'PixelOperator',
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontSize: rf(19),
-    marginTop: hp(1.5),
-    marginBottom: 2,   // <-- remove the gap
-    lineHeight: rf(22),
-},
+    highlightQuestion: {
+        color: '#FF6BCB',
+        fontFamily: 'PixelBold',
+        fontSize: rf(19),
+        textAlign: 'center',
+        marginTop: -hp(0.5),
+        marginBottom: hp(2.5),
+    },
+    predictionSubtitle: {
+        fontFamily: 'PixelOperator',
+        color: '#FFFFFF',
+        textAlign: 'center',
+        fontSize: rf(19),
+        marginTop: hp(1.5),
+        marginBottom: 2,   // <-- remove the gap
+        lineHeight: rf(22),
+    },
     whyBox: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -383,14 +378,12 @@ predictionSubtitle: {
     whyTextContainer: {
         flex: 1,
         justifyContent: 'center',
-        
     },
     whyTitle: {
         fontFamily: 'PixelBold',
         color: '#FFD94E',
         fontSize: rf(15),
         marginBottom: hp(0.5),
-        
     },
     whyDescription: {
         fontFamily: 'PixelOperator',
@@ -403,12 +396,10 @@ predictionSubtitle: {
         gap: hp(1.5),
     },
     questionContainer: {
-  alignItems: 'center',
-  marginTop: hp(1),
-  marginBottom: hp(2.5),
-},
-
-
+        alignItems: 'center',
+        marginTop: hp(1),
+        marginBottom: hp(2.5),
+    },
     predictionCard: {
         width: '100%',
         borderRadius: rf(18),

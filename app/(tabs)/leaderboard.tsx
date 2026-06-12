@@ -103,11 +103,12 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: 'rgba(138, 101, 242, 0.4)',
+    marginTop:70
   },
   header: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
   title: { color: '#FFF', fontSize: fp(20), fontFamily: 'PixelBold' },
   viewAll: { color: '#B8A0FF', fontFamily: 'PixelOperator', fontSize: fp(14) },
-  listContainer: { gap: 8 },
+  listContainer: { gap: 8 , marginTop:20},
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 12, borderRadius: 16 },
   activeRow: { backgroundColor: 'rgba(138, 101, 242, 0.2)' },
   rank: { color: '#A0A0A0', fontFamily: 'PixelBold', width: 30, fontSize: fp(14) },

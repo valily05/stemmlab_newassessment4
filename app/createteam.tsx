@@ -6,13 +6,15 @@ import { Copy } from 'lucide-react-native';
 import { useEffect, useState } from "react";
 
 import { auth, db } from "@/services/firebase/config";
+import { createTeam } from "@/services/firebase/teamService";
 
 import {
-    doc,
-    getDoc
+    collection,
+    getDocs,
+    query,
+    where
 } from "firebase/firestore";
 
-import { createTeam } from "@/services/firebase/teamService";
 import {
     ActivityIndicator,
     Alert,
@@ -46,12 +48,15 @@ export default function CreateTeamPage() {
     const [teamCode, setTeamCode] = useState("");
     const [loading, setLoading] = useState(false);
 const isCodeInDatabase = async (code: string) => {
-    const docRef = doc(db, "teams", code);
-    const docSnap = await getDoc(docRef);
+  const snapshot = await getDocs(
+    query(
+      collection(db, "teams"),
+      where("teamCode", "==", code)
+    )
+  );
 
-    return docSnap.exists();
+  return !snapshot.empty;
 };
-
     // Generate unique 4-digit code
     const generateCode = async () => {
         const digits = "0123456789";
@@ -92,11 +97,11 @@ const isCodeInDatabase = async (code: string) => {
         return;
     }
 
-    await createTeam(
-        teamCode,
-        teamName,
-        creatorId
-    );
+await createTeam(
+    teamCode,
+    teamName,
+    creatorId
+);
 
     Alert.alert("Success", "Team created successfully!", [
         {

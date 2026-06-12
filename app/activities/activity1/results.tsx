@@ -57,19 +57,6 @@ const hp = (percentage: number) =>
 export default function Activity1Results() {
   const params = useLocalSearchParams();
 
-  // const {
-  //   sessionID,
-  //   totalScore,
-  //   totalIterations,
-  //   bestResult,
-  //   accuracy,
-  //   results
-  // } = useLocalSearchParams();
-
-  // const totalScore = Number(
-  //   params.totalScore || 0
-  // );
-
   const totalIterations = Number(
     params.totalIterations ?? 0
   );
@@ -77,6 +64,8 @@ export default function Activity1Results() {
   const accuracy = Number(
     params.accuracy ?? 0
   );
+
+  const predictionText = params.prediction ? (params.prediction as string) : 'No prediction made';
 
   let bestResult: any = null;
 
@@ -127,8 +116,6 @@ export default function Activity1Results() {
 
   const [isSaving, setIsSaving] = useState(false);
 
-  
-
   const experimentTime =
     parsedResults.reduce(
       (total, item) =>
@@ -161,32 +148,6 @@ export default function Activity1Results() {
 
     return value;
   };
-
-  // for (
-  //   let i = 0;
-  //   i < parsedResults.length;
-  //   i++
-  // ) {
-  //   const result = parsedResults[i];
-
-  //   if (typeof value === 'number') {
-  //     return `${(value / 1000).toFixed(2)} s`;
-  //   }
-
-  //   const parts = value.split(':');
-
-  //   if (parts.length === 2) {
-  //     const minutes = Number(parts[0]);
-  //     const seconds = Number(parts[1]);
-
-  //     return `${(
-  //       minutes * 60 +
-  //       seconds
-  //     ).toFixed(2)} s`;
-  //   }
-
-  //   return value;
-  // };
 
   const downloadResultsTable = async () => {
     const csvContent = [
@@ -281,6 +242,44 @@ export default function Activity1Results() {
             </Text>
           </LinearGradient>
         </MaskedView>
+
+        {/* Prediction vs Actual Display Box */}
+        <LinearGradient
+          colors={[
+            '#2A0D45',
+            '#351058',
+            '#2B0A3D',
+            '#12031E',
+          ]}
+          locations={[0, 0.35, 0.7, 1]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.predictionCard}
+        >
+          <Text style={styles.predictionCardTitle}>🔍 PREDICTION VS ACTUAL</Text>
+          
+          <View style={styles.predictionRow}>
+            <Text style={styles.predictionLabel}>Your Prediction:</Text>
+            <Text style={styles.predictionValueText}>{predictionText}</Text>
+          </View>
+
+          <View style={styles.predictionRow}>
+            <Text style={styles.predictionLabel}>Best Performing Prototype:</Text>
+            <Text style={styles.predictionValueText}>
+              {bestResult ? bestResult.stage : '--'}
+            </Text>
+          </View>
+
+          <View style={styles.predictionDivider} />
+
+          <Text style={styles.predictionSummary}>
+            {predictionText !== 'No prediction made' && bestResult
+              ? predictionText.includes(bestResult.stage.replace('PROTOTYPE ', '')) 
+                ? 'Spot on! Your prediction matched the best prototype.' 
+                : 'Interesting results! Let’s analyze why the outcome differed from your prediction.'
+              : 'Review your prototype data below to see how it compares.'}
+          </Text>
+        </LinearGradient>
 
         <LinearGradient
           colors={[
@@ -608,58 +607,38 @@ export default function Activity1Results() {
                 ]}
               >
                 <View style={styles.resultCardInner}>
-                  <View
-                    style={
-                      styles.resultTop
-                    }
-                  >
+                  <View style={styles.resultTop}>
                     <View>
-                      <Text
-                        style={
-                          styles.resultStage
-                        }
-                      >
+                      <Text style={styles.resultStage}>
                         {item.stage}
                       </Text>
 
                       {bestResult?.stage ===
                         item.stage && (
-                          <View style={styles.bestResultTag}>
-                            <Star
-                              size={rf(13)}
-                              color="#FFD633"
-                              fill="#FFD633"
-                            />
+                      <View style={styles.bestResultTag}>
+                        <Star
+                          size={rf(13)}
+                          color="#FFD633"
+                          fill="#FFD633"
+                        />
 
-                            <Text style={styles.bestResultTagText}>
-                              BEST RESULT
-                            </Text>
-                          </View>
-                        )}
+                        <Text style={styles.bestResultTagText}>
+                          BEST RESULT
+                        </Text>
+                      </View>
+                      )}
                     </View>
 
-                    <Text
-                      style={
-                        styles.resultTime
-                      }
-                    >
+                    <Text style={styles.resultTime}>
                       {formatSeconds(
                         item.dropTime
                       )}
                     </Text>
                   </View>
 
-                  <View
-                    style={
-                      styles.resultRow
-                    }
-                  >
+                  <View style={styles.resultRow}>
                     <View>
-                      <Text
-                        style={
-                          styles.miniLabel
-                        }
-                      >
+                      <Text style={styles.miniLabel}>
                         Landing Accuracy
                       </Text>
 
@@ -681,11 +660,7 @@ export default function Activity1Results() {
                     </View>
 
                     <View>
-                      <Text
-                        style={
-                          styles.miniLabel
-                        }
-                      >
+                      <Text style={styles.miniLabel}>
                         Impact Force
                       </Text>
 
@@ -704,20 +679,12 @@ export default function Activity1Results() {
                                 ? '#FF4D4D'
                                 : item.impactForce === 'EXTREME'
                                 ? '#A00000'
-                                : '#FFFFFF'
+                                : '#FFFFFF',
                           },
                         ]}
                       >
                         {item.impactForce}
                       </Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.resultRow}>
-                    <View>
-                    </View>
-
-                    <View>
                     </View>
                   </View>
                 </View>
@@ -738,15 +705,13 @@ export default function Activity1Results() {
             </Text>
 
             <Text style={styles.feedbackText}>
-              Your parachute improved significantly
-              across iterations.{' '}
+              Your parachute improved significantly across iterations.{' '}
 
               <Text style={styles.highlightStage}>
                 {bestResult?.stage}
               </Text>{' '}
 
-              achieved the best landing
-              performance with a flight time of{' '}
+              achieved the best landing performance with a flight time of{' '}
 
               <Text style={styles.highlightTime}>
                 {bestResult
@@ -779,8 +744,7 @@ export default function Activity1Results() {
           </Text>
 
           <Text style={styles.cvButtonSubtitle}>
-            Use Computer Vision to calculate
-            trajectory, velocity and acceleration.
+            Use Computer Vision to calculate trajectory, velocity and acceleration.
           </Text>
         </TouchableOpacity>
 
@@ -790,7 +754,7 @@ export default function Activity1Results() {
           </Text>
 
           <Text style={styles.graphSubtitle}>
-          Comparing landing acceleration for each prototype.
+            Comparing landing acceleration for each prototype.
           </Text>
 
           <View
@@ -844,7 +808,6 @@ export default function Activity1Results() {
                   r: '5',
                   strokeWidth: '2',
                   stroke: '#C86DFF',
-                  
                 },
 
                 propsForLabels: {
@@ -915,13 +878,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor:'#1D0E23',
   },
-
   content: {
     padding: wp(4),
     paddingTop: hp(12),
     paddingBottom: hp(10),
   },
-
   title: {
     color: '#FFFFFF',
     fontSize: rf(16),
@@ -930,44 +891,80 @@ const styles = StyleSheet.create({
     fontFamily: 'Pixel',
     letterSpacing: 1,
   },
-
+  // Added Prediction Card Styles
+  predictionCard: {
+    borderRadius: rf(18),
+    padding: rf(20),
+    marginBottom: hp(3),
+    borderWidth: 2,
+    borderColor: 'rgba(200,109,255,0.2)',
+    shadowColor:'#C86DFF',
+    shadowOpacity:0.2,
+    shadowRadius:20,
+    shadowOffset:{
+      width:0,
+      height:0,
+    },
+    elevation:8,
+    overflow:'hidden',
+  },
+  predictionCardTitle: {
+    color: '#E39BFF',
+    fontSize: rf(16),
+    fontFamily: 'PixelBold',
+    marginBottom: hp(1.5),
+    textAlign: 'center',
+  },
+  predictionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: hp(0.4),
+  },
+  predictionLabel: {
+    color: '#B8BED3',
+    fontSize: rf(13),
+    fontFamily: 'PixelOperator',
+  },
+  predictionValueText: {
+    color: '#FFFFFF',
+    fontSize: rf(13),
+    fontFamily: 'PixelBold',
+  },
+  predictionDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    marginVertical: hp(1.5),
+  },
+  predictionSummary: {
+    color: '#FFB3E6',
+    fontSize: rf(11),
+    fontFamily: 'PixelOperator',
+    lineHeight: rf(15),
+    textAlign: 'center',
+  },
   graphCard:{
     backgroundColor:'#121127',
-
     borderRadius:rf(16),
-
     padding:rf(16),
-
     marginTop:hp(3),
     marginBottom:hp(3),
-
     borderWidth:1,
     borderColor:'rgba(255,255,255,0.08)',
   },
-
   graphTitle:{
     color:'#FFFFFF',
-
     fontSize:rf(20),
-
     fontFamily:'PixelBold',
-
     textAlign:'center',
   },
-
   graphSubtitle:{
     color:'#B8BED3',
-
     fontSize:rf(14),
-
     fontFamily:'PixelOperator',
-
     textAlign:'center',
-
     marginTop:hp(0.5),
     marginBottom:hp(1.5),
   },
-
   saveButton: {
     backgroundColor: '#7A4DFF',
     borderRadius: rf(18),
@@ -978,181 +975,120 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
-
+  saveButtonText: {
+    color: '#FFFFFF',
+    fontSize: rf(16),
+    fontFamily: 'PixelBold',
+  },
   metricsCard:{
     marginTop: hp(2),
-
     backgroundColor:'#121127',
-
     borderRadius:rf(14),
-
     padding:rf(16),
-
     borderWidth:1,
     borderColor:'rgba(255,255,255,0.08)',
   },
-
   metricsTitle:{
     color:'#FFFFFF',
-
     fontSize:rf(18),
-
     fontFamily:'PixelBold',
-
     marginBottom:hp(1.5),
   },
-
   heightCard:{
     marginTop: hp(2),
-
     backgroundColor:'#2B0A3D',
-
     borderRadius:rf(14),
-
     padding:rf(18),
-
     alignItems:'center',
-
     borderWidth:2,
     borderColor:'#C86DFF',
   },
-
   heightLabel:{
     color:'#B8BED3',
-
     fontSize:rf(13),
-
     fontFamily:'PixelOperator',
   },
-
   heightValue:{
     color:'#FFFFFF',
-
     fontSize:rf(32),
-
     fontFamily:'PixelBold',
-
     marginTop:hp(0.5),
   },
-
   metricsGrid:{
     flexDirection:'row',
-
     flexWrap:'wrap',
-
     justifyContent:'space-between',
   },
-
   metricBox:{
     width:'48%',
-
     backgroundColor:'#1A1B35',
-
     borderRadius:rf(10),
-
     padding:rf(12),
-
     marginBottom:hp(1),
   },
-
   metricLabel:{
     color:'#9AA3D8',
-
     fontSize:rf(12),
-
     fontFamily:'PixelOperator',
   },
-
   metricValue:{
     color:'#FFFFFF',
-
     fontSize:rf(18),
-
     fontFamily:'PixelBold',
-
     marginTop:hp(0.5),
   },
-
   cvButton: {
     marginTop: hp(3),
-
     backgroundColor: '#121127',
-
     borderRadius: rf(18),
-
     padding: rf(18),
-
     borderWidth: 2,
     borderColor: '#6D4AFF',
-
     shadowColor: '#6D4AFF',
     shadowOpacity: 0.35,
     shadowRadius: 15,
-
     shadowOffset: {
       width: 0,
       height: 0,
     },
-
     elevation: 10,
   },
-
   cvButtonTitle: {
     color: '#FFFFFF',
-
     fontSize: rf(20),
-
     fontFamily: 'PixelBold',
-
     textAlign: 'center',
-
     marginBottom: hp(0.8),
   },
-
   cvButtonSubtitle: {
     color: '#B8BED3',
-
     fontSize: rf(14),
-
     fontFamily: 'PixelOperator',
-
     textAlign: 'center',
-
     lineHeight: rf(18),
   },
-
   iterationSection:{
     borderRadius:rf(18),
-
     borderWidth:2,
     borderColor:'rgba(255,255,255,0.08)',
-
     padding:rf(18),
-
     marginBottom:hp(2),
-
     shadowColor:'#A855F7',
     shadowOpacity:0.35,
     shadowRadius:25,
-
     shadowOffset:{
       width:0,
       height:0,
     },
-
     elevation:12,
-
     overflow:'hidden',
   },
-
   heroCard:{
     borderRadius: rf(18),
     padding: rf(24),
     marginBottom: hp(3),
-
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.08)',
-
     shadowColor:'#A855F7',
     shadowOpacity:0.35,
     shadowRadius:25,
@@ -1163,29 +1099,19 @@ const styles = StyleSheet.create({
     elevation:12,
     overflow:'hidden',
   },
-
-  heroText:{
-    flex:1,  
-  },
-
   bestResultCard:{
     backgroundColor:'#121127',
-
     borderWidth:2,
     borderColor:'#FF8C1A',
-
     shadowColor:'#FF8C1A',
     shadowOpacity:0.45,
     shadowRadius:12,
-
     shadowOffset:{
       width:0,
       height:0,
     },
-
     elevation:10,
   },
-
   heroTitle: {
     color: '#D8D8FF',
     fontSize: rf(20),
@@ -1194,125 +1120,92 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily:'PixelBold'
   },
-
   scoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: hp(1),
   },
-
   bigMedal: {
     width: wp(14),
     height: wp(14),
     resizeMode: 'contain',
   },
-
   heroGrid:{
     flexDirection:'row',
     gap: wp(3),
     marginBottom: hp(1.5),
   },
-
   timeCard:{
     flex:1,
-
     backgroundColor:'rgba(237,53,157,0.12)',
     borderWidth:1,
     borderColor:'#ED359D',
-
     borderRadius:rf(10),
     padding:rf(14),
-
     alignItems:'center',
   },
-
   iterationCard:{
     flex:1,
-
     backgroundColor:'rgba(43,112,221,0.12)',
     borderWidth:1,
     borderColor:'#2B70DD',
-
     borderRadius:rf(10),
     padding:rf(14),
-
     alignItems:'center',
   },
-
   bestTimeCard:{
     flex:1,
-
     backgroundColor:'rgba(250,204,21,0.12)',
     borderWidth:1,
     borderColor:'#FACC15',
-
     borderRadius:rf(10),
     padding:rf(14),
-
     alignItems:'center',
   },
-
   accuracyCard:{
     flex:1,
-
     backgroundColor:'rgba(37,159,96,0.12)',
     borderWidth:1,
     borderColor:'#259F60',
-
     borderRadius:rf(10),
     padding:rf(14),
-
     alignItems:'center',
   },
-
   videoTab:{
     backgroundColor:'#242630',
-
     borderWidth:1,
     borderColor:'rgba(255,255,255,0.12)',
-
     borderRadius:rf(8),
-
     paddingHorizontal:wp(3),
     paddingVertical:hp(0.9),
-
     marginRight:wp(2),
-
     alignItems:'center',
     justifyContent:'center',
   },
-
   activeVideoTab:{
     backgroundColor:'#3A245E',
-
     borderColor:'#C86DFF',
-
     shadowColor:'#C86DFF',
     shadowOpacity:0.4,
     shadowRadius:8,
-
     shadowOffset:{
       width:0,
       height:0,
     },
-
     elevation:6,
   },
-
   videoTabText:{
     color:'#D5D7E0',
     fontSize:rf(13),
     fontFamily:'PixelOperator',
   },
-
   statValue:{
     color:'#FFFFFF',
     fontSize:rf(22),
     fontFamily:'PixelBold',
     marginTop:hp(1),
   },
-
   statLabel:{
     color:'#C6CAD5',
     fontSize:rf(17),
@@ -1320,7 +1213,6 @@ const styles = StyleSheet.create({
     marginTop:hp(0.5),
     fontFamily:'PixelOperator',
   },
-
   heroScore: {
     color: '#FFFFFF',
     fontSize: rf(70),
@@ -1328,70 +1220,33 @@ const styles = StyleSheet.create({
     marginHorizontal: wp(4),
     fontFamily:'PixelBold'
   },
-
   heroDivider: {
     height: 2,
-    backgroundColor: '#rgba(255,255,255,0.08)',
+    backgroundColor: 'rgba(255,255,255,0.08)',
     marginVertical: hp(2),
   },
-
-  heroItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-
-  heroLabel: {
-    color: '#C6CAD5',
-    fontSize: rf(14),
-    marginBottom: hp(0.5),
-    fontFamily:'PixelOperator'
-  },
-
-  heroStatRow: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(3),
-  },
-
-  heroValue: {
-    color: '#FFFFFF',
-    fontSize: rf(24),
-    fontWeight: 'bold',
-    fontFamily:'PixelBold'
-  },
-
   videoTitleRow:{
     flexDirection:'row',
     alignItems:'center',
     justifyContent:'center',
     gap: wp(1),
   },
-
   videoCard:{
     backgroundColor:'#0A0A0F',
-
     borderRadius:rf(16),
-
     borderWidth:1,
     borderColor:'#8A8A97',
-
     padding:rf(18),
-
     marginBottom:hp(3),
-
     shadowColor:'#A855F7',
     shadowOpacity:0.15,
     shadowRadius:20,
-
     shadowOffset:{
       width:0,
       height:0,
     },
-
     elevation:12,
   },
-
   videoTitle: {
     color: '#FFFFFF',
     fontSize: rf(21),
@@ -1399,32 +1254,24 @@ const styles = StyleSheet.create({
     marginBottom: hp(2),
     fontFamily:'PixelBold'
   },
-
   videoPlaceholder:{
     height:hp(44),
-
     backgroundColor:'#242833',
-
     borderRadius:rf(14),
-
     borderWidth:1,
     borderColor:'rgba(255,255,255,0.06)',
-
     justifyContent:'center',
     alignItems:'center',
   },
-
   playIcon: {
     color: '#ffffff',
     fontSize: rf(60),
   },
-
   videoTabs:{
     flexDirection:'row',
     gap: wp(1),
     marginBottom: hp(2),
   },
-
   playText: {
     color: '#ffffff',
     fontSize: rf(12),
@@ -1432,208 +1279,141 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily:'Pixel'
   },
-
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: hp(2),
   },
-
   sectionTitle:{
     color:'#FFFFFF',
     fontSize:rf(21),
     fontFamily:'PixelBold',
     marginLeft:rf(5)
   },
-
   sectionTitleRow:{
     flexDirection:'row',
     alignItems:'center',
     gap:wp(2),
   },
-
   csvButton:{
     flexDirection:'row',
     alignItems:'center',
     gap:wp(2),
-
     backgroundColor:'#7A4DFF',
-
     borderWidth:1,
     borderColor:'#B68CFF',
-
     borderRadius:rf(10),
-
     paddingHorizontal:wp(2),
     paddingVertical:hp(0.6),
-
     shadowColor:'#7A4DFF',
     shadowOpacity:0.35,
     shadowRadius:10,
-
     shadowOffset:{
       width:0,
       height:0,
     },
-
     elevation:8,
   },
-
   csvText: {
     color: '#FFFFFF',
     fontSize: rf(14),
     fontWeight: 'bold',
   },
-
   resultCard:{
     backgroundColor:'#5b6174',
-
     borderRadius:rf(18),
-
     padding:rf(2.7),
-
     marginBottom:hp(2.2),
   },
-
-  resultCardInner:{
-    backgroundColor:'#121127',
-
-    borderRadius:rf(18),
-
-    padding:rf(20),
-
-    borderWidth:1,
-    borderColor:'rgba(255,255,255,0.05)',
+  resultCardInner: {
+    backgroundColor: '#1A1B35',
+    borderRadius: rf(16),
+    padding: rf(14),
   },
-
   resultTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: hp(2),
+    marginBottom: hp(1),
   },
-
   resultStage: {
     color: '#FFFFFF',
-    fontSize: rf(12),
-    fontWeight: 'bold',
-    fontFamily:'Pixel'
+    fontSize: rf(16),
+    fontFamily: 'PixelBold',
   },
-
-  bestResultTag:{
-    alignSelf:'flex-start',
-
-    flexDirection:'row',
-    alignItems:'center',
-
-    backgroundColor:'rgba(255,214,51,0.15)',
-
-    borderWidth:1,
-    borderColor:'rgba(255,214,51,0.45)',
-
-    paddingHorizontal:wp(2.3),
-    paddingVertical:hp(0.6),
-
-    borderRadius:rf(8),
-
-    marginTop:hp(0.9),
-
-    gap:wp(1.2),
+  bestResultTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,214,51,0.15)',
+    paddingHorizontal: wp(2),
+    paddingVertical: hp(0.3),
+    borderRadius: rf(6),
+    marginTop: hp(0.5),
+    gap: 4,
   },
-
-  bestResultTagText:{
-    color:'#FFD633',
-
-    fontSize:rf(10),
-
-    fontFamily:'PixelBold',
-
-    textShadowColor:'rgba(255,214,51,0.7)',
-    textShadowRadius:8,
+  bestResultTagText: {
+    color: '#FFD633',
+    fontSize: rf(10),
+    fontFamily: 'PixelBold',
   },
-
-  resultTime:{
-    color:'#FFE95B',
-
-    fontSize:rf(34),
-
-    fontFamily:'PixelBold',
-
-    textShadowColor:'rgba(255,233,91,0.4)',
-    textShadowRadius:10,
+  resultTime: {
+    color: '#FFFFFF',
+    fontSize: rf(20),
+    fontFamily: 'PixelBold',
   },
-
   resultRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: hp(1),
   },
-
   miniLabel: {
     color: '#9AA3D8',
-    fontSize: rf(16),
-    marginBottom: hp(0.5),
-    fontFamily:'PixelOperator'
+    fontSize: rf(10),
+    fontFamily: 'PixelOperator',
   },
-
   resultValue: {
-    fontSize: rf(19),
-    fontFamily:'PixelBold'
+    fontSize: rf(13),
+    fontFamily: 'PixelBold',
+    marginTop: hp(0.2),
   },
-
   feedbackCard: {
-    backgroundColor: '#2B0A3D',
-    borderRadius: rf(16),
-
-    padding: rf(12),
-
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.08)',
-
     flexDirection: 'row',
+    backgroundColor: '#121127',
+    borderRadius: rf(18),
+    padding: rf(16),
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    marginTop: hp(3),
     alignItems: 'center',
+    gap: 16,
   },
-
   teacherImage: {
-    width: wp(23),
-    height: wp(23),
+    width: wp(16),
+    height: wp(16),
     resizeMode: 'contain',
   },
-
   feedbackContent: {
     flex: 1,
   },
-
   feedbackTitle: {
-    color: '#FFE95B',
-    fontSize: rf(24),
-    fontWeight: 'bold',
-    marginTop: hp(1),
-    fontFamily:'PixelBold',
-  },
-
-  feedbackText: {
-    
-    color: '#ffffff',
-    fontSize: rf(15),
-    lineHeight: rf(17),
-    fontFamily:'PixelOperator'
-  },
-
-  highlightStage: {
-    color: '#FFE95B',
-    fontWeight: 'bold',
-  },
-
-  highlightTime: {
     color: '#32FF7E',
-    fontWeight: 'bold',
+    fontSize: rf(16),
+    fontFamily: 'PixelBold',
+    marginBottom: hp(0.5),
   },
-
-  saveButtonText: {
-    color: '#FFFFFF',
-    fontSize: rf(22),
-    fontFamily:'PixelBold'
+  feedbackText: {
+    color: '#B8BED3',
+    fontSize: rf(12),
+    fontFamily: 'PixelOperator',
+    lineHeight: rf(16),
+  },
+  highlightStage: {
+    color: '#C86DFF',
+    fontFamily: 'PixelBold',
+  },
+  highlightTime: {
+    color: '#FFC107',
+    fontFamily: 'PixelBold',
   },
 });
