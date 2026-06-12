@@ -226,8 +226,8 @@ export const activities = {
     group: "ENGINEERING",
 
     image: {
-      dark: require('@/assets/images/HumanPerformanceLabImage.png'),
-      light: require('@/assets/images/HumanPerformanceLabImage-Light.png'),
+      dark: require('@/assets/images/earthquake.png'),
+      light: require('@/assets/images/earthquake-Light.png'),
     },
     route: '/activities/activity4/overview',
 
@@ -317,8 +317,8 @@ export const activities = {
     title: 'HUMAN PERFORMANCE LAB',
     group: "",
     image: {
-      dark: require('../assets/images/human.png'),
-      //light: require(''),
+        dark: require('@/assets/images/HumanPerformanceLabImage.png'),
+      light: require('@/assets/images/HumanPerformanceLabImage-Light.png'),
     },
     route: '/activities/activity5/overview',
     
