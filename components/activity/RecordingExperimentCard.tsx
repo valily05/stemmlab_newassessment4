@@ -164,10 +164,10 @@ await saveIteration(
     iterationNo: iteration,
 
     data: {
-      action: stage,
+      stage: stage, // 👈 Correctly mapped to 'stage'
       duration: recordingTime,
-    averageDecibel,
-maxDecibel,
+      averageDecibel,
+      maxDecibel,
       audioURL: recordedUri,
       createdAt: Timestamp.now(),
     },

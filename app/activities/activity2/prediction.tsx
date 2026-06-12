@@ -66,9 +66,26 @@ const hp = (percentage: number) =>
         (height * percentage) / 100
     );
 
+const PREDICTION_OPTIONS = [
+    { id: 0, title: 'CLAPPING', value: 'Clapping' },
+    { id: 1, title: 'DROPPING OBJECT', value: 'Dropping Object' },
+    { id: 2, title: 'STOMPING FOOT', value: 'Stomping Foot' },
+    { id: 3, title: 'TALKING', value: 'Talking' },
+];
+
 export default function Activity1Prediction() {
     const [showInfo, setShowInfo] = useState(false);
     const [selectedPrediction, setSelectedPrediction] = useState<number | null>(null);
+
+    const handleSendAnswer = () => {
+        if (selectedPrediction !== null) {
+            const predictionValue = PREDICTION_OPTIONS[selectedPrediction].value;
+            router.push({
+                pathname: '/activities/activity2/experiment',
+                params: { prediction: predictionValue }
+            });
+        }
+    };
 
     return (
         <LinearGradient
@@ -99,26 +116,24 @@ export default function Activity1Prediction() {
                     />
                 </TouchableOpacity>
 
-<ExperimentHero
-  activityID={2}
-    title={activity.title}
-    image={require('@/assets/images/sound-bunny.png')}
-    imageStyle={{
-        width: wp(40),
-        height: hp(20),
-        right: -wp(7),
-        top: hp(-2),
-    }}
-  description={
-    <Text style={styles.heroDescription}>
-      Before starting the experiment, predict which environment will have the
-      <Text style={{ color: '#FF6BCB' }}> highest noise level.</Text>
+                <ExperimentHero
+                    activityID={2}
+                    title={activity.title}
+                    image={require('@/assets/images/sound-bunny.png')}
+                    imageStyle={{
+                        width: wp(40),
+                        height: hp(20),
+                        right: -wp(7),
+                        top: hp(-2),
+                    }}
+                    description={
+                        <Text style={styles.heroDescription}>
+                            Before starting the experiment, predict which environment will have the
+                            <Text style={{ color: '#FF6BCB' }}> highest noise level.</Text>
+                        </Text>
+                    }
+                />
 
-    </Text>
-  }
-/>
-
-                {/* "Why make a prediction?" box placed outside the main prediction container */}
                 <LinearGradient
                     colors={['#261B4D', '#1A123D']}
                     start={{ x: 0, y: 0 }}
@@ -142,7 +157,6 @@ export default function Activity1Prediction() {
                     end={{ x: 1, y: 1 }}
                     style={styles.predictionContainer}
                 >
-                    {/* Gradient Title: PREDICTIONS ★ */}
                     <MaskedView
                         maskElement={
                             <Text style={styles.predictionTitle}>PREDICTIONS ✦</Text>
@@ -156,16 +170,17 @@ export default function Activity1Prediction() {
                             <Text style={[styles.predictionTitle, { opacity: 0 }]}>PREDICTIONS ★</Text>
                         </LinearGradient>
                     </MaskedView>
-<Text style={styles.predictionSubtitle}>
-Which location do you think has
-</Text>
+                    
+                    <Text style={styles.predictionSubtitle}>
+                        Which location do you think has
+                    </Text>
 
-<Text style={styles.highlightQuestion}>
-the highest noise level?
-</Text>
+                    <Text style={styles.highlightQuestion}>
+                        the highest noise level?
+                    </Text>
 
                     <View style={styles.cardList}>
-                        {/* Card 1: Without Parachute */}
+                        {/* Card 1: Clapping */}
                         <TouchableOpacity
                             style={[
                                 styles.predictionCard,
@@ -180,22 +195,18 @@ the highest noise level?
                                 end={{ x: 1, y: 1 }}
                             >
                                 <View style={styles.iconWrapper}>
-<Hand size={rf(32)} color="#FF6097" />
+                                    <Hand size={rf(32)} color="#FF6097" />
                                 </View>
                                 <View style={styles.textContainer}>
-<Text style={styles.cardTitle}>
-  CLAPPING
-</Text>                                    
-<Text style={styles.cardDescription}>
-  Repeated hand claps may
-  create a loud and
-  sharp sound.
-</Text>
+                                    <Text style={styles.cardTitle}>CLAPPING</Text>                                           
+                                    <Text style={styles.cardDescription}>
+                                        Repeated hand claps may create a loud and sharp sound.
+                                    </Text>
                                 </View>
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        {/* Card 2: Small Parachute */}
+                        {/* Card 2: Dropping Object */}
                         <TouchableOpacity
                             style={[
                                 styles.predictionCard,
@@ -210,23 +221,18 @@ the highest noise level?
                                 end={{ x: 1, y: 1 }}
                             >
                                 <View style={styles.iconWrapper}>
-<Box size={rf(32)} color="#FFD94E" />
+                                    <Box size={rf(32)} color="#FFD94E" />
                                 </View>
                                 <View style={styles.textContainer}>
-<Text style={styles.cardTitle}>
-  DROPPING
-  OBJECT
-</Text>                                
-<Text style={styles.cardDescription}>
-  A falling object creates
-  a short but powerful
-  impact sound.
-</Text>
+                                    <Text style={styles.cardTitle}>DROPPING OBJECT</Text>
+                                    <Text style={styles.cardDescription}>
+                                        A falling object creates a short but powerful impact sound.
+                                    </Text>
                                 </View>
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        {/* Card 3: Large Parachute */}
+                        {/* Card 3: Stomping Foot */}
                         <TouchableOpacity
                             style={[
                                 styles.predictionCard,
@@ -241,23 +247,18 @@ the highest noise level?
                                 end={{ x: 1, y: 1 }}
                             >
                                 <View style={styles.iconWrapper}>
-<Footprints size={rf(32)} color="#00E676" />
+                                    <Footprints size={rf(32)} color="#00E676" />
                                 </View>
                                 <View style={styles.textContainer}>
-<Text style={styles.cardTitle}>
-  STOMPING
-  FOOT
-</Text>
-                                  <Text style={styles.cardDescription}>
-  Strong footsteps can
-  produce loud vibrations
-  on the floor.
-</Text>
+                                    <Text style={styles.cardTitle}>STOMPING FOOT</Text>
+                                    <Text style={styles.cardDescription}>
+                                        Strong footsteps can produce loud vibrations on the floor.
+                                    </Text>
                                 </View>
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        {/* Card 4: My Design */}
+                        {/* Card 4: Talking */}
                         <TouchableOpacity
                             style={[
                                 styles.predictionCard,
@@ -272,17 +273,13 @@ the highest noise level?
                                 end={{ x: 1, y: 1 }}
                             >
                                 <View style={styles.iconWrapper}>
-<MessageCircle size={rf(32)} color="#B336FF" />
+                                    <MessageCircle size={rf(32)} color="#B336FF" />
                                 </View>
                                 <View style={styles.textContainer}>
-<Text style={styles.cardTitle}>
-  TALKING
-</Text>
+                                    <Text style={styles.cardTitle}>TALKING</Text>
                                     <Text style={styles.cardDescription}>
-  Speaking continuously
-  creates a steady
-  level of sound.
-</Text>
+                                        Speaking continuously creates a steady level of sound.
+                                    </Text>
                                 </View>
                             </LinearGradient>
                         </TouchableOpacity>
@@ -295,10 +292,7 @@ the highest noise level?
                                 selectedPrediction === null && styles.sendButtonDisabled
                             ]}
                             disabled={selectedPrediction === null}
-                            onPress={() => {
-                                console.log("Sending prediction:", selectedPrediction);
-                                router.push('/activities/activity2/experiment');
-                            }}
+                            onPress={handleSendAnswer}
                         >
                             <LinearGradient
                                 colors={selectedPrediction === null ? ['#3A35A3', '#3A35A3'] : ['#FFB6D9', '#9C4DFF']}
@@ -370,30 +364,30 @@ const styles = StyleSheet.create({
         fontSize: rf(34),
         textAlign: 'center',
     },
-highlightQuestion: {
-  color: '#FF6BCB',
-  fontFamily: 'PixelBold',
-  fontSize: rf(19),
-  textAlign: 'center',
-  marginTop: -hp(0.5),
-  marginBottom: hp(2.5),
-},
-predictionSubtitle: {
-    fontFamily: 'PixelOperator',
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontSize: rf(19),
-    marginTop: hp(1.5),
-    marginBottom: 2,   // <-- remove the gap
-    lineHeight: rf(22),
-},
+    highlightQuestion: {
+        color: '#FF6BCB',
+        fontFamily: 'PixelBold',
+        fontSize: rf(19),
+        textAlign: 'center',
+        marginTop: -hp(0.5),
+        marginBottom: hp(2.5),
+    },
+    predictionSubtitle: {
+        fontFamily: 'PixelOperator',
+        color: '#FFFFFF',
+        textAlign: 'center',
+        fontSize: rf(19),
+        marginTop: hp(1.5),
+        marginBottom: 2,
+        lineHeight: rf(22),
+    },
     whyBox: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: wp(4),
         marginHorizontal: wp(6),
         marginBottom: hp(3),
-        marginTop:hp(2),
+        marginTop: hp(2),
         borderRadius: rf(16),
         borderWidth: 1.5,
         borderColor: '#5B49D6',
@@ -415,14 +409,12 @@ predictionSubtitle: {
     whyTextContainer: {
         flex: 1,
         justifyContent: 'center',
-        
     },
     whyTitle: {
         fontFamily: 'PixelBold',
         color: '#FFD94E',
         fontSize: rf(15),
         marginBottom: hp(0.5),
-        
     },
     whyDescription: {
         fontFamily: 'PixelOperator',
@@ -434,13 +426,6 @@ predictionSubtitle: {
         flexDirection: 'column',
         gap: hp(1.5),
     },
-    questionContainer: {
-  alignItems: 'center',
-  marginTop: hp(1),
-  marginBottom: hp(2.5),
-},
-
-
     predictionCard: {
         width: '100%',
         borderRadius: rf(18),
@@ -541,64 +526,5 @@ predictionSubtitle: {
         fontFamily: 'PixelOperator',
         lineHeight: rf(22),
         width: rf(252)
-    },
-    resultHeader: {
-        color: '#FFFFFF',
-        fontFamily: 'PixelOperator',
-        fontSize: rf(21),
-        textAlign: 'center',
-        marginBottom: rf(10)
-    },
-    frame: {
-        backgroundColor: '#140B3A',
-        borderWidth: 3,
-        borderRadius: 0,
-        paddingVertical: hp(2),
-        paddingHorizontal: wp(4),
-        position: 'relative',
-        marginTop: hp(5),
-    },
-    resultText: {
-        color: '#FFFFFF',
-        fontFamily: 'PixelOperator',
-        fontSize: rf(16),
-        textAlign: 'center',
-        lineHeight: rf(22),
-    },
-    modalCard: {
-        width: '100%',
-        backgroundColor: '#1A123D',
-        borderRadius: rf(24),
-        padding: wp(6),
-        borderWidth: rf(2),
-        borderColor: '#5711BE',
-    },
-    modalTitle: {
-        color: '#FFD94E',
-        fontSize: rf(19),
-        fontFamily: 'Pixel',
-        marginBottom: hp(2),
-        textAlign: 'center',
-        width: hp(36)
-    },
-    modalText: {
-        color: 'white',
-        fontSize: rf(15),
-        lineHeight: rf(28),
-        marginBottom: hp(0.8),
-        fontFamily: 'PixelOperator',
-    },
-    closeButton: {
-        marginTop: hp(2),
-        height: hp(6.5),
-        borderRadius: rf(16),
-        backgroundColor: '#FF5AA9',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    closeText: {
-        color: 'white',
-        fontFamily: 'Pixel',
-        fontSize: rf(15),
     },
 });

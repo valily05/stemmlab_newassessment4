@@ -22,10 +22,10 @@ export default function Activity2Results() {
     const params = useLocalSearchParams();
     const activityID = Number(params.activityID);
     const sessionID = params.sessionID;
+    const { prediction } = useLocalSearchParams<{ prediction?: string }>();
 
     const [loading, setLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false); // Added missing state
-    const [session, setSession] = useState<any>(null);
+    const [isSaving, setIsSaving] = useState(false);
     const [locations, setLocations] = useState<any[]>([]);
     const [iterations, setIterations] = useState<any[]>([]);
     const [stats, setStats] = useState({
@@ -35,6 +35,7 @@ export default function Activity2Results() {
         experimentTime: 0,
         risk: "LOW",
         loudestLocation: "",
+        loudestActivity: "",
         totalPoints: 0,
     });
 
@@ -46,8 +47,7 @@ export default function Activity2Results() {
         try {
             setLoading(true);
             const sessionSnap = await getDoc(doc(db, "sessions", String(sessionID)));
-            if (sessionSnap.exists()) setSession(sessionSnap.data());
-
+            
             const locationSnap = await getDocs(collection(db, "sessions", String(sessionID), "locations"));
             const locationList: any[] = [];
             const iterationList: any[] = [];
@@ -83,6 +83,7 @@ export default function Activity2Results() {
         let total = 0;
         let highest = 0;
         let loudestLocation = "";
+        let loudestActivity = "";
 
         iterationData.forEach(item => {
             const dbVal = item.data?.averageDecibel ?? 0;
@@ -90,6 +91,8 @@ export default function Activity2Results() {
             if (dbVal > highest) {
                 highest = dbVal;
                 loudestLocation = item.locationName;
+                // Correctly accessing the stage saved from the RecordingExperimentCard data object
+                loudestActivity = item.data?.stage || "UNKNOWN";
             }
         });
 
@@ -108,6 +111,7 @@ export default function Activity2Results() {
             experimentTime: timeVal ? Number(timeVal) : 0,
             risk: average < 60 ? "LOW" : average < 80 ? "MEDIUM" : "HIGH",
             loudestLocation,
+            loudestActivity,
             totalPoints: points,
         });
     }
@@ -126,6 +130,21 @@ export default function Activity2Results() {
                 <View style={styles.headerWrapper}>
                     <Text style={styles.headerTitle}>RESULTS</Text>
                     <View style={styles.neonDivider} />
+                </View>
+
+                {prediction ? (
+                    <View style={styles.predictionBanner}>
+                        <Text style={styles.predictionBannerTitle}>YOUR PREDICTION</Text>
+                        <Text style={styles.predictionBannerText}>{prediction}</Text>
+                    </View>
+                ) : null}
+
+                <View style={styles.statBanner}>
+                    <Text style={styles.statBannerTitle}>HIGHEST DB LEVEL</Text>
+                    <Text style={styles.statBannerText}>{stats.highest} dB</Text>
+                    <Text style={styles.statBannerSubtitle}>
+                        FROM {stats.loudestActivity.toUpperCase()}
+                    </Text>
                 </View>
 
                 <View style={styles.cardWrapper}>
@@ -157,19 +176,13 @@ export default function Activity2Results() {
                                 activityID,
                                 sessionID: sessionID,
                                 pointsEarned: stats.totalPoints,
+                                prediction: prediction || '',
                             },
                         })
                     }
                     disabled={isSaving}
                 >
-                    {isSaving ? (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <ActivityIndicator size="small" color="#FFFFFF" style={{ marginRight: 10 }} />
-                            <Text style={styles.saveButtonText}>SAVING RESULTS...</Text>
-                        </View>
-                    ) : (
-                        <Text style={styles.saveButtonText}>SAVE & REFLECT</Text>
-                    )}
+                    <Text style={styles.saveButtonText}>SAVE & REFLECT</Text>
                 </TouchableOpacity>
             </ScrollView>
         </LinearGradient>
@@ -183,6 +196,29 @@ const styles = StyleSheet.create({
     headerWrapper: { alignItems: "center", marginBottom: hp(3), marginTop: hp(2) },
     headerTitle: { color: "#FFE95B", fontFamily: "PixelBold", fontSize: rf(32), letterSpacing: 2 },
     neonDivider: { marginTop: hp(1.5), width: wp(50), height: 3, backgroundColor: "#FFD94E", borderRadius: 2 },
+    predictionBanner: {
+        backgroundColor: "#26216D",
+        padding: wp(4),
+        borderRadius: rf(15),
+        marginBottom: hp(2),
+        borderWidth: 1,
+        borderColor: "#EC588C",
+        alignItems: "center",
+    },
+    predictionBannerTitle: { color: "#EC588C", fontFamily: "PixelBold", fontSize: rf(12), marginBottom: hp(0.5) },
+    predictionBannerText: { color: "#FFFFFF", fontFamily: "PixelOperator", fontSize: rf(14), textAlign: "center" },
+    statBanner: {
+        backgroundColor: "#26216D",
+        padding: wp(4),
+        borderRadius: rf(15),
+        marginBottom: hp(2.5),
+        borderWidth: 1,
+        borderColor: "#FFD94E",
+        alignItems: "center",
+    },
+    statBannerTitle: { color: "#FFD94E", fontFamily: "PixelBold", fontSize: rf(12), marginBottom: hp(0.5) },
+    statBannerText: { color: "#FFFFFF", fontFamily: "PixelBold", fontSize: rf(18), textAlign: "center" },
+    statBannerSubtitle: { color: "#FFFFFF", fontFamily: "PixelOperator", fontSize: rf(12), marginTop: hp(0.5), opacity: 0.8 },
     cardWrapper: { marginBottom: hp(2.5), borderRadius: rf(20), elevation: 6 },
     buttonSpacing: { marginTop: hp(3), alignItems: "center" },
     saveButton: {
@@ -194,9 +230,5 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: "#FFD94E"
     },
-    saveButtonText: {
-        color: "#FFFFFF",
-        fontFamily: "Pixel",
-        fontSize: rf(14)
-    }
+    saveButtonText: { color: "#FFFFFF", fontFamily: "Pixel", fontSize: rf(14) }
 });
