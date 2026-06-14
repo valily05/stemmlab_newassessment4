@@ -188,9 +188,11 @@ export const activities = {
 
     overview:"",
     objective:"",
+    
     mission:"",
     duration:"",
-    difficulty:"",
+    difficulty:"Medium",
+
     materials: [
       {
         name:"",
@@ -227,7 +229,7 @@ export const activities = {
 
     image: {
       dark: require('@/assets/images/earthquake.png'),
-      light: require('@/assets/images/earthquake-Light.png'),
+      light: require('@/assets/images/earthquakeImage-Light.png'),
     },
     route: '/activities/activity4/overview',
 
@@ -315,9 +317,9 @@ export const activities = {
   activity5: {
     id: 5,
     title: 'HUMAN PERFORMANCE LAB',
-    group: "",
+    group: "HEALTH",
     image: {
-        dark: require('@/assets/images/HumanPerformanceLabImage.png'),
+      dark: require('@/assets/images/HumanPerformanceLabImage.png'),
       light: require('@/assets/images/HumanPerformanceLabImage-Light.png'),
     },
     route: '/activities/activity5/overview',
@@ -329,11 +331,11 @@ export const activities = {
     //pointsRequired: 600,
     
     overview: "Investigate how the human body moves by measuring speed, smoothness, and coordination during controlled stretching activities.",
-    objective: "",
+    objective: "Measure and improve movement speed, smoothness, and coordination during stretching exercises.",
 
-    mission: "",
-    duration: "? Minutes",//change this
-    difficulty: "",
+    mission: "Perform controlled stretches as smoothly and accurately as possible.",
+    duration: "15 Minutes",//change this
+    difficulty: "Medium",
 
     materials: [
       {
@@ -378,10 +380,10 @@ export const activities = {
   activity6: {
     id: 6,
     title: 'REACTION BOARD CHALLENGE',
-    group: "",
+    group: "HEALTH",
     image: {
-      //dark: require('@/assets/images/reaction.png'),
-      //light: require(''),
+      dark: require('@/assets/images/ReactionBoardChallengeImage.png'),
+      light: require('@/assets/images/ReactionBoardChallengeImage-Light.png'),
     },
     route: '/activities/activity6/overview',
 
@@ -392,11 +394,11 @@ export const activities = {
     //pointsRequired: 800,
 
     overview: "Measure reaction time, coordination, and improvement through repeated digital and physical challenges.",
-    objective: "",
+    objective: "Measure and improve reaction time, coordination, and tracing accuracy through repeated challenges.",
 
-    mission: "",
-    duration: "20 Minutes",
-    difficulty: "",
+    mission: "React quickly, maintain control, and achieve the highest accuracy score.",
+    duration: "12 Minutes",
+    difficulty: "Hard",
 
     materials: [
       {
@@ -419,7 +421,9 @@ export const activities = {
     ],
 
     instructions: [
-      "Drop ...",
+      "Phase 1: Tap Reaction\n1. Tap the screen as soon as the hidden button appears\n2. Record reaction time",
+      "Phase 2: Swap Hands\n1. Repeat using the non-dominant hand\n2. Compare results",
+      "Phase 3: Tracing Challenge\n1. Trace a moving shape on the screen\n2. Review accuracy and delay"
     ],
     
     safetyNotes: [
@@ -436,10 +440,10 @@ export const activities = {
   activity7: {
     id: 7,
     title: 'BREATHING PACE TRAINER',
-    group: "",
+    group: "HEALTH",
     image: {
-      //dark: require('@/assets/images/breathing.png'),
-      //light: require(''),
+      dark: require('@/assets/images/BreathingPaceTrainerImage.png'),
+      light: require('@/assets/images/BreathingPaceTrainerImage-Light.png'),
     },
     route: '/activities/activity7/overview',
     
@@ -449,11 +453,11 @@ export const activities = {
     //pointsRequired: 1000,
     
     overview: "Analyse breathing patterns at rest and after exercise.",
-    objective: "",
+    objective: "Measure and compare breathing rates before and after exercise.",
 
-    mission: "",
+    mission: "Discover how exercise changes breathing patterns and identify the fastest recovery rate.",
     duration: "18 Minutes",
-    difficulty: "",
+    difficulty: "Hard",
 
     materials: [
       {
