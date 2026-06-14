@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Animated,
   Image,
@@ -16,8 +16,8 @@ import PasswordChecklist from '@/components/auth/PasswordChecklist';
 import PasswordMatchIndicator from '@/components/auth/PasswordMatchIndicator';
 import PasswordStrength from '@/components/auth/PasswordStrength';
 import WarningMessage from '@/components/auth/WarningMessage';
-import StarField from '@/components/backgrounds/StarField';
 import { AuthButton, AuthInput } from '@/components/AuthElements';
+import StarField from '@/components/backgrounds/StarField';
 import { LAYOUT } from '@/constants/layout';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -156,6 +156,7 @@ export default function RegisterScreen() {
 
               {/* FULL NAME */}
               <AuthInput
+              testID="fullNameInput"
                 label={t.fullName}
                 image={require('../../assets/images/User.png')}
                 placeholder={t.placeholderName}
@@ -168,6 +169,7 @@ export default function RegisterScreen() {
               )}
 
               <AuthInput
+                 testID="emailInput"
                 label={t.email} 
                 image={require('../../assets/images/Letter.png')}
                 placeholder={t.placeholderEmail}
@@ -180,6 +182,7 @@ export default function RegisterScreen() {
               )}
 
               <AuthInput 
+                 testID="passwordInput"
                 label={t.password} 
                 image={require('../../assets/images/Lock.png')} 
                 placeholder={t.placeholderPassword} 
@@ -202,6 +205,7 @@ export default function RegisterScreen() {
 
               <View ref={confirmRef}>
                 <AuthInput 
+                  testID="confirmPasswordInput"
                   label={t.confirmPassword} 
                   image={require('../../assets/images/Lock.png')} 
                   placeholder={t.placeholderConfirm}
@@ -233,7 +237,9 @@ export default function RegisterScreen() {
                 {t.already}
               </Text>
 
-              <TouchableOpacity onPress={() => router.push('/login')}>
+              <TouchableOpacity 
+                 testID="registerButton"
+              onPress={() => router.push('/login')}>
                 <Text style={[styles.loginLink, { fontSize: FONT }]}>
                   {t.login}
                 </Text>

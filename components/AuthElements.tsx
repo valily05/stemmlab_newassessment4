@@ -9,7 +9,6 @@ import {
   View
 } from 'react-native';
 import { COLORS, LAYOUT } from '../constants/layout';
-
 interface AuthInputProps {
   label: string;
   image: ImageSourcePropType;
@@ -20,6 +19,8 @@ interface AuthInputProps {
   value?: string;
   onFocus?: () => void;
   borderColor?: string;
+
+  testID?: string;   // <-- add this
 }
 
 export const AuthInput: React.FC<AuthInputProps> = ({
@@ -31,7 +32,8 @@ export const AuthInput: React.FC<AuthInputProps> = ({
   onChangeText,
   value,
   onFocus,
-  borderColor
+  borderColor,
+  testID
 }) => {
   const FONT = LAYOUT.width * 0.035;
   const [hidePassword, setHidePassword] = useState(true);
@@ -47,6 +49,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({
 
       <View style={styles.inputWrapper}>
       <TextInput
+      testID={testID}
   placeholder={placeholder}
   placeholderTextColor={COLORS.lightPurple}
   secureTextEntry={isPassword ? hidePassword : secure}
