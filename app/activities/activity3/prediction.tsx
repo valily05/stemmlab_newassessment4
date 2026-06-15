@@ -3,8 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import {
     Fan,
-    Lightbulb,
-    MessageCircle
+    Lightbulb
 } from 'lucide-react-native';
 import { useState } from 'react';
 import {
@@ -269,31 +268,7 @@ Flat paper fan with no folds.
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        {/* Card 4: Talking */}
-                        <TouchableOpacity
-                            style={[
-                                styles.predictionCard,
-                                selectedPrediction === 3 && styles.selectedCardPurple,
-                            ]}
-                            onPress={() => setSelectedPrediction(3)}
-                        >
-                            <LinearGradient
-                                colors={selectedPrediction === 3 ? ['#3B2A6E', '#1D1340'] : ['#261B4D', '#120B26']}
-                                style={styles.cardGradient}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 1 }}
-                            >
-                                <View style={styles.iconWrapper}>
-                                    <MessageCircle size={rf(32)} color="#B336FF" />
-                                </View>
-                                <View style={styles.textContainer}>
-                                    <Text style={styles.cardTitle}>TALKING</Text>
-                                    <Text style={styles.cardDescription}>
-                                        Speaking continuously creates a steady level of sound.
-                                    </Text>
-                                </View>
-                            </LinearGradient>
-                        </TouchableOpacity>
+                 
                     </View>
 
                     <View style={styles.buttonActionRow}>

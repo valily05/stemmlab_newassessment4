@@ -32,7 +32,7 @@ export interface Session {
 export interface Iteration {
     iterationNo: number;//int
     videoURL?: string;
-
+recordedAt?:Timestamp;
     data: Record<string, any>;
 }
 

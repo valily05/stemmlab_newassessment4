@@ -172,7 +172,7 @@ export const activities = {
 
 activity3: {
   id: 3,
-  title: "HAND FAN CHALLENGE",
+  title: "HAND-FAN CHALLENGE",
   group: "ENGINEERING",
 
   image: {
