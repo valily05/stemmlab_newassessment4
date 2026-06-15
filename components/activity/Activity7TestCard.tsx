@@ -31,7 +31,7 @@ const rf = (size: number) => {
   );
 };
 
-export default function Activity5TestCard() {
+export default function Activity7TestCard({ phase }: { phase: string }) {
   return (
     <View style={styles.card}>
       <View style={styles.header}>
@@ -47,7 +47,11 @@ export default function Activity5TestCard() {
 
       <View style={styles.content}>
         <Text style={styles.contentTitle}>
-          Recording the Movement
+          {phase === 'rest'
+            ? 'Lie still and breathe normally'
+            : phase === 'exercise'
+            ? 'Do your exercise'
+            : 'Recover breathing...'}
         </Text>
       </View>
     </View>

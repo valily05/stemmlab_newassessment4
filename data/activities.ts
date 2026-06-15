@@ -233,7 +233,7 @@ activity3: {
   setupSteps: [
     {
       title: "BUILD YOUR HAND FAN",
-      image: require("@/assets/images/A3setup1.png"),
+      //image: require("@/assets/images/A3setup1.png"),
       instruction:
         "Fold or cut paper and attach it securely to a handle.",
       bunnyTip:
@@ -506,7 +506,7 @@ activity3: {
     overview: "Analyse breathing patterns at rest and after exercise.",
     objective: "Measure and compare breathing rates before and after exercise.",
 
-    mission: "Discover how exercise changes breathing patterns and identify the fastest recovery rate.",
+    mission: "Discover how exercise changes breathing patterns.",
     duration: "18 Minutes",
     difficulty: "Hard",
 
