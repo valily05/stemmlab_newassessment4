@@ -1,15 +1,15 @@
-import { router } from 'expo-router';
-import { useState, useEffect } from 'react';
-import {
-  Alert,
-  Dimensions,
-  ImageBackground,
-  PixelRatio,
-  ScrollView,
-  StyleSheet,
-  View
-} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import {
+    Alert,
+    Dimensions,
+    ImageBackground,
+    PixelRatio,
+    ScrollView,
+    StyleSheet,
+    View
+} from 'react-native';
 
 import ActivityHeader from '@/components/activity/ActivityHeader';
 import ActivityHero from '@/components/activity/ActivityHero';
@@ -108,7 +108,7 @@ export default function Activity3Overview() {
             >
                 {/* HERO SECTION */}
                 <ImageBackground
-                    source={require('@/assets/images/miffyspace.png')}
+                    source={require('@/assets/images/fan-bunny.png')}
                     style={styles.heroBackground}
                     imageStyle={styles.heroImage}
                 >
@@ -159,7 +159,7 @@ export default function Activity3Overview() {
                     />
 
                     <ReferenceSetupCard
-                        image={require('@/assets/images/miffyspace.png')}//change this
+                        image={require('@/assets/images/A3setup1.png')}//change this
                     />
 
                     <SafetyNotes
@@ -174,7 +174,7 @@ export default function Activity3Overview() {
                                 pathname: '/activities/ActivityIntroScreen',
                                 params: {
                                     activityID: 3,
-                                    nextScreen: '/activities/activity3/experiment',
+                                    nextScreen: '/activities/activity3/prediction',
                                 },
                             })
                         }
