@@ -394,7 +394,7 @@ export const activities = {
     //pointsRequired: 800,
 
     overview: "Measure reaction time, coordination, and improvement through repeated digital and physical challenges.",
-    objective: "Measure and improve reaction time, coordination, and tracing accuracy through repeated challenges.",
+    objective: "Measure and improve reaction time & tracing accuracy through repeated challenges.",
 
     mission: "React quickly, maintain control, and achieve the highest accuracy score.",
     duration: "12 Minutes",

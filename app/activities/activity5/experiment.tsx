@@ -697,6 +697,8 @@ export default function Activity5Experiment() {
   const retryTest = () => {
     setExperimentPhase('setup');
 
+    setMovementType(null);
+    
     setMovementIntensity(0);
 
     setAverageAngularVelocity(0);

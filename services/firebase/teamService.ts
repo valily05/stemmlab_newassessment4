@@ -120,3 +120,36 @@ export const createTeam = async (
 
   return teamRef.id;
 };
+
+export const getTeamByID = async (
+  teamID: string
+) => {
+  try {
+    const teamRef = doc(
+      db,
+      'teams',
+      teamID
+    );
+
+    const teamSnap =
+      await getDoc(teamRef);
+
+    if (!teamSnap.exists()) {
+      return null;
+    }
+
+    const data = teamSnap.data();
+
+    return {
+      id: teamSnap.id,
+      ...data,
+      members: data.members ?? []
+    };
+  } catch (error) {
+    console.log(
+      'getTeamByID error:',
+      error
+    );
+    return null;
+  }
+};
