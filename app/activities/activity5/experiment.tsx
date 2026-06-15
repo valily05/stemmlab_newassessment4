@@ -15,20 +15,18 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Accelerometer } from 'expo-sensors';
+import { Accelerometer, Gyroscope } from 'expo-sensors';
 
 import { Timestamp } from 'firebase/firestore';
 
-import Activity4CaptureCard from '@/components/activity/Activity4CaptureCard';
+import Activity5CaptureCard from '@/components/activity/Activity5CaptureCard';
 import Activity4Observation from '@/components/activity/Activity4Observation';
-import Activity4VibrationCard from '@/components/activity/Activity4VibrationCard';
+import Activity5TestCard from '@/components/activity/Activity5TestCard';
 import ExitButton from '@/components/activity/ExitButton';
 import ExperimentHero from '@/components/activity/ExperimentHero';
 import ExperimentStats from '@/components/activity/ExperimentStats';
 import ExperimentTipCard from '@/components/activity/ExperimentTipCard';
 import InfoModal from '@/components/activity/InfoModal';
-import LiveTimerCard from '@/components/activity/LiveTimerCard';
-import StopwatchCard from '@/components/activity/StopwatchCard';
 
 import { activities } from '@/data/activities';
 
@@ -41,28 +39,22 @@ import { getUserProfile } from '@/services/firebase/userService';
 type ExperimentResult = {
   iterationNo: number;
   
-  numberOfPillars: number;
-  layerType:
-    | 'Paper Folds'
-    | 'Cardboard Folds'
-    | 'Mixed';
-  layerDesign: string;
-  description: string;
+  movementType:
+    | 'Arm Rotation'
+    | 'Up and Down Motion'
+    | 'Side Motion';
 
-  distanceMoved: number;
-  movementLevel: 
-    | 'No Movement'
-    | 'Slight Movement'
-    | 'Strong Shaking'
-    | 'Structure Collapsed';
+  movementIntensity: number;// g
 
-  avgAcceleration: number;
-  maxAcceleration: number;
+  averageAngularVelocity: number;
+  speed: number;// mm/s
+  smoothness: number;//%
+  rangeOfMotion: number;//degrees
 
-  stabilityScore: number;
-}
+  performanceScore: number;
+};
 
-const activity = activities.activity4;
+const activity = activities.activity5;
 
 const { width, height } = Dimensions.get('window');
 
@@ -93,9 +85,7 @@ const stages = [
   'PROTOTYPE 3',
 ];
 
-const VIBRATION_DURATION = 10000;
-
-export default function Activity4Experiment() {
+export default function Activity5Experiment() {
   const [isUploading, setIsUploading] =
     useState(false);
 
@@ -109,61 +99,80 @@ export default function Activity4Experiment() {
     return `ITERATION ${currentIteration}`;
   };
 
-  const [currentStage, setCurrentStage] =
-    useState(0);
-
   const [experimentPhase, setExperimentPhase] =
     useState<'setup'|'testing'|'observation'>('setup');
 
   const [isTesting, setIsTesting] = useState(false);
 
-  const [distanceMoved, setDistanceMoved] = useState('');
-
-  const [movementLevel, setMovementLevel] =
+  const [movementType, setMovementType] =
     useState<
-      ExperimentResult['movementLevel'] | null
+      | 'Arm Rotation'
+      | 'Up and Down Motion'
+      | 'Side Motion'
+      | null
     >(null);
 
-  const [numberOfPillars, setNumberOfPillars] = useState('');
-  const [layerType, setLayerType] =
-    useState<ExperimentResult['layerType'] | null>(null);
-  const [layerDesign, setLayerDesign] = useState('');
-  const [description, setDescription] = useState('');
+  const [notes, setNotes] =
+    useState('');
 
-  const [avgAcceleration, setAvgAcceleration] = useState(0);
+  const [movementIntensity,
+    setMovementIntensity] =
+    useState(0);
 
-  const [maxAcceleration, setMaxAcceleration] = useState(0);
+  const [speed, setSpeed] =
+    useState(0);
 
-  const [stabilityScore, setStabilityScore] = useState(0);
+  const [averageAngularVelocity,
+    setAverageAngularVelocity] =
+    useState(0);
+
+  const [smoothness, setSmoothness] =
+    useState(0);
+
+  const [rangeOfMotion,
+    setRangeOfMotion] =
+    useState(0);
+
+  const [performanceScore,
+    setPerformanceScore] =
+    useState(0);
 
   const [readings,
     setReadings] =
     useState<number[]>([]);
 
-  const canStartVibration =
-    numberOfPillars.trim() !== '' &&
-    layerType !== null &&
-    layerDesign.trim() !== '' &&
-    description.trim() !== '';
+  const canStartTest =
+    movementType !== null;
 
   const [results, setResults] =
     useState<ExperimentResult[]>([]);
 
-  const startVibration = async () => {
+  const TEST_DURATION = 10000;
+
+  const startTest = async () => {
     setExperimentPhase('testing');
     setIsTesting(true);
 
-    setAvgAcceleration(0);
-    setMaxAcceleration(0);
-    setStabilityScore(0);
+    setMovementIntensity(0);
+    setSpeed(0);
+    setSmoothness(0);
+    setRangeOfMotion(0);
+    setPerformanceScore(0);
 
-    const samples:number[] = [];
+    const accelSamples:number[] = [];
+    const gyroSamples:number[] = [];
+
+    // let maxMagnitude = 0;
+    // let minMagnitude = Number.MAX_VALUE;
+
+    let totalJerk = 0;
+    let previousAccel = 0;
+    let accumulatedAngle = 0;
 
     Accelerometer.setUpdateInterval(100);
+    Gyroscope.setUpdateInterval(100);
 
-    let previousMagnitude = 0;
-
-    const subscription =
+    const accelSubscription =
       Accelerometer.addListener(
         data => {
           const magnitude =
@@ -172,48 +181,130 @@ export default function Activity4Experiment() {
               data.y * data.y +
               data.z * data.z
             );
-          
-          const movement =
-            Math.abs(magnitude-previousMagnitude);
 
-          previousMagnitude = magnitude;
+          accelSamples.push(magnitude);
 
-          samples.push(magnitude);
+          totalJerk +=
+            Math.abs(
+              magnitude -
+              previousAccel
+            );
+
+          previousAccel = magnitude;
         }
       );
 
-    Vibration.vibrate(VIBRATION_DURATION);
+    const gyroSubscription =
+      Gyroscope.addListener(data => {
+
+        const angularVelocity =
+          Math.sqrt(
+            data.x * data.x +
+            data.y * data.y +
+            data.z * data.z
+          );
+
+        gyroSamples.push(
+          angularVelocity
+        );
+
+        accumulatedAngle +=
+          angularVelocity * 0.1;
+      });
 
     setTimeout(() => {
+      accelSubscription.remove();
+      gyroSubscription.remove();
 
-      subscription.remove();
+      if (accelSamples.length === 0 ||
+      gyroSamples.length === 0) {
+        setIsTesting(false);
+        setExperimentPhase('observation');
+        return;
+      }
 
-      const avg =
-        samples.reduce(
+      const avgAcceleration =
+        accelSamples.reduce(
           (sum, value) =>
             sum + value,
           0
-        ) / samples.length;
+        ) / accelSamples.length;
 
-      const max =
-        Math.max(...samples);
+      const avgAngularVelocity =
+        gyroSamples.reduce(
+          (sum, value) =>
+            sum + value,
+          0
+        ) / gyroSamples.length;
 
-      const score =
+      const speedValue =
+        Math.round(
+          avgAngularVelocity *
+          60
+        );
+
+      const smoothnessValue =
         Math.max(
           0,
-          Math.round(
-            100 - avg * 15
+          Math.min(
+            100,
+            Math.round(
+              100 -
+              totalJerk /
+                accelSamples.length *
+                15
+            )
           )
         );
 
-      setAvgAcceleration(avg);
-      setMaxAcceleration(max);
-      setStabilityScore(score);
+      const rangeValue =
+        Math.round(
+          accumulatedAngle *
+          (180 / Math.PI)
+        );
+
+      const performanceValue =
+        Math.round(
+          speedValue * 0.25 +
+          smoothnessValue * 0.40 +
+          Math.min(
+            rangeValue,
+            180
+          ) * 0.35
+        );
+
+      setMovementIntensity(
+        Number(
+          avgAcceleration.toFixed(2)
+        )
+      );
+
+      setAverageAngularVelocity(
+        Number(
+          avgAngularVelocity.toFixed(2)
+        )
+      );
+
+      setSpeed(speedValue);
+
+      setSmoothness(
+        smoothnessValue
+      );
+
+      setRangeOfMotion(
+        rangeValue
+      );
+
+      setPerformanceScore(
+        performanceValue
+      );
 
       setIsTesting(false);
 
-      setExperimentPhase('observation');
-    }, VIBRATION_DURATION);
+      setExperimentPhase(
+        'observation'
+      );
+    }, TEST_DURATION);
   }
 
   // const [hasStarted, setHasStarted] =
@@ -223,7 +314,7 @@ export default function Activity4Experiment() {
   //   useState(0);
 
   const [timeLeft, setTimeLeft] =
-    useState(20 * 60);
+    useState(10 * 60);
 
   useEffect(() => {
     const checkTeam = async () => {
@@ -339,20 +430,18 @@ export default function Activity4Experiment() {
     //   );
     // };
 
-    const result = {
+    const result: ExperimentResult = {
       iterationNo: currentIteration,
 
-      numberOfPillars: Number(numberOfPillars),
-      layerType: layerType!,
-      layerDesign,
-      description,
+      movementType: movementType!,
 
-      distanceMoved: Number(distanceMoved),
-      movementLevel: movementLevel!,
+      movementIntensity,
+      averageAngularVelocity,
+      speed,
+      smoothness,
+      rangeOfMotion,
 
-      avgAcceleration,
-      maxAcceleration,
-      stabilityScore
+      performanceScore,
     };
 
     const updatedResults = [
@@ -360,10 +449,10 @@ export default function Activity4Experiment() {
       result,
     ];
 
-    setResults(prev => [
-      ...prev,
-      result
-    ]);
+    // setResults(prev => [
+    //   ...prev,
+    //   result
+    // ]);
 
     setIsUploading(true);
 
@@ -406,19 +495,33 @@ export default function Activity4Experiment() {
 
     const totalIterations = resultsWithUrls.length;
 
-      // const inTargetCount =
-      //   resultsWithUrls.filter(
-      //     item => item.inTarget
-      //   ).length;
+      const fastestSpeed =
+        Math.max(
+          ...updatedResults.map(
+            r => r.speed
+          )
+        );
 
-      // const accuracy =
-      //   totalIterations > 0
-      //     ? Math.round(
-      //         (inTargetCount /
-      //           totalIterations) *
-      //           100
-      //       )
-      //     : 0;
+      const highestSmoothness =
+        Math.max(
+          ...updatedResults.map(
+            r => r.smoothness
+          )
+        );
+
+      const largestRangeOfMotion =
+        Math.max(
+          ...updatedResults.map(
+            r => r.rangeOfMotion
+          )
+        );
+
+      const bestPerformanceScore =
+        Math.max(
+          ...updatedResults.map(
+            r => r.performanceScore
+          )
+        );
 
       const bestResult =
         resultsWithUrls.reduce(
@@ -427,114 +530,56 @@ export default function Activity4Experiment() {
               return current;
             }
 
-            if(current.stabilityScore > best.stabilityScore) {
+            if (
+              current.performanceScore >
+              best.performanceScore
+            ) {
               return current;
             }
-            // const bestTarget =
-            //   best.inTarget ? 1 : 0;
-
-            // const currentTarget =
-            //   current.inTarget ? 1 : 0;
-
-            // if (
-            //   currentTarget >
-            //   bestTarget
-            // ) {
-            //   return current;
-            // }
-
-            // if (
-            //   currentTarget === bestTarget &&
-            //   current.dropTime > best.dropTime
-            // ) {
-            //   return current;
-            // }
 
             return best;
           },
           null as ExperimentResult | null
         );
       
-      // const accuracyScore =
-      //   accuracy * 2.5;
-      
-      const movementRank = {
-        'No Movement': 4,
-        'Slight Movement': 3,
-        'Strong Shaking': 2,
-        'Structure Collapsed': 1,
-      }
-
-      const avgDistance = 
-        resultsWithUrls.reduce(
-          (sum, item) =>
-            sum+item.distanceMoved,
-          0
-        ) / totalIterations;
-
-      const mostStableLayerDesign =
-        bestResult?.layerDesign ?? '';
-
-      const lowestMovementLevel =
-        resultsWithUrls.reduce(
-          (best, current) => {
-            if (
-              movementRank[current.movementLevel] > movementRank[best.movementLevel]
-            ) {
-              return current;
-            }
-
-            return best;
-          }
-        ).movementLevel;
-
-      const stabilityPoints =
+      const speedPoints =
         Math.min(
-          500,
-          bestResult
-            ? bestResult.stabilityScore * 5
-            : 0
+          250,
+          fastestSpeed * 2.5
         );
 
-      const distancePoints =
-        Math.max(
-          0,
-          250 - avgDistance * 5
+      const smoothnessPoints =
+        Math.min(
+          300,
+          highestSmoothness * 3
         );
 
-      let movementPoints = 0;
+      const rangePoints =
+        Math.min(
+          250,
+          largestRangeOfMotion * 1.5
+        );
 
-      switch (lowestMovementLevel) {
-        case 'No Movement':
-          movementPoints = 250;
-          break;
-
-        case 'Slight Movement':
-          movementPoints = 180;
-          break;
-
-        case 'Strong Shaking':
-          movementPoints = 80;
-          break;
-
-        case 'Structure Collapsed':
-          movementPoints = 0;
-          break;
-      }
+      const performancePoints =
+        Math.min(
+          150,
+          bestPerformanceScore * 1.5
+        );
         
-      const experimentTime = (60*20) - timeLeft;
+      const experimentTime = (60*10) - timeLeft;
 
       const experimentScore =
         Math.min(
-          100,
-          experimentTime / 200
+          50,
+          experimentTime / 12
         );
       
       const totalScore =
         Math.round(
-          stabilityPoints +
-          distancePoints +
-          movementPoints +
+          speedPoints +
+          smoothnessPoints +
+          rangePoints +
+          performancePoints +
           experimentScore
         );
 
@@ -549,17 +594,10 @@ export default function Activity4Experiment() {
           completedAt: Timestamp.now(),
 
           insights: {
-            mostStableLayerDesign,
-            shortestDistance:
-              Math.min(
-                ...resultsWithUrls.map(
-                  r => r.distanceMoved
-                )
-              ),
-            lowestMovementLevel,
-
-            bestStability: bestResult?.stabilityScore ?? 0,
-            avgDistance: Number(avgDistance.toFixed(2)),
+            fastestSpeed,
+            highestSmoothness,
+            largestRangeOfMotion,
+            bestPerformanceScore,
           },
         });
       console.log('Session created:', sessionID);
@@ -575,20 +613,29 @@ export default function Activity4Experiment() {
         await saveIterationToFirestore(
           sessionID,
           {
-            iterationNo: i,
+            iterationNo: i+1,
 
             data: {
-              numberOfPillars: result.numberOfPillars,
-              layerType: result.layerType,
-              layerDesign: result.layerDesign,
-              description: result.description,
+              movementType:
+                result.movementType,
 
-              distanceMoved: result.distanceMoved,
-              movementLevel: result.movementLevel,
+              movementIntensity:
+                result.movementIntensity,
 
-              avgAcceleration: result.avgAcceleration,
-              maxAcceleration: result.maxAcceleration,
-              stabilityScore: result.stabilityScore
+              averageAngularVelocity:
+                result.averageAngularVelocity,
+
+              speed:
+                result.speed,
+
+              smoothness:
+                result.smoothness,
+
+              rangeOfMotion:
+                result.rangeOfMotion,
+
+              performanceScore:
+                result.performanceScore,
             }
           }
         );
@@ -610,21 +657,15 @@ export default function Activity4Experiment() {
 
       router.replace({
         pathname:
-          '/activities/activity4/results',
+          '/activities/activity5/results',
         params: {
           sessionID,
           totalScore,
           totalIterations,
-          mostStableLayerDesign,
-          shortestDistance:
-            Math.min(
-              ...resultsWithUrls.map(
-                r => r.distanceMoved
-              )
-            ),
-          lowestMovementLevel,
-          bestStability: bestResult?.stabilityScore ?? 0,
-          avgDistance: Number(avgDistance.toFixed(2)),
+          fastestSpeed,
+          highestSmoothness,
+          largestRangeOfMotion,
+          bestPerformanceScore,
           bestResult: JSON.stringify(bestResult),
           results: JSON.stringify(resultsWithUrls),
         },
@@ -636,17 +677,41 @@ export default function Activity4Experiment() {
     setCurrentIteration(prev => prev+1);
     setExperimentPhase('setup');
 
-    setDistanceMoved('');
-    setMovementLevel(null);
+    setMovementType(null);
 
-    setNumberOfPillars('');
-    setLayerType(null);
-    setLayerDesign('');
-    setDescription('');
+    setMovementIntensity(0);
 
-    setAvgAcceleration(0);
-    setMaxAcceleration(0);
-    setStabilityScore(0);
+    setAverageAngularVelocity(0);
+
+    setSpeed(0);
+
+    setSmoothness(0);
+
+    setRangeOfMotion(0);
+
+    setPerformanceScore(0);
+
+    setReadings([]);
+  }
+
+  const retryTest = () => {
+    setExperimentPhase('setup');
+
+    setMovementIntensity(0);
+
+    setAverageAngularVelocity(0);
+
+    setSpeed(0);
+
+    setSmoothness(0);
+
+    setRangeOfMotion(0);
+
+    setPerformanceScore(0);
+
+    setReadings([]);
+
+    setIsTesting(false);
   }
 
   return (
@@ -692,13 +757,13 @@ export default function Activity4Experiment() {
           title={activity.title}
           description={
             <Text style={styles.heroDescription}>
-              Build the{' '}
+              Choose the{' '}
               <Text style={styles.pinkText}>
-                ANTI-VIBRATION LAYER{' '}
+                MOVEMENT TYPE{' '}
               </Text>
-              and activate the{' '}
+              and start the{' '}
               <Text style={styles.pinkText}>
-                VIBRATION MODE
+                MOVEMENT
               </Text>
               .
             </Text>
@@ -709,43 +774,29 @@ export default function Activity4Experiment() {
           timeLeft={formatCountdown(timeLeft)}
           iteration={getIterationLabel()}
         />
-
-        {/* <StopwatchCard /> */}
-
-          
-          {/* <LiveTimerCard
-            time={'20:20'}
-          /> */}
         
         {experimentPhase==='setup' && (
           <>
-            <Activity4CaptureCard 
-              numberOfPillars={numberOfPillars}
-              setNumberOfPillars={setNumberOfPillars}
-              layerType={layerType}
-              setLayerType={setLayerType}
-              layerDesign={layerDesign}
-              setLayerDesign={setLayerDesign}
-              description={description}
-              setDescription={setDescription}
-              onStartVibration={startVibration}
+            <Activity5CaptureCard 
+              movementType={movementType}
+              setMovementType={setMovementType}
               isTesting={isTesting}
             />
           
             <View 
-              style={styles.vibrationButtonArea}
+              style={styles.movementButtonArea}
             >
               <TouchableOpacity
                 style={[
                   styles.stopButton,
-                  !canStartVibration && {
+                  !canStartTest && {
                     opacity: 0.4,
                   },
                 ]}
                 onPress={() => {
                   Alert.alert(
                     'Ready to Start?',
-                    'Is your anti-vibration setup finished and ready for earthquake?',
+                    'Are you ready to start the movement?',
                     [
                       {
                         text: 'No',
@@ -753,15 +804,15 @@ export default function Activity4Experiment() {
                       },
                       {
                         text: 'Yes',
-                        onPress: startVibration,
+                        onPress: startTest,
                       },
                     ]
                   );
                 }}
-                disabled={!canStartVibration}
+                disabled={!canStartTest}
               >
                 <Text style={styles.buttonText}>
-                  START VIBRATION
+                  START MOVEMENT
                 </Text>
               </TouchableOpacity>
             </View>
@@ -769,7 +820,7 @@ export default function Activity4Experiment() {
         )}
 
         {experimentPhase==='testing' && (
-          <Activity4VibrationCard />
+          <Activity5TestCard />
         )}
 
         {experimentPhase==='observation' && (
@@ -792,37 +843,57 @@ export default function Activity4Experiment() {
               </ImageBackground>
 
               <Text style={styles.resultText}>
-                Average Acceleration: {avgAcceleration}
+                Movement Type: {movementType}
               </Text>
 
               <Text style={styles.resultText}>
-                Maximum Acceleration: {maxAcceleration}
+                Movement Intensity: {movementIntensity} g
+              </Text>
+
+              <Text style={styles.resultText}>
+                Average Rotation: {averageAngularVelocity} rad/s
+              </Text>
+
+              <Text style={styles.resultText}>
+                Speed: {speed}°/s
+              </Text>
+
+              <Text style={styles.resultText}>
+                Smoothness: {smoothness}%
+              </Text>
+
+              <Text style={styles.resultText}>
+                Range of Motion: {rangeOfMotion}°
+              </Text>
+
+              <Text style={styles.resultText}>
+                Performance Score: {performanceScore}
               </Text>
             </View>
 
-            <Activity4Observation
+            {/* <Activity4Observation
               distanceMoved={distanceMoved}
               setDistanceMoved={setDistanceMoved}
               movementLevel={movementLevel}
               setMovementLevel={setMovementLevel}
               stabilityScore={stabilityScore}
               setStabilityScore={setStabilityScore}
-            />
+            /> */}
 
             <TouchableOpacity
               style={[
                 styles.button,
-                (
-                  distanceMoved === '' ||
-                  movementLevel === null
-                ) && {
-                  opacity: 0.4,
-                },
+                // (
+                //   // distanceMoved === '' ||
+                //   // movementLevel === null
+                // ) && {
+                //   opacity: 0.4,
+                // },
               ]}
-              disabled={
-                distanceMoved === '' ||
-                movementLevel === null
-              }
+              // disabled={
+              //   // distanceMoved === '' ||
+              //   // movementLevel === null
+              // }
               onPress={nextIteration}
             >
               <Text style={styles.buttonText}>
@@ -832,25 +903,7 @@ export default function Activity4Experiment() {
 
             <TouchableOpacity
               style={styles.stopButton}
-              onPress={() => {
-                setExperimentPhase('setup');
-
-                setNumberOfPillars('');
-                setLayerType(null);
-                setLayerDesign('');
-                setDescription('');
-
-                setDistanceMoved('');
-                setMovementLevel(null);
-
-                setAvgAcceleration(0);
-                setMaxAcceleration(0);
-                setStabilityScore(0);
-
-                setReadings([]);
-
-                setIsTesting(false);
-              }}
+              onPress={retryTest}
             >
               <Text style={styles.buttonText}>
                 RETRY
@@ -860,19 +913,19 @@ export default function Activity4Experiment() {
             <TouchableOpacity
               style={[
                 styles.finishButton,
-                (
-                  distanceMoved === '' ||
-                  movementLevel === null ||
-                  isUploading
-                ) && {
-                  opacity: 0.4,
-                },
+                // (
+                //   distanceMoved === '' ||
+                //   movementLevel === null ||
+                //   isUploading
+                // ) && {
+                //   opacity: 0.4,
+                // },
               ]}
-              disabled={
-                distanceMoved === '' ||
-                movementLevel === null ||
-                isUploading
-              }
+              // disabled={
+              //   distanceMoved === '' ||
+              //   movementLevel === null ||
+              //   isUploading
+              // }
               onPress={saveIteration}
             >
               {isUploading ? (
@@ -1123,7 +1176,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  vibrationButtonArea: {
+  movementButtonArea: {
     marginHorizontal: wp(5),
     marginTop: hp(2),
     gap: hp(1.5),

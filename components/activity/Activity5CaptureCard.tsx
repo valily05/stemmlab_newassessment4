@@ -33,48 +33,25 @@ const rf = (size: number) => {
 };
 
 type Props = {
-  numberOfPillars: string;
-  setNumberOfPillars: (
-    value: string
-  ) => void;
-
-  layerType:
-    | 'Paper Folds'
-    | 'Cardboard Folds'
-    | 'Mixed'
+  movementType:
+    | 'Arm Rotation'
+    | 'Up and Down Motion'
+    | 'Side Motion'
     | null;
-  setLayerType: (
+
+  setMovementType: (
     value:
-    | 'Paper Folds'
-    | 'Cardboard Folds'
-    | 'Mixed'
+    | 'Arm Rotation'
+    | 'Up and Down Motion'
+    | 'Side Motion'
   ) => void;
-
-  layerDesign: string;
-  setLayerDesign: (
-    value: string
-  ) => void;
-
-  description: string;
-  setDescription: (
-    value: string
-  ) => void;
-
-  onStartVibration: () => void;
 
   isTesting: boolean;
 };
 
 export default function Activity4CaptureCard({
-  numberOfPillars,
-  setNumberOfPillars,
-  layerType,
-  setLayerType,
-  layerDesign,
-  setLayerDesign,
-  description,
-  setDescription,
-  onStartVibration,
+  movementType,
+  setMovementType,
   isTesting,
 }: Props) {
   return(
@@ -89,11 +66,11 @@ export default function Activity4CaptureCard({
           </Text>
 
           <Text style={styles.description}>
-            Record the{' '}
+            Choose the{' '}
             <Text style={styles.yellowText}>
-              ANTI-VIBRATION LAYER DESIGN
+              MOVEMENT TYPE
             </Text>{' '}
-            to analyze the best design.
+            to investigate how the human body moves.
           </Text>
         </View>
       </View>
@@ -121,141 +98,58 @@ export default function Activity4CaptureCard({
 
       <View style={styles.inputCard}>
         <Text style={styles.inputLabel}>
-          NUMBER OF PILLARS
-        </Text>
-      
-        <TextInput
-          style={styles.textInput}
-          placeholder="e.g. 1"
-          placeholderTextColor="#8A8FBF"
-          keyboardType="numeric"
-          value={numberOfPillars}
-          onChangeText={setNumberOfPillars}
-        />
-        {!numberOfPillars.trim() && (
-          <Text
-            style={{
-              color: '#FF6B6B',
-              fontSize: rf(14),
-              fontFamily: 'PixelOperator',
-              marginTop: hp(0.8),
-            }}
-          >
-            * Enter the number of pillars
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.inputCard}>
-        <Text style={styles.inputLabel}>
-          LAYER TYPE
+          MOVEMENT TYPE
         </Text>
 
         <View style={styles.radioButton}>
           <TouchableOpacity
             onPress={() =>
-              setLayerType('Paper Folds')
+              setMovementType('Arm Rotation')
             }
           >
             <Text
               style={[
                 styles.option,
-                layerType === 'Paper Folds' &&
+                movementType === 'Arm Rotation' &&
                   styles.selected,
               ]}
             >
-              ● Paper Folds
+              ● Arm Rotation
             </Text>
           </TouchableOpacity>
   
           <TouchableOpacity
             onPress={() =>
-              setLayerType('Cardboard Folds')
+              setMovementType('Up and Down Motion')
             }
           >
             <Text
               style={[
                 styles.option,
-                layerType === 'Cardboard Folds' &&
+                movementType === 'Up and Down Motion' &&
                   styles.selected,
               ]}
             >
-              ● Cardboard Folds
+              ● Up and Down Motion
             </Text>
           </TouchableOpacity>
   
           <TouchableOpacity
             onPress={() =>
-              setLayerType('Mixed')
+              setMovementType('Side Motion')
             }
           >
             <Text
               style={[
                 styles.option,
-                layerType === 'Mixed' &&
+                movementType === 'Side Motion' &&
                   styles.selected,
               ]}
             >
-              ● Mixed
+              ● Side Motion
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
-
-      <View style={styles.inputCard}>
-        <Text style={styles.inputLabel}>
-          LAYER DESIGN
-        </Text>
-
-        <TextInput
-          style={styles.textInput}
-          placeholder="e.g. Prototype 1"
-          placeholderTextColor="#8A8FBF"
-          keyboardType="default"
-          value={layerDesign}
-          onChangeText={setLayerDesign}
-        />
-        {!layerDesign.trim() && (
-          <Text
-            style={{
-              color: '#FF6B6B',
-              fontSize: rf(14),
-              fontFamily: 'PixelOperator',
-              marginTop: hp(0.8),
-            }}
-          >
-            * Enter the layer design
-          </Text>
-        )}
-      </View>
-    
-      <View style={styles.inputCard}>
-        <Text style={styles.inputLabel}>
-          SHORT DESCRIPTION OF YOUR SETUP
-        </Text>
-
-        <TextInput
-          style={[styles.textInput, styles.multilineInput]}
-          placeholder={"e.g. 2 layers of cardboards\n4 pillars at the corners"}
-          placeholderTextColor="#8A8FBF"
-          keyboardType="default"
-          multiline
-          textAlignVertical='top'
-          value={description}
-          onChangeText={setDescription}
-        />
-        {!description.trim() && (
-          <Text
-            style={{
-              color: '#FF6B6B',
-              fontSize: rf(14),
-              fontFamily: 'PixelOperator',
-              marginTop: hp(0.8),
-            }}
-          >
-            * Enter the short description
-          </Text>
-        )}
       </View>
     </View>
   );

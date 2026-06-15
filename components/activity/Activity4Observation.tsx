@@ -11,6 +11,7 @@ import {
   PixelRatio,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -45,9 +46,9 @@ const rf = (
 };
 
 type Props = {
-  distanceMoved: number;
+  distanceMoved: string;
 
-  setDistanceMoved: (value: number) => void;
+  setDistanceMoved: (value: string) => void;
 
   movementLevel: 
     | 'No Movement'
@@ -63,6 +64,10 @@ type Props = {
     | 'Strong Shaking'
     | 'Structure Collapsed'
   ) => void;
+
+  stabilityScore: number;
+
+  setStabilityScore: (value: number) => void;
 };
 
 export default function Activity4Observation({
@@ -70,6 +75,8 @@ export default function Activity4Observation({
   setDistanceMoved,
   movementLevel,
   setMovementLevel,
+  stabilityScore,
+  setStabilityScore,
 }: Props) {
   const [showTimeFormula, setShowTimeFormula] =
     useState(false);
@@ -100,49 +107,43 @@ export default function Activity4Observation({
       );
     };
 
-
-  let impactRating = 'SAFE';
   let ratingColor = '#00E84A';
 
-  // if (gForce  >= 5 && gForce  < 10) {
-  //   impactRating = 'CAUTION';
-  //   ratingColor = '#FFD54F';
-  // }
+  if (stabilityScore  >= 75 && stabilityScore < 90) {
+    ratingColor = '#FFD54F';
+  }
 
-  // if (gForce  >= 10 && gForce  < 30) {
-  //   impactRating = 'HIGH';
-  //   ratingColor = '#FF9800';
-  // }
+  if (stabilityScore  >= 50 && stabilityScore < 75) {
+    ratingColor = '#FF9800';
+  }
 
-  // if (gForce  >= 30 && gForce  < 50) {
-  //   impactRating = 'SEVERE';
-  //   ratingColor = '#FF4D4D';
-  // }
+  if (stabilityScore  >= 25 && stabilityScore < 50) {
+    ratingColor = '#FF4D4D';
+  }
 
-  // if (gForce  >= 50) {
-  //   impactRating = 'EXTREME';
-  //   ratingColor = '#A00000';
-  // }
+  if (stabilityScore < 25) {
+    ratingColor = '#A00000';
+  }
 
-  const iconColor =
-    impactRating === 'SAFE'
-      ? '#00E84A'
-      : impactRating === 'CAUTION'
-      ? '#FFD54F'
-      : impactRating === 'HIGH'
-      ? '#FF9800'
-      : impactRating === 'SEVERE'
-      ? '#FF4D4D'
-      : '#A00000';
+  // const iconColor =
+  //   impactRating === 'SAFE'
+  //     ? '#00E84A'
+  //     : impactRating === 'CAUTION'
+  //     ? '#FFD54F'
+  //     : impactRating === 'HIGH'
+  //     ? '#FF9800'
+  //     : impactRating === 'SEVERE'
+  //     ? '#FF4D4D'
+  //     : '#A00000';
 
   const ratingBackground =
-    impactRating === 'SAFE'
+    ratingColor === '#00E84A'
       ? '#10311A'
-      : impactRating === 'CAUTION'
+      : ratingColor === '#FFD54F'
       ? '#3A2F08'
-      : impactRating === 'HIGH'
+      : ratingColor === '#FF9800'
       ? '#3A2000'
-      : impactRating === 'SEVERE'
+      : ratingColor === '#FF4D4D'
       ? '#3A1010'
       : '#200000';
 
@@ -155,12 +156,18 @@ export default function Activity4Observation({
       </View>
 
       <Text style={styles.question}>
-        ① Distance Moved
+        ① Distance Moved (cm)
       </Text>
 
       <View style={styles.radioButton}>
-       
-
+       <TextInput
+          style={styles.textInput}
+          placeholder="e.g. 2"
+          placeholderTextColor="#8A8FBF"
+          keyboardType="numeric"
+          value={distanceMoved}
+          onChangeText={setDistanceMoved}
+        />
       </View>
 
       <Text style={styles.question}>
@@ -233,8 +240,8 @@ export default function Activity4Observation({
         </TouchableOpacity>
       </View>
 
-      <View style={styles.metricHeader}>
-        <View style={styles.metricRow}>
+      {/* <View style={styles.metricHeader}> */}
+        {/* <View style={styles.metricRow}>
           <View style={styles.metricLeft}>
             <ArrowDown
               size={rf(20)}
@@ -244,12 +251,12 @@ export default function Activity4Observation({
             <Text style={styles.metricLabel}>
               DROP HEIGHT
             </Text>
-          </View>
+          </View> */}
 {/* 
           <Text style={styles.metricValue}>
             {dropHeight} m
           </Text> */}
-        </View>
+        {/* </View>
 
         <TouchableOpacity
           style={styles.metricRow}
@@ -276,12 +283,12 @@ export default function Activity4Observation({
               alignItems: 'center',
               gap: wp(2),
             }}
-          >
+          > */}
             {/* <Text style={styles.metricValue}>
               {velocity.toFixed(2)} m/s
             </Text> */}
 
-            <Text style={styles.expandIcon}>
+            {/* <Text style={styles.expandIcon}>
               {showVelocityFormula ? '−' : '+'}
             </Text>
           </View>
@@ -295,7 +302,7 @@ export default function Activity4Observation({
 
             <Text style={styles.dropdownText}>
               Velocity = √(2 × g × h)
-            </Text>
+            </Text> */}
 {/* 
             <Text style={styles.dropdownExample}>
               √(2 × 9.81 × {dropHeight})
@@ -304,7 +311,7 @@ export default function Activity4Observation({
             <Text style={styles.dropdownResult}>
               = {velocity.toFixed(2)} m/s
             </Text> */}
-          </View>
+          {/* </View>
         )}
 
         <TouchableOpacity
@@ -332,11 +339,11 @@ export default function Activity4Observation({
               alignItems: 'center',
               gap: wp(2),
             }}
-          >
+          > */}
             {/* <Text style={styles.metricValue}>
               {contactTime.toFixed(2)} s
             </Text> */}
-
+{/* 
             <Text style={styles.expandIcon}>
               {showTimeFormula ? '−' : '+'}
             </Text>
@@ -353,7 +360,7 @@ export default function Activity4Observation({
               Time To Stop =
               Stop Moving Time -
               First Hit Time
-            </Text>
+            </Text> */}
 {/* 
             <Text style={styles.dropdownExample}>
               {stopMovingTime || '--'} -
@@ -363,7 +370,7 @@ export default function Activity4Observation({
             <Text style={styles.dropdownResult}>
               = {contactTime.toFixed(2)} s
             </Text> */}
-          </View>
+          {/* </View>
         )}
                 
         <TouchableOpacity
@@ -391,12 +398,12 @@ export default function Activity4Observation({
               alignItems: 'center',
               gap: wp(2),
             }}
-          >
+          > */}
             {/* <Text style={styles.metricValue}>
               {acceleration.toFixed(2)} m/s²
             </Text> */}
 
-            <Text style={styles.expandIcon}>
+            {/* <Text style={styles.expandIcon}>
               {showAccelerationFormula ? '−' : '+'}
             </Text>
           </View>
@@ -410,7 +417,7 @@ export default function Activity4Observation({
 
             <Text style={styles.dropdownText}>
               Acceleration = Velocity ÷ Time
-            </Text>
+            </Text> */}
 {/* 
             <Text style={styles.dropdownExample}>
               {velocity.toFixed(2)} ÷
@@ -420,7 +427,7 @@ export default function Activity4Observation({
             <Text style={styles.dropdownResult}>
               = {acceleration.toFixed(2)} m/s²
             </Text> */}
-          </View>
+          {/* </View>
         )}
                 
         <TouchableOpacity
@@ -448,12 +455,12 @@ export default function Activity4Observation({
               alignItems: 'center',
               gap: wp(2),
             }}
-          >
+          > */}
             {/* <Text style={styles.metricValue}>
               {gForce.toFixed(2)} g
             </Text> */}
 
-            <Text style={styles.expandIcon}>
+            {/* <Text style={styles.expandIcon}>
               {showimpactForceFormula ? '−' : '+'}
             </Text>
           </View>
@@ -467,7 +474,7 @@ export default function Activity4Observation({
 
             <Text style={styles.dropdownText}>
               G = v / (t × 9.81)
-            </Text>
+            </Text> */}
 {/* 
             <Text style={styles.dropdownExample}>
               {velocity.toFixed(2)} / (
@@ -478,11 +485,11 @@ export default function Activity4Observation({
             <Text style={styles.dropdownResult}>
               = {gForce.toFixed(2)} g
             </Text> */}
-          </View>
-        )}
+          {/* </View>
+        )} */}
 
         <Text style={styles.impactLabel}>
-          IMPACT RATING
+          STABILITY SCORE
         </Text>
 
         <View
@@ -490,50 +497,45 @@ export default function Activity4Observation({
             styles.ratingBox,
             {
               backgroundColor: ratingBackground,
-              borderColor: iconColor,
+              borderColor: ratingColor,
             },
           ]}
         >
-          <ShieldAlert
-            size={rf(22)}
-            color={iconColor}
-          />
-
           <Text
             style={[
               styles.ratingText,
               {
-                color: iconColor,
+                color: ratingColor,
               },
             ]}
           >
-            {impactRating}
+            {stabilityScore}
           </Text>
         </View>
 
         <View style={styles.legendCard}>
           <Text style={styles.legendText}>
-            🟢 SAFE (1–5g)
+            🟢 Excellent Stability (100-90)
           </Text>
 
           <Text style={styles.legendText}>
-            🟡 CAUTION (5–10g)
+            🟡 Stable (90–75)
           </Text>
 
           <Text style={styles.legendText}>
-            🟠 HIGH (10–30g)
+            🟠 Moderately Stable (75–50)
           </Text>
 
           <Text style={styles.legendText}>
-            🔴 SEVERE (30–50g)
+            🔴 Unstable (50-25)
           </Text>
 
           <Text style={styles.legendText}>
-            ⚫ EXTREME (50g+)
+            ⚫ Very Unstable (25-0)
           </Text>
         </View>
       </View>
-    </View>
+    // </View>
   );
 }
 
@@ -795,5 +797,21 @@ const styles = StyleSheet.create({
     fontFamily: 'PixelOperator',
     fontSize: rf(11),
     marginTop: hp(0.3),
+  },
+
+  textInput: {
+    height: hp(5.5),
+
+    backgroundColor: '#0E0B24',
+
+    borderRadius: rf(10),
+
+    paddingHorizontal: wp(4),
+
+    color: 'white',
+
+    fontFamily: 'PixelOperator',
+
+    fontSize: rf(15),
   },
 });

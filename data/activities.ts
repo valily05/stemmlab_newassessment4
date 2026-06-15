@@ -382,7 +382,7 @@ activity3: {
     //pointsRequired: 600,
     
     overview: "Investigate how the human body moves by measuring speed, smoothness, and coordination during controlled stretching activities.",
-    objective: "Measure and improve movement speed, smoothness, and coordination during stretching exercises.",
+    objective: "Measure and improve movement speed & smoothness during stretching exercises.",
 
     mission: "Perform controlled stretches as smoothly and accurately as possible.",
     duration: "15 Minutes",//change this
@@ -506,7 +506,7 @@ activity3: {
     overview: "Analyse breathing patterns at rest and after exercise.",
     objective: "Measure and compare breathing rates before and after exercise.",
 
-    mission: "Discover how exercise changes breathing patterns and identify the fastest recovery rate.",
+    mission: "Discover how breathing changes with activity.",
     duration: "18 Minutes",
     difficulty: "Hard",
 
