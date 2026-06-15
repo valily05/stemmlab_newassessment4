@@ -19,7 +19,9 @@ import { Accelerometer } from 'expo-sensors';
 
 import { Timestamp } from 'firebase/firestore';
 
+import Activity4CaptureCard from '@/components/activity/Activity4CaptureCard';
 import Activity4Observation from '@/components/activity/Activity4Observation';
+import Activity4VibrationCard from '@/components/activity/Activity4VibrationCard';
 import ExitButton from '@/components/activity/ExitButton';
 import ExperimentHero from '@/components/activity/ExperimentHero';
 import ExperimentStats from '@/components/activity/ExperimentStats';
@@ -39,6 +41,14 @@ import { getUserProfile } from '@/services/firebase/userService';
 type ExperimentResult = {
   iterationNo: number;
   
+  numberOfPillars: number;
+  layerType:
+    | 'Paper Folds'
+    | 'Cardboard Folds'
+    | 'Mixed';
+  layerDesign: string;
+  description: string;
+
   distanceMoved: number;
   movementLevel: 
     | 'No Movement'
@@ -102,17 +112,23 @@ export default function Activity4Experiment() {
   const [currentStage, setCurrentStage] =
     useState(0);
 
-  const [results, setResults] =
-    useState<ExperimentResult[]>([]);
+  const [experimentPhase, setExperimentPhase] =
+    useState<'setup'|'testing'|'observation'>('setup');
 
   const [isTesting, setIsTesting] = useState(false);
 
-  const [distanceMoved, setDistanceMoved] = useState(0);
+  const [distanceMoved, setDistanceMoved] = useState('');
 
   const [movementLevel, setMovementLevel] =
     useState<
       ExperimentResult['movementLevel'] | null
     >(null);
+
+  const [numberOfPillars, setNumberOfPillars] = useState('');
+  const [layerType, setLayerType] =
+    useState<ExperimentResult['layerType'] | null>(null);
+  const [layerDesign, setLayerDesign] = useState('');
+  const [description, setDescription] = useState('');
 
   const [avgAcceleration, setAvgAcceleration] = useState(0);
 
@@ -124,12 +140,28 @@ export default function Activity4Experiment() {
     setReadings] =
     useState<number[]>([]);
 
+  const canStartVibration =
+    numberOfPillars.trim() !== '' &&
+    layerType !== null &&
+    layerDesign.trim() !== '' &&
+    description.trim() !== '';
+
+  const [results, setResults] =
+    useState<ExperimentResult[]>([]);
+
   const startVibration = async () => {
+    setExperimentPhase('testing');
     setIsTesting(true);
+
+    setAvgAcceleration(0);
+    setMaxAcceleration(0);
+    setStabilityScore(0);
 
     const samples:number[] = [];
 
     Accelerometer.setUpdateInterval(100);
+
+    let previousMagnitude = 0;
 
     const subscription =
       Accelerometer.addListener(
@@ -140,25 +172,17 @@ export default function Activity4Experiment() {
               data.y * data.y +
               data.z * data.z
             );
+          
+          const movement =
+            Math.abs(magnitude-previousMagnitude);
+
+          previousMagnitude = magnitude;
 
           samples.push(magnitude);
         }
       );
 
-    Vibration.vibrate(
-      [
-        0,
-        400,
-        100,
-        400,
-        100,
-        400,
-        100,
-        400,
-        100,
-        400,
-      ]
-    );
+    Vibration.vibrate(VIBRATION_DURATION);
 
     setTimeout(() => {
 
@@ -188,7 +212,8 @@ export default function Activity4Experiment() {
 
       setIsTesting(false);
 
-    }, 10000);
+      setExperimentPhase('observation');
+    }, VIBRATION_DURATION);
   }
 
   // const [hasStarted, setHasStarted] =
@@ -317,20 +342,17 @@ export default function Activity4Experiment() {
     const result = {
       iterationNo: currentIteration,
 
-      distanceMoved:
-        Number(distanceMoved),
+      numberOfPillars: Number(numberOfPillars),
+      layerType: layerType!,
+      layerDesign,
+      description,
 
-      movementLevel:
-        movementLevel!,
+      distanceMoved: Number(distanceMoved),
+      movementLevel: movementLevel!,
 
-      avgAcceleration:
-        avgAcceleration,
-
-      maxAcceleration:
-        maxAcceleration,
-
-      stabilityScore:
-        stabilityScore,
+      avgAcceleration,
+      maxAcceleration,
+      stabilityScore
     };
 
     const updatedResults = [
@@ -343,44 +365,37 @@ export default function Activity4Experiment() {
       result
     ]);
 
-    if(currentStage < stages.length - 1) {
-      setCurrentStage(
-        prev => prev + 1
+    setIsUploading(true);
+
+    const profile = await getUserProfile(uid!);
+
+    if(!profile) {
+      throw new Error('User profile not found');
+    }
+
+    const teamID = profile?.teamID;
+
+    if(!teamID) {
+      throw new Error('Team ID missing');
+    }
+
+    const resultsWithUrls =
+      await Promise.all(
+        updatedResults.map(
+          async result => {
+            return {
+              ...result,
+            };
+          }
+        )
       );
 
-      //setHasStarted(true);
-    } else {
-      setIsUploading(true);
+    console.log(
+      'UPLOADED RESULTS:',
+      resultsWithUrls
+    );
 
-      const profile = await getUserProfile(uid!);
-
-      if(!profile) {
-        throw new Error('User profile not found');
-      }
-
-      const teamID = profile?.teamID;
-
-      if(!teamID) {
-        throw new Error('Team ID missing');
-      }
-
-      const resultsWithUrls =
-        await Promise.all(
-          updatedResults.map(
-            async result => {
-              return {
-                ...result,
-              };
-            }
-          )
-        );
-
-      console.log(
-        'UPLOADED RESULTS:',
-        resultsWithUrls
-      );
-
-      setIsUploading(false);
+    setIsUploading(false);
 
       //setHasStarted(false);
       
@@ -389,7 +404,7 @@ export default function Activity4Experiment() {
       //   resultsWithUrls
       // );
 
-      const totalIterations = resultsWithUrls.length;
+    const totalIterations = resultsWithUrls.length;
 
       // const inTargetCount =
       //   resultsWithUrls.filter(
@@ -412,6 +427,9 @@ export default function Activity4Experiment() {
               return current;
             }
 
+            if(current.stabilityScore > best.stabilityScore) {
+              return current;
+            }
             // const bestTarget =
             //   best.inTarget ? 1 : 0;
 
@@ -434,20 +452,76 @@ export default function Activity4Experiment() {
 
             return best;
           },
-          null as any
+          null as ExperimentResult | null
         );
       
       // const accuracyScore =
       //   accuracy * 2.5;
+      
+      const movementRank = {
+        'No Movement': 4,
+        'Slight Movement': 3,
+        'Strong Shaking': 2,
+        'Structure Collapsed': 1,
+      }
 
-      const dropTimeScore =
+      const avgDistance = 
+        resultsWithUrls.reduce(
+          (sum, item) =>
+            sum+item.distanceMoved,
+          0
+        ) / totalIterations;
+
+      const mostStableLayerDesign =
+        bestResult?.layerDesign ?? '';
+
+      const lowestMovementLevel =
+        resultsWithUrls.reduce(
+          (best, current) => {
+            if (
+              movementRank[current.movementLevel] > movementRank[best.movementLevel]
+            ) {
+              return current;
+            }
+
+            return best;
+          }
+        ).movementLevel;
+
+      const stabilityPoints =
         Math.min(
-          150,
+          500,
           bestResult
-            ? bestResult.dropTime / 50
+            ? bestResult.stabilityScore * 5
             : 0
         );
-      
+
+      const distancePoints =
+        Math.max(
+          0,
+          250 - avgDistance * 5
+        );
+
+      let movementPoints = 0;
+
+      switch (lowestMovementLevel) {
+        case 'No Movement':
+          movementPoints = 250;
+          break;
+
+        case 'Slight Movement':
+          movementPoints = 180;
+          break;
+
+        case 'Strong Shaking':
+          movementPoints = 80;
+          break;
+
+        case 'Structure Collapsed':
+          movementPoints = 0;
+          break;
+      }
+        
       const experimentTime = (60*20) - timeLeft;
 
       const experimentScore =
@@ -458,9 +532,9 @@ export default function Activity4Experiment() {
       
       const totalScore =
         Math.round(
-          //impactScore +
-          //accuracyScore +
-          dropTimeScore +
+          stabilityPoints +
+          distancePoints +
+          movementPoints +
           experimentScore
         );
 
@@ -468,16 +542,25 @@ export default function Activity4Experiment() {
       const sessionID = 
         await createSession({
           teamID,
-          activityID: 1,
+          activityID: activity.id,
           experimentTime,
           totalIterations,
           pointsEarned: totalScore,
           completedAt: Timestamp.now(),
 
           insights: {
-            bestTime: bestResult.dropTime,
-            //avgAccuracy: accuracy,
-          }
+            mostStableLayerDesign,
+            shortestDistance:
+              Math.min(
+                ...resultsWithUrls.map(
+                  r => r.distanceMoved
+                )
+              ),
+            lowestMovementLevel,
+
+            bestStability: bestResult?.stabilityScore ?? 0,
+            avgDistance: Number(avgDistance.toFixed(2)),
+          },
         });
       console.log('Session created:', sessionID);
 
@@ -495,17 +578,17 @@ export default function Activity4Experiment() {
             iterationNo: i,
 
             data: {
-              // dropTime: result.dropTime,
-              // firstHitTime: result.firstHitTime,
-              // stopMovingTime: result.stopMovingTime,
-              // velocity: result.velocity,
-              // acceleration: result.acceleration,
-              // gForce: result.gForce,
-              // impactForce: result.impactForce,
-              // dropHeight: result.dropHeight,
-              // objectWeight: result.weight,
-              // inTarget: result.inTarget,
-              // bounced: result.bounced,
+              numberOfPillars: result.numberOfPillars,
+              layerType: result.layerType,
+              layerDesign: result.layerDesign,
+              description: result.description,
+
+              distanceMoved: result.distanceMoved,
+              movementLevel: result.movementLevel,
+
+              avgAcceleration: result.avgAcceleration,
+              maxAcceleration: result.maxAcceleration,
+              stabilityScore: result.stabilityScore
             }
           }
         );
@@ -527,24 +610,39 @@ export default function Activity4Experiment() {
 
       router.replace({
         pathname:
-          '/activities/activity1/results',
+          '/activities/activity4/results',
         params: {
           sessionID,
           totalScore,
           totalIterations,
-          //accuracy,
+          mostStableLayerDesign,
+          shortestDistance:
+            Math.min(
+              ...resultsWithUrls.map(
+                r => r.distanceMoved
+              )
+            ),
+          lowestMovementLevel,
+          bestStability: bestResult?.stabilityScore ?? 0,
+          avgDistance: Number(avgDistance.toFixed(2)),
           bestResult: JSON.stringify(bestResult),
           results: JSON.stringify(resultsWithUrls),
         },
       });
-    }
+    
   };
 
   const nextIteration = () => {
     setCurrentIteration(prev => prev+1);
+    setExperimentPhase('setup');
 
-    setDistanceMoved(0);
+    setDistanceMoved('');
     setMovementLevel(null);
+
+    setNumberOfPillars('');
+    setLayerType(null);
+    setLayerDesign('');
+    setDescription('');
 
     setAvgAcceleration(0);
     setMaxAcceleration(0);
@@ -596,7 +694,11 @@ export default function Activity4Experiment() {
             <Text style={styles.heroDescription}>
               Build the{' '}
               <Text style={styles.pinkText}>
-                ANTI-VIBRATION LAYER
+                ANTI-VIBRATION LAYER{' '}
+              </Text>
+              and activate the{' '}
+              <Text style={styles.pinkText}>
+                VIBRATION MODE
               </Text>
               .
             </Text>
@@ -608,13 +710,69 @@ export default function Activity4Experiment() {
           iteration={getIterationLabel()}
         />
 
-        <StopwatchCard />
+        {/* <StopwatchCard /> */}
 
-          <>
-          <LiveTimerCard
+          
+          {/* <LiveTimerCard
             time={'20:20'}
-          />
+          /> */}
+        
+        {experimentPhase==='setup' && (
+          <>
+            <Activity4CaptureCard 
+              numberOfPillars={numberOfPillars}
+              setNumberOfPillars={setNumberOfPillars}
+              layerType={layerType}
+              setLayerType={setLayerType}
+              layerDesign={layerDesign}
+              setLayerDesign={setLayerDesign}
+              description={description}
+              setDescription={setDescription}
+              onStartVibration={startVibration}
+              isTesting={isTesting}
+            />
+          
+            <View 
+              style={styles.vibrationButtonArea}
+            >
+              <TouchableOpacity
+                style={[
+                  styles.stopButton,
+                  !canStartVibration && {
+                    opacity: 0.4,
+                  },
+                ]}
+                onPress={() => {
+                  Alert.alert(
+                    'Ready to Start?',
+                    'Is your anti-vibration setup finished and ready for earthquake?',
+                    [
+                      {
+                        text: 'No',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'Yes',
+                        onPress: startVibration,
+                      },
+                    ]
+                  );
+                }}
+                disabled={!canStartVibration}
+              >
+                <Text style={styles.buttonText}>
+                  START VIBRATION
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
 
+        {experimentPhase==='testing' && (
+          <Activity4VibrationCard />
+        )}
+
+        {experimentPhase==='observation' && (
           <View
             style={{
               marginHorizontal: wp(5),
@@ -622,161 +780,123 @@ export default function Activity4Experiment() {
               gap: hp(1.5),
             }}
           >
-              <View style={styles.frame}>
-                <ImageBackground
-                  source={require('@/assets/images/Group 224.png')}
-                  style={styles.ribbonImage}
-                  resizeMode="stretch"
-                >
-                  <Text style={styles.resultHeader}>
-                    {stages[currentStage]} RESULTS
-                  </Text>
-                </ImageBackground>
-
-                {/* <Text style={styles.resultText}>
-                  First Hit Ground: {firstHitTime}
-                </Text>
-
-                <Text style={styles.resultText}>
-                  Stopped Moving: {stopMovingTime}
-                </Text> */}
-              </View>
-            
-
-            
-              <>
-              <TouchableOpacity
-                style={[
-                  styles.hitButton,
-                  // (!isRecording || !!firstHitTime) && {
-                  //   opacity: 0.4,
-                  // },
-                ]}
-                //disabled={!isRecording || !!firstHitTime}    
-                onPress={() => {
-                  // setFirstHitTime(
-                  //   formatTime(elapsedTime)
-                  // );
-                }}
+            <View style={styles.frame}>
+              <ImageBackground
+                source={require('@/assets/images/Group 224.png')}
+                style={styles.ribbonImage}
+                resizeMode="stretch"
               >
-                <Text style={styles.hitButtonText}>
-                  HIT GROUND
+                <Text style={styles.resultHeader}>
+                  ITERATION {currentIteration} RESULTS
                 </Text>
-              </TouchableOpacity>
+              </ImageBackground>
 
-              <TouchableOpacity
-                style={[
-                  styles.stopButton,
-                  // (!isRecording || !firstHitTime || !!stopMovingTime) && {
-                  //   opacity: 0.4,
-                  // },
-                ]}
-                // disabled={
-                //   !isRecording ||
-                //   !firstHitTime ||
-                //   !!stopMovingTime
-                // }
-                onPress={() => {
-                  // const time =
-                  //   formatTime(elapsedTime);
-                  console.log(
-                    'STOPPED MOVING:',
-                    //time
-                  );
-                  //setStopMovingTime(time);
-                  console.log(
-                    'can stop enabled'
-                  );
-                }}
-              >
-                <Text style={styles.hitButtonText}>
-                  STOPPED MOVING
-                </Text>
-              </TouchableOpacity>
-              </>
-            
+              <Text style={styles.resultText}>
+                Average Acceleration: {avgAcceleration}
+              </Text>
 
-              <Activity4Observation
-                distanceMoved={distanceMoved}
-                setDistanceMoved={setDistanceMoved}
-                movementLevel={movementLevel}
-                setMovementLevel={setMovementLevel}
-              />
+              <Text style={styles.resultText}>
+                Maximum Acceleration: {maxAcceleration}
+              </Text>
+            </View>
 
-              <TouchableOpacity
-                style={[
-                  styles.hitButton,
-                  (
-                    distanceMoved === null ||
-                    movementLevel === null ||
-                    isUploading
-                  ) && {
-                    opacity: 0.4,
-                  },
-                ]}
-                disabled={
-                  distanceMoved === null ||
+            <Activity4Observation
+              distanceMoved={distanceMoved}
+              setDistanceMoved={setDistanceMoved}
+              movementLevel={movementLevel}
+              setMovementLevel={setMovementLevel}
+              stabilityScore={stabilityScore}
+              setStabilityScore={setStabilityScore}
+            />
+
+            <TouchableOpacity
+              style={[
+                styles.button,
+                (
+                  distanceMoved === '' ||
+                  movementLevel === null
+                ) && {
+                  opacity: 0.4,
+                },
+              ]}
+              disabled={
+                distanceMoved === '' ||
+                movementLevel === null
+              }
+              onPress={nextIteration}
+            >
+              <Text style={styles.buttonText}>
+                NEXT ITERATION
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.stopButton}
+              onPress={() => {
+                setExperimentPhase('setup');
+
+                setNumberOfPillars('');
+                setLayerType(null);
+                setLayerDesign('');
+                setDescription('');
+
+                setDistanceMoved('');
+                setMovementLevel(null);
+
+                setAvgAcceleration(0);
+                setMaxAcceleration(0);
+                setStabilityScore(0);
+
+                setReadings([]);
+
+                setIsTesting(false);
+              }}
+            >
+              <Text style={styles.buttonText}>
+                RETRY
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.finishButton,
+                (
+                  distanceMoved === '' ||
                   movementLevel === null ||
                   isUploading
-                }
-                onPress={saveIteration}
-              >
-                {isUploading ? (
-                  <>
-                    <ActivityIndicator color="#FFF" />
-                    <Text style={styles.hitButtonText}>
-                      UPLOADING ...
-                    </Text>
-                  </>
-                ) : (
-                  <Text style={styles.hitButtonText}>
-                    SAVE ITERATION
+                ) && {
+                  opacity: 0.4,
+                },
+              ]}
+              disabled={
+                distanceMoved === '' ||
+                movementLevel === null ||
+                isUploading
+              }
+              onPress={saveIteration}
+            >
+              {isUploading ? (
+                <>
+                  <ActivityIndicator color="#FFF" />
+                  <Text style={styles.buttonText}>
+                    UPLOADING ...
                   </Text>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.hitButton,
-                  (
-                    distanceMoved === null ||
-                    movementLevel === null ||
-                    isUploading
-                  ) && {
-                    opacity: 0.4,
-                  },
-                ]}
-                disabled={
-                  distanceMoved === null ||
-                  movementLevel === null
-                }
-                onPress={nextIteration}
-              >
-                <Text style={styles.hitButtonText}>
-                  NEXT ITERATION
+                </>
+              ) : (
+                <Text style={styles.buttonText}>
+                  FINISH EXPERIMENT
                 </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.stopButton}
-                onPress={() => {
-                }}
-              >
-                <Text style={styles.hitButtonText}>
-                  RETRY
-                </Text>
-              </TouchableOpacity>
+              )}
+            </TouchableOpacity>
           </View>
-          </>
+        )}
         
-
         <ExperimentTipCard
           tips={[
             'The timer continues running even if you exit the app. Complete all integrations before finishing.',
           ]}
         />
         
-
         <ExitButton
           onPress={() =>
             router.back()
@@ -898,7 +1018,7 @@ const styles = StyleSheet.create({
     marginBottom:rf(10)
   },
 
-  hitButton: {
+  button: {
     height: hp(6.5),
 
     borderRadius: rf(16),
@@ -920,7 +1040,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  hitButtonText: {
+  buttonText: {
     color: '#FFFFFF',
 
     fontFamily: 'Pixel',
@@ -1003,6 +1123,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  vibrationButtonArea: {
+    marginHorizontal: wp(5),
+    marginTop: hp(2),
+    gap: hp(1.5),
+  },
+
   retryButton: {
     marginTop: hp(1.5),
 
@@ -1011,6 +1137,19 @@ const styles = StyleSheet.create({
     borderRadius: rf(16),
 
     backgroundColor: '#5711BE',
+
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  finishButton: {
+    marginTop: hp(1.5),
+
+    height: hp(6.5),
+
+    borderRadius: rf(16),
+
+    backgroundColor: '#44963A',
 
     justifyContent: 'center',
     alignItems: 'center',

@@ -455,7 +455,7 @@ export const activities = {
     overview: "Analyse breathing patterns at rest and after exercise.",
     objective: "Measure and compare breathing rates before and after exercise.",
 
-    mission: "Discover how exercise changes breathing patterns and identify the fastest recovery rate.",
+    mission: "Discover how breathing changes with activity.",
     duration: "18 Minutes",
     difficulty: "Hard",
 
