@@ -7,6 +7,7 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   serverTimestamp,
   updateDoc,
@@ -102,6 +103,27 @@ const checkStreakReminder = async () => {
     sendingReminder.current = false;
   }
 };
+async function preloadHomeData() {
+  const uid = auth.currentUser?.uid;
+
+  if (!uid) return;
+
+  const userRef = doc(db, "users", uid);
+  const activitiesRef = collection(db, "activities");
+  const teamsRef = collection(db, "teams");
+
+  const [userSnap, activitiesSnap, teamsSnap] = await Promise.all([
+    getDoc(userRef),
+    getDocs(activitiesRef),
+    getDocs(teamsRef),
+  ]);
+
+  console.log(
+    userSnap.exists(),
+    activitiesSnap.size,
+    teamsSnap.size
+  );
+}
 useEffect(() => {
   const uid = auth.currentUser?.uid;
 
@@ -109,6 +131,7 @@ useEffect(() => {
     setLoading(false);
     return;
   }
+  preloadHomeData();
 
   let unsubscribeTeam: (() => void) | null = null;
 
