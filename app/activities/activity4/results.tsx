@@ -80,24 +80,39 @@ export default function Activity4Results() {
   //   );
   // }
 
-  let parsedResults: any[] = [];
+  //let parsedResults: any[] = [];
 
-  try {
-    if (params.results) {
-      parsedResults = JSON.parse(
-        params.results as string
-      );
-      console.log(
-        'PARSED RESULTS',
-        parsedResults
-      );
-    }
-  } catch (error) {
-    console.log(
-      'JSON PARSE ERROR:',
-      error
-    );
-  }
+  const parsedResults = params.results
+    ? JSON.parse(params.results as string)
+    : [];
+
+  const normalizedResults = parsedResults.map((item: any, index: number) => ({
+    iterationNo: item.iterationNo ?? index + 1,
+    distanceMoved: item.distanceMoved ?? 0,
+    numberOfPillars: item.numberOfPillars ?? 0,
+    layerType: item.layerType ?? 'N/A',
+    layerDesign: item.layerDesign ?? 'N/A',
+    description: item.description ?? 'N/A',
+    movementLevel: item.movementLevel ?? 'N/A',
+    ...item,
+  }));
+
+  // try {
+  //   if (params.results) {
+  //     parsedResults = JSON.parse(
+  //       params.results as string
+  //     );
+  //     console.log(
+  //       'PARSED RESULTS',
+  //       parsedResults
+  //     );
+  //   }
+  // } catch (error) {
+  //   console.log(
+  //     'JSON PARSE ERROR:',
+  //     error
+  //   );
+  // }
 
   const bestResult =
     params.bestResult
@@ -131,11 +146,7 @@ export default function Activity4Results() {
   const [isSaving, setIsSaving] = useState(false);
 
   const experimentTime =
-    parsedResults.reduce(
-      (total, item) =>
-        total + (item.dropTime || 0),
-      0
-    );
+    0;
 
   const formatSeconds = (
     value: string | number | null | undefined
@@ -167,57 +178,36 @@ export default function Activity4Results() {
     const csvContent = [
       [
         'Iteration',
-        'First Hit (s)',
-        'Stop Moving (s)',
-        'Drop Time (s)',
-        'In Target',
-        'Bounce',
-        'Impact Force',
+        'Distance Moved',
+        'Number of Pillars',
+        'Layer Type',
+        'Layer Design',
+        'Setup Description',
+        'Movement Level',
       ].join(','),
 
-      ...parsedResults.map(item =>
+      ...normalizedResults.map((item: any) =>
         [
-          item.stage,
-          formatSeconds(item.firstHitTime).replace(' s', ''),
-          formatSeconds(item.stopMovingTime).replace(' s', ''),
-          formatSeconds(item.dropTime).replace(' s', ''),
-          item.inTarget ? 'Yes' : 'No',
-          item.bounced ? 'Yes' : 'No',
-          item.impactForce,
+          item.iterationNo,
+          item.distanceMoved,
+          item.numberOfPillars,
+          item.layerType,
+          item.layerDesign,
+          item.description,
+          item.movementLevel,
         ].join(',')
       ),
     ].join('\n');
 
     const fileUri =
       FileSystem.documentDirectory +
-      'Activity1Results.csv';
+      'Activity4Results.csv';
       await FileSystem.writeAsStringAsync(
         fileUri,
         csvContent
       );
 
     await Sharing.shareAsync(fileUri);
-  };
-
-  const accelerationData = {
-    labels: parsedResults.map(
-      item =>
-        item.stage.replace(
-          'PROTOTYPE ',
-          'P'
-        )
-    ),
-
-    datasets: [
-      {
-        data: parsedResults.map(
-          item =>
-            Number(
-              item.acceleration || 0
-            )
-        ),
-      },
-    ],
   };
 
   return (
@@ -327,7 +317,7 @@ export default function Activity4Results() {
             <MaskedView
               maskElement={
                 <Text style={styles.heroScore}>
-                  {params.totalScore}
+                  {Number(params.totalScore)}
                 </Text>
               }
             >
@@ -394,174 +384,46 @@ export default function Activity4Results() {
             <View style={styles.bestTimeCard}>
               <Trophy size={rf(30)} color="#FACC15" />
               <Text style={styles.statValue}>
-                {bestResult
-                  ? formatSeconds(bestResult.dropTime)
-                  : '--'}
+                {mostStableLayerDesign}
               </Text>
               <Text style={styles.statLabel}>
-                Best Time
+                Most Stable Layer Design
               </Text>
             </View>
 
-            <View style={styles.accuracyCard}>
-              <Crosshair size={rf(30)} color="#259F60" />
+            <View style={styles.bestTimeCard}>
+              <Trophy size={rf(30)} color="#FACC15" />
               <Text style={styles.statValue}>
-                {accuracy}%
+                {shortestDistance.toFixed(2)} cm
               </Text>
               <Text style={styles.statLabel}>
-                Avg Accuracy
+                Shortest Distance
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.heroGrid}>
+            <View style={styles.bestTimeCard}>
+              <Trophy size={rf(30)} color="#FACC15" />
+              <Text style={styles.statValue}>
+                {lowestMovementLevel}
+              </Text>
+              <Text style={styles.statLabel}>
+                Lowest Movement Level
+              </Text>
+            </View>
+
+            <View style={styles.bestTimeCard}>
+              <Trophy size={rf(30)} color="#FACC15" />
+              <Text style={styles.statValue}>
+                {bestStability}
+              </Text>
+              <Text style={styles.statLabel}>
+                Best Stability
               </Text>
             </View>
           </View>
         </LinearGradient>
-
-        <View style={styles.videoCard}>
-          <Video
-            size={rf(26)}
-            color="#C86DFF"
-            style={{
-              marginBottom:wp(-6.5),
-              marginLeft:wp(2)
-            }}
-          />
-
-          <View style={styles.videoTitleRow}>
-            <Text style={styles.videoTitle}>
-              EXPERIMENT RECORDINGS
-            </Text>
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.videoTabs}
-          >
-            {parsedResults.map(
-              (item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() =>
-                    setSelectedVideo(index)
-                  }
-                  style={[
-                    styles.videoTab,
-
-                    selectedVideo === index &&
-                      styles.activeVideoTab,
-
-                  ]}
-                >
-                  <Text
-                    style={styles.videoTabText}
-                  >
-                    {bestResult?.stage === item.stage
-                      ? `🏆 ${item.stage}`
-                      : item.stage}
-                  </Text>
-                </TouchableOpacity>
-              )
-            )}
-          </ScrollView>
-
-          <View style={styles.videoPlaceholder}>
-            {currentVideo ? (
-              <VideoView
-                player={player}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: rf(14),
-                }}
-                allowsFullscreen
-                allowsPictureInPicture
-              />
-            ) : (
-              <>
-                <Text style={styles.playIcon}>
-                  ▶
-                </Text>
-
-                <Text style={styles.playText}>
-                  No Video Available
-                </Text>
-              </>
-            )}
-          </View>
-
-          <View style={styles.heightCard}>
-            <Text style={styles.heightLabel}>
-              DROP HEIGHT
-            </Text>
-
-            <Text style={styles.heightValue}>
-              {parsedResults[0]?.dropHeight ?? '--'} m
-            </Text>
-          </View>
-
-          <View style={styles.metricsCard}>
-            <Text style={styles.metricsTitle}>
-              EXPERIMENT DATA
-            </Text>
-
-            <View style={styles.metricsGrid}>
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>
-                  Velocity
-                </Text>
-                <Text style={styles.metricValue}>
-                  {Number(
-                    parsedResults[selectedVideo]?.velocity || 0
-                  ).toFixed(2)} m/s
-                </Text>
-              </View>
-
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>
-                  Time To Stop
-                </Text>
-                <Text style={styles.metricValue}>
-                  {formatSeconds(
-                    parsedResults[selectedVideo]?.stopMovingTime
-                  )}
-                </Text>
-              </View>
-
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>
-                  Acceleration
-                </Text>
-                <Text style={styles.metricValue}>
-                  {Number(
-                    parsedResults[selectedVideo]?.acceleration || 0
-                  ).toFixed(2)}
-                </Text>
-              </View>
-
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>
-                  G-Force
-                </Text>
-                <Text style={styles.metricValue}>
-                  {Number(
-                    parsedResults[selectedVideo]?.gForce || 0
-                  ).toFixed(2)} g
-                </Text>
-              </View>
-
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>
-                  First Hit Time
-                </Text>
-
-                <Text style={styles.metricValue}>
-                  {formatSeconds(
-                    parsedResults[selectedVideo]?.firstHitTime
-                  )}
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
 
         <LinearGradient
           colors={[
@@ -624,11 +486,11 @@ export default function Activity4Results() {
                   <View style={styles.resultTop}>
                     <View>
                       <Text style={styles.resultStage}>
-                        {item.stage}
+                        Iteration {item.iterationNo ?? index + 1}
                       </Text>
 
-                      {bestResult?.stage ===
-                        item.stage && (
+                      {bestResult?.iterationNo ===
+                        item.iterationNo && (
                       <View style={styles.bestResultTag}>
                         <Star
                           size={rf(13)}
@@ -644,60 +506,128 @@ export default function Activity4Results() {
                     </View>
 
                     <Text style={styles.resultTime}>
-                      {formatSeconds(
-                        item.dropTime
-                      )}
+                      {item.distanceMoved} cm
                     </Text>
                   </View>
 
                   <View style={styles.resultRow}>
                     <View>
                       <Text style={styles.miniLabel}>
-                        Landing Accuracy
+                        Number of Pillars
                       </Text>
 
                       <Text
                         style={[
                           styles.resultValue,
-                          {
-                            color:
-                              item.inTarget
-                                ? '#32FF7E'
-                                : '#FF6B6B',
-                          },
+                          // {
+                          //   color:
+                          //     item.inTarget
+                          //       ? '#32FF7E'
+                          //       : '#FF6B6B',
+                          // },
                         ]}
                       >
-                        {item.inTarget
-                          ? 'IN TARGET'
-                          : 'OFF TARGET'}
+                        {item.numberOfPillars}
                       </Text>
                     </View>
 
                     <View>
                       <Text style={styles.miniLabel}>
-                        Impact Force
+                        Movement Level
                       </Text>
 
                       <Text
                         style={[
                           styles.resultValue,
-                          {
-                            color:
-                              item.impactForce === 'SAFE'
-                                ? '#00E84A'
-                                : item.impactForce === 'CAUTION'
-                                ? '#FFD54F'
-                                : item.impactForce === 'HIGH'
-                                ? '#FF9800'
-                                : item.impactForce === 'SEVERE'
-                                ? '#FF4D4D'
-                                : item.impactForce === 'EXTREME'
-                                ? '#A00000'
-                                : '#FFFFFF',
-                          },
+                          // {
+                          //   color:
+                          //     item.impactForce === 'SAFE'
+                          //       ? '#00E84A'
+                          //       : item.impactForce === 'CAUTION'
+                          //       ? '#FFD54F'
+                          //       : item.impactForce === 'HIGH'
+                          //       ? '#FF9800'
+                          //       : item.impactForce === 'SEVERE'
+                          //       ? '#FF4D4D'
+                          //       : item.impactForce === 'EXTREME'
+                          //       ? '#A00000'
+                          //       : '#FFFFFF',
+                          // },
                         ]}
                       >
-                        {item.impactForce}
+                        {item.movementLevel}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.resultRow}>
+                    <View>
+                      <Text style={styles.miniLabel}>
+                        Layer Type
+                      </Text>
+
+                      <Text
+                        style={[
+                          styles.resultValue,
+                          // {
+                          //   color:
+                          //     item.inTarget
+                          //       ? '#32FF7E'
+                          //       : '#FF6B6B',
+                          // },
+                        ]}
+                      >
+                        {item.layerType}
+                      </Text>
+                    </View>
+
+                    <View>
+                      <Text style={styles.miniLabel}>
+                        Layer Design
+                      </Text>
+
+                      <Text
+                        style={[
+                          styles.resultValue,
+                          // {
+                          //   color:
+                          //     item.impactForce === 'SAFE'
+                          //       ? '#00E84A'
+                          //       : item.impactForce === 'CAUTION'
+                          //       ? '#FFD54F'
+                          //       : item.impactForce === 'HIGH'
+                          //       ? '#FF9800'
+                          //       : item.impactForce === 'SEVERE'
+                          //       ? '#FF4D4D'
+                          //       : item.impactForce === 'EXTREME'
+                          //       ? '#A00000'
+                          //       : '#FFFFFF',
+                          // },
+                        ]}
+                      >
+                        {item.layerDesign}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.resultRow}>
+                    <View>
+                      <Text style={styles.miniLabel}>
+                        Setup Description
+                      </Text>
+
+                      <Text
+                        style={[
+                          styles.resultValue,
+                          // {
+                          //   color:
+                          //     item.inTarget
+                          //       ? '#32FF7E'
+                          //       : '#FF6B6B',
+                          // },
+                        ]}
+                      >
+                        {item.description}
                       </Text>
                     </View>
                   </View>
@@ -746,7 +676,7 @@ export default function Activity4Results() {
           ]}
           onPress={() => 
             router.push({
-              pathname: '/activities/activity1/feedback',
+              pathname: '/activities/activity4/feedback',
               params: {
                 sessionID: params.sessionID,
                 pointsEarned: params.totalScore,
@@ -1279,6 +1209,7 @@ const styles = StyleSheet.create({
     fontSize: rf(13),
     fontFamily: 'PixelBold',
     marginTop: hp(0.2),
+    color: 'white'
   },
   feedbackCard: {
     flexDirection: 'row',

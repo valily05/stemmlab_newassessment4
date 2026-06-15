@@ -507,6 +507,8 @@ export default function Activity6Experiment() {
 
       const totalScore = Math.round(experimentScore);
 
+      const averageReactionTime = (dominantReactionTime + nonDominantReactionTime) / 2;
+
       // -----------------------------
       // 2. Create session in Firebase
       // -----------------------------
@@ -520,8 +522,7 @@ export default function Activity6Experiment() {
         totalIterations: results.length + 1,
 
         insights: {
-          averageReactionTime:
-            (dominantReactionTime + nonDominantReactionTime) / 2,
+          averageReactionTime,
 
           tracingAccuracy,
           tracingDelay,
