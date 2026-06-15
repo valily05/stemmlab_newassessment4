@@ -61,7 +61,7 @@ const stages = [
   "CARDBOARD_30CM",
 ];
 
-export default function Activity2Experiment() {
+export default function Activity3Experiment() {
   // Retrieve the prediction parameter passed from the previous screen
   const { prediction } = useLocalSearchParams<{ prediction?: string }>();
 
@@ -157,7 +157,7 @@ export default function Activity2Experiment() {
 
         <ExperimentHero
           title={activity.title}
-          image={require('@/assets/images/sound-bunny.png')}
+          image={require('@/assets/images/fan-bunny.png')}
           imageStyle={{
             width: wp(39),
             height: hp(20),
