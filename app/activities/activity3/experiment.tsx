@@ -1,371 +1,268 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { saveIteration } from "@/services/firebase/iterationService";
+import { useEffect, useState } from 'react';
 import {
+    ActivityIndicator,
     Alert,
-    Dimensions,
-    Image,
-    PixelRatio,
-    ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
+    View,
 } from 'react-native';
 
-import ExitButton from '@/components/activity/ExitButton';
-import ExperimentHero from '@/components/activity/ExperimentHero';
-import ExperimentStats from '@/components/activity/ExperimentStats';
-import ExperimentTipCard from '@/components/activity/ExperimentTipCard';
-import InfoModal from '@/components/activity/InfoModal';
-import LocationCompleteModal from '@/components/activity/LocationCompleteModal';
-import LocationHowItWorks from '@/components/activity/LocationHowItWorks';
-import RecordingExperimentCard from '@/components/activity/RecordingExperimentCard';
-import SoundExperimentCard from '@/components/activity/SoundExperimentCard';
-import { activities } from '@/data/activities';
-import { auth } from '@/services/firebase/config';
-import { createLocation } from '@/services/firebase/locationService';
-import { createSession } from '@/services/firebase/sessionService';
-import { getUserProfile } from '@/services/firebase/userService';
-import * as Location from 'expo-location';
-import { Timestamp } from 'firebase/firestore';
+interface AccelerometerData {
+  x: number;
+  y: number;
+  z: number;
+}
 
-const activity = activities.activity3;
+interface Props {
+  sessionID: string;
+  stage: string;
+  iteration: number;
+  onNext: () => void;
+  isLastIteration: boolean;
+  accelerometerData: AccelerometerData;
+}
 
-const { width, height } = Dimensions.get('window');
+export default function RecordingExperimentCard({
+  sessionID,
+  stage,
+  iteration,
+  onNext,
+  isLastIteration,
+  accelerometerData,
+}: Props) {
+  const [isRecording, setIsRecording] = useState(false);
+  const [hasRecorded, setHasRecorded] = useState(false);
+  const [timer, setTimer] = useState(20);
+  const [samples, setSamples] = useState<number[]>([]);
+  const [averageAcceleration, setAverageAcceleration] = useState<number | null>(null);
+  const [peakAcceleration, setPeakAcceleration] = useState<number | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-const wp = (percentage: number) =>
-  PixelRatio.roundToNearestPixel(
-    (width * percentage) / 100
-  );
-
-const rf = (size: number) => {
-  const scale = width / 390;
-
-  return Math.round(
-    PixelRatio.roundToNearestPixel(
-      size * scale
-    )
-  );
-};
-
-const hp = (percentage: number) =>
-  PixelRatio.roundToNearestPixel(
-    (height * percentage) / 100
-  );
-
-const stages = [
-  "LOCATION",
-  "PAPER_30CM",
-  "PAPER_15CM",
-  "PAPER_45CM",
-  "CARDBOARD_30CM",
-];
-
-export default function Activity3Experiment() {
-  // Retrieve the prediction parameter passed from the previous screen
-  const { prediction } = useLocalSearchParams<{ prediction?: string }>();
-
-  const [locationNumber, setLocationNumber] = useState(1);
-  const [currentStage, setCurrentStage] = useState(0);
-  const [sessionID, setSessionID] = useState('');
-  const [locationID, setLocationID] = useState('');
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [locationName, setLocationName] = useState('');
-  const [showLocationComplete, setShowLocationComplete] = useState(false);
-  const [loadingLocation, setLoadingLocation] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(20 * 60);
-  
-  const scrollRef = useRef<ScrollView>(null);
-
+  // Collect samples when recording
   useEffect(() => {
-    // Log the prediction to verify it was received on the experiment page
-    if (prediction) {
-      console.log('Received prediction on Experiment page:', prediction);
-    }
-  }, [prediction]);
+    if (!isRecording) return;
 
+    const magnitude = Math.max(
+      0,
+      Math.sqrt(
+        accelerometerData.x ** 2 +
+        accelerometerData.y ** 2 +
+        accelerometerData.z ** 2
+      ) - 9.81
+    );
+
+    setSamples((prevSamples) => [...prevSamples, magnitude]);
+  }, [accelerometerData, isRecording]);
+
+  // Timer logic
   useEffect(() => {
-    if (!hasStarted) return;
+    if (!isRecording) return;
 
-    const timer = setInterval(() => {
-      setTimeLeft(prev =>
-        prev > 0 ? prev - 1 : 0
-      );
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          stopRecording();
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [hasStarted]);
+    return () => clearInterval(interval);
+  }, [isRecording]);
 
-  const detectLocation = async () => {
-    setLoadingLocation(true);
+  const startRecording = () => {
+    setSamples([]);
+    setAverageAcceleration(null);
+    setPeakAcceleration(null);
+    setTimer(20);
+    setIsRecording(true);
+  };
 
-    const { status } =
-      await Location.requestForegroundPermissionsAsync();
+  const stopRecording = () => {
+const stopRecording = () => {
+  setIsRecording(false);
 
-    if (status !== 'granted') {
-      setLoadingLocation(false);
-      return;
-    }
+  setTimeout(() => {
+    if (samples.length === 0) return;
 
-    const currentLocation =
-      await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
+    const avg =
+      samples.reduce((a, b) => a + b, 0) /
+      samples.length;
+
+    const peak = Math.max(...samples);
+
+    setAverageAcceleration(avg);
+    setPeakAcceleration(peak);
+    setHasRecorded(true);
+  }, 100);
+};
+
+    const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
+    const peak = Math.max(...samples);
+
+    setAverageAcceleration(avg);
+    setPeakAcceleration(peak);
+  };
+
+  const handleSaveAndNext = async () => {
+    if (averageAcceleration === null || peakAcceleration === null) return;
+
+    setIsSaving(true);
+    try {
+      await saveIteration(sessionID, {
+        iterationNo: iteration,
+        data: {
+          fanType: stage,
+          duration: 20,
+          averageAcceleration,
+          peakAcceleration,
+        },
       });
 
-    setLocation(currentLocation);
-    setHasStarted(true);
-    setLoadingLocation(false);
+      setIsSaving(false);
+      onNext();
+    } catch (error) {
+      console.error('Error saving iteration:', error);
+      setIsSaving(false);
+      Alert.alert('Error', 'Failed to save acceleration data. Please try again.');
+    }
   };
 
-  const formatCountdown = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  };
+  const liveAcceleration = Math.max(
+    0,
+    Math.sqrt(
+      accelerometerData.x ** 2 +
+      accelerometerData.y ** 2 +
+      accelerometerData.z ** 2
+    ) - 9.81
+  ).toFixed(2);
 
   return (
-    <LinearGradient
-      colors={[
-        '#0B0820', 
-        '#14103A', 
-        '#1D1854',
-        '#26216D',
-        '#312C88',
-        '#3A35A3',
-      ]}
-      locations={[0, 0.50, 0.75, 0.88, 0.94, 1]}
-      start={{ x: 0.5, y: 0 }}
-      end={{ x: 0.5, y: 1 }}
-      style={styles.container}
-    >
-      <ScrollView
-        ref={scrollRef}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
-        <TouchableOpacity
-          style={styles.infoButton}
-          onPress={() => setShowInfo(true)}
-        >
-          <Image
-            source={require('@/assets/images/info-icon.png')}
-            style={styles.infoIcon}
-          />
+    <View style={styles.card}>
+      {!isRecording && !hasRecorded && (
+        <TouchableOpacity style={styles.button} onPress={startRecording}>
+          <Text style={styles.buttonText}>Start Recording</Text>
         </TouchableOpacity>
+      )}
 
-        <ExperimentHero
-          title={activity.title}
-          image={require('@/assets/images/fan-bunny.png')}
-          imageStyle={{
-            width: wp(39),
-            height: hp(20),
-            right: -wp(9),
-          }}
-          activityID={3}
-         description={
-  currentStage === 0 ? (
-    <Text style={styles.heroDescription}>
-      Detect and save your{" "}
-      <Text style={styles.pinkText}>
-        CURRENT LOCATION
-      </Text>{" "}
-      before testing different fan designs.
-    </Text>
-  ) : (
-    <Text style={styles.heroDescription}>
-      Perform the{" "}
-      <Text style={styles.pinkText}>
-        {stages[currentStage].replace("_", " ")}
-      </Text>{" "}
-      air movement experiment.
-    </Text>
-  )
-}
-        />
+      {isRecording && (
+        <View style={styles.recordingContainer}>
+          <Text style={styles.timerText}>{timer}s</Text>
+<Text style={styles.recordingSubtext}>
+Move the phone by waving the fan for 20 seconds.
+</Text>
+          <Text style={styles.liveAccText}>{liveAcceleration} m/s²</Text>
+        </View>
+      )}
 
-        <ExperimentStats
-          timeLeft={formatCountdown(timeLeft)}
-          iteration={stages[currentStage]}
-        />
+      {hasRecorded && (
+        <View style={styles.resultsContainer}>
+          <View style={styles.resultItem}>
+            <Text style={styles.resultLabel}>Peak Acceleration</Text>
+            <Text style={styles.resultValue}>
+              {peakAcceleration ? `${peakAcceleration.toFixed(2)} m/s²` : '0.00 m/s²'}
+            </Text>
+          </View>
 
-        {currentStage === 0 ? (
-          <SoundExperimentCard
-            location={location}
-            loadingLocation={loadingLocation}
-            locationName={locationName}
-            setLocationName={setLocationName}
-            onDetectLocation={detectLocation}
-            onSaveLocation={async () => {
-              if (!locationName.trim()) {
-                Alert.alert("Please enter a location name.");
-                return;
-              }
+          <View style={styles.resultItem}>
+            <Text style={styles.resultLabel}>Average Acceleration</Text>
+            <Text style={styles.resultValue}>
+              {averageAcceleration ? `${averageAcceleration.toFixed(2)} m/s²` : '0.00 m/s²'}
+            </Text>
+          </View>
 
-              try {
-                let currentSessionID = sessionID;
-
-                if (!currentSessionID) {
-                  const uid = auth.currentUser?.uid;
-                  if (!uid) throw new Error("User not logged in");
-
-                  const profile = await getUserProfile(uid);
-                  if (!profile?.teamID) throw new Error("No team found");
-
-                  currentSessionID = await createSession({
-                    activityID: 3,
-                    teamID: profile.teamID,
-                    experimentTime: 0,
-                    totalIterations: 0,
-                    pointsEarned: 0,
-                    completedAt: Timestamp.now(),
-                    insights: {},
-                  });
-
-                  setSessionID(currentSessionID);
-                }
-
-                const newLocationID = await createLocation(
-                  currentSessionID,
-                  {
-                    locationNo: locationNumber,
-                    name: locationName,
-                    latitude: location!.coords.latitude,
-                    longitude: location!.coords.longitude,
-                  }
-                );
-                setLocationID(newLocationID);
-                setCurrentStage(1);
-                setLocation(null);
-                setLocationName("");
-              } catch (e) {
-                console.log(e);
-                Alert.alert("Failed to save location.");
-              }
-            }}
-            onInputFocus={() => {
-              scrollRef.current?.scrollTo({
-                y: hp(55),
-                animated: true,
-              });
-            }}
-          />
-        ) : (
-          <RecordingExperimentCard
-            key={currentStage}
-            sessionID={sessionID}
-            locationID={locationID}
-            stage={stages[currentStage]}
-            iteration={currentStage}
-            onNext={() => {
-              setCurrentStage(prev => prev + 1);
-            }}
-            isLastIteration={currentStage === stages.length - 1}
-            onFinishLocation={() => setShowLocationComplete(true)}
-          />
-        )}
-
-        {currentStage === 0 && !hasStarted && (
-          <LocationHowItWorks />
-        )}
-        
-        {currentStage === 0 ? (
-          <ExperimentTipCard
-            tips={['Stay at the same spot while detecting your location.']}
-          />
-        ) : (
-          <ExperimentTipCard
-       tips={[
-  "Keep the phone in the same position for every recording.",
-  "Fan at the specified distance only.",
-  "Use the same strength when waving the fan.",
-]}
-          />
-        )}
-
-        <ExitButton onPress={() => router.back()} />
-      </ScrollView>
-
-      <InfoModal
-        visible={showInfo}
-        title={
-          currentStage === 0
-            ? "HOW TO COMPLETE THIS ACTIVITY"
-            : "HOW TO RECORD"
-        }
-instructions={
-  currentStage === 0
-    ? [
-        "Tap Detect Location.",
-        "Allow GPS permission.",
-        "Enter a location name.",
-        "Save the location.",
-      ]
-    : [
-        "Place the phone in position.",
-        "Use the requested fan setup.",
-        "Record the movement.",
-        "Save the result.",
-      ]
-}
-        onClose={() => setShowInfo(false)}
-      />
-      
-      <LocationCompleteModal
-        visible={showLocationComplete}
-        onAddAnother={() => {
-          setShowLocationComplete(false);
-          setLocationNumber(prev => prev + 1);
-          setCurrentStage(0);
-          setLocation(null);
-          setLocationName("");
-          setLocationID("");
-        }}
-        onFinish={() => {
-          setShowLocationComplete(false);
-          // Forward both sessionID and the prediction param to the results screen
-          router.push({
-            pathname: "/activities/activity3/results",
-            params: {
-              activityID: 3,
-              sessionID,
-              prediction: prediction || '',
-            },
-          });
-        }}
-      />
-    </LinearGradient>
+          <TouchableOpacity
+            style={[styles.button, isSaving && { opacity: 0.7 }]}
+            onPress={handleSaveAndNext}
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text style={styles.buttonText}>
+                {isLastIteration ? 'Finish' : 'Save & Next'}
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  card: {
+    backgroundColor: '#26216D',
+    borderRadius: 16,
+    padding: 20,
+    marginVertical: 16,
+    width: '90%',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 200,
   },
-  content: {
-    paddingTop: hp(4),
-    paddingBottom: hp(5),
+  button: {
+    backgroundColor: '#EC588C',
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
   },
-  infoIcon: {
-    width: rf(34),
-    height: rf(34),
-    resizeMode: 'contain',
-  },
-  infoButton: {
-    position: 'absolute',
-    top: hp(7),
-    right: wp(6),
-    zIndex: 999,
-  },
-  heroDescription: {
+  buttonText: {
     color: '#FFFFFF',
-    fontSize: rf(15),
-    fontFamily: 'PixelOperator',
-    lineHeight: rf(22),
-    width: rf(252)
+    fontSize: 16,
+    fontFamily: 'PixelOperatorBold',
+    fontWeight: 'bold',
   },
-  pinkText: {
+  recordingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timerText: {
+    color: '#FFFFFF',
+    fontSize: 48,
+    fontFamily: 'PixelOperatorBold',
+    marginBottom: 10,
+  },
+  recordingSubtext: {
+    color: '#A09CBF',
+    fontSize: 14,
+    fontFamily: 'PixelOperator',
+  },
+  liveAccText: {
     color: '#EC588C',
+    fontSize: 20,
+    fontFamily: 'PixelOperatorBold',
+    marginTop: 8,
+  },
+  resultsContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  resultItem: {
+    backgroundColor: '#14103A',
+    width: '100%',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  resultLabel: {
+    color: '#A09CBF',
+    fontSize: 14,
+    fontFamily: 'PixelOperator',
+    marginBottom: 4,
+  },
+  resultValue: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontFamily: 'PixelOperatorBold',
   },
 });

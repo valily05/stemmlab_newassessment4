@@ -159,7 +159,7 @@ export default function Activity3Overview() {
                     />
 
                     <ReferenceSetupCard
-                        image={require('@/assets/images/A3Setup1.png')}//change this
+                        image={require('@/assets/images/activity3Setup1.png')}//change this
                     />
 
                     <SafetyNotes
