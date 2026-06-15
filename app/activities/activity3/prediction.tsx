@@ -127,7 +127,7 @@ export default function Activity1Prediction() {
 <ExperimentHero
     activityID={3}
     title={activity.title}
-    image={require('@/assets/images/fan.png')}
+    image={require('@/assets/images/miffyfan.png')}
     imageStyle={{
         width: wp(40),
         height: hp(20),
