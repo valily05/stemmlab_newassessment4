@@ -1,10 +1,10 @@
 import { LinearGradient } from "expo-linear-gradient";
 import {
-    Dimensions,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -28,31 +28,50 @@ export default function SoundRiskCard({
   highest,
   risk,
 }: Props) {
-  const getColor = () => {
-    switch (risk) {
-      case "LOW":
-        return "#5EEA8B";
+const getColor = () => {
+  if (highest <= 60) return "#5EEA8B";          // Green
+  if (highest <= 85) return "#B6E44A";          // Yellow-green
+  if (highest <= 100) return "#FFD94E";         // Yellow
+  if (highest <= 120) return "#FF8A3D";         // Orange
+  return "#FF5B5B";                             // Red
+};
+  
 
-      case "MEDIUM":
-        return "#FFD94E";
+const getDescription = () => {
+  if (highest <= 30) {
+    return "No risk. This sound level is comparable to a whisper or a quiet library.";
+  }
 
-      default:
-        return "#FF5B5B";
-    }
-  };
+  if (highest <= 60) {
+    return "Safe for long periods. This is similar to a normal conversation or classroom noise.";
+  }
 
-  const getDescription = () => {
-    switch (risk) {
-      case "LOW":
-        return "Your recordings stayed within a safe environmental noise level.";
+  if (highest <= 85) {
+    return "Generally safe, but long exposure can cause hearing fatigue. Examples include busy traffic or a vacuum cleaner.";
+  }
 
-      case "MEDIUM":
-        return "Some recordings reached moderate noise levels. Prolonged exposure may become uncomfortable.";
+  if (highest <= 90) {
+    return "Hearing damage is possible after long exposure. Similar to a lawn mower, loud classroom, or heavy traffic.";
+  }
 
-      default:
-        return "High noise levels were detected. Long-term exposure may affect hearing health.";
-    }
-  };
+  if (highest <= 100) {
+    return "Hearing damage is likely after short exposure. Examples include motorbikes, power tools, or loud music.";
+  }
+
+  if (highest <= 110) {
+    return "Serious hearing damage can occur within minutes. Similar to a nightclub, rock concert, or chainsaw.";
+  }
+
+  if (highest <= 120) {
+    return "Painful sound level. Immediate hearing damage is possible. Comparable to a nearby siren or car horn.";
+  }
+
+if (highest <= 140) {
+  return "Immediate and severe hearing damage can occur. Similar to standing near a jet engine.";
+}
+
+return "Instant and permanent hearing damage is likely. Comparable to an explosion or gunshot.";
+};
 
   // Dynamic subtle glow based on risk level
   const getGlowColor = () => {
@@ -77,10 +96,26 @@ export default function SoundRiskCard({
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.label}>Overall Status</Text>
-          <Text style={[styles.risk, { color: getColor() }]}>
-            {risk}
-          </Text>
+    <Text style={styles.label}>Hearing Risk</Text>
+<Text style={[styles.risk, { color: getColor() }]}>
+  {highest <= 30
+    ? "NO RISK"
+    : highest <= 60
+    ? "SAFE"
+    : highest <= 85
+    ? "LOW RISK"
+    : highest <= 90
+    ? "POSSIBLE DAMAGE"
+    : highest <= 100
+    ? "LIKELY DAMAGE"
+    : highest <= 110
+    ? "SERIOUS DAMAGE"
+    : highest <= 120
+    ? "IMMEDIATE DAMAGE"
+    : highest <= 130
+    ? "SEVERE DAMAGE"
+    : "PERMANENT DAMAGE"}
+</Text>
         </View>
 
         <View style={styles.divider} />
