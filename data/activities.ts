@@ -331,7 +331,7 @@ export const activities = {
     //pointsRequired: 600,
     
     overview: "Investigate how the human body moves by measuring speed, smoothness, and coordination during controlled stretching activities.",
-    objective: "Measure and improve movement speed, smoothness, and coordination during stretching exercises.",
+    objective: "Measure and improve movement speed & smoothness during stretching exercises.",
 
     mission: "Perform controlled stretches as smoothly and accurately as possible.",
     duration: "15 Minutes",//change this
