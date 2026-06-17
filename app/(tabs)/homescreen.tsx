@@ -26,6 +26,7 @@ import { useLanguage } from '../../context/LanguageContext'; // Update your path
 import { getAvatarSource } from '../../data/avatarData';
 
 // Components
+import TestBanner from "@/components/ads/TestBanner";
 import ActivitiesSection from '../../components/ActivitiesSection';
 import Banner from '../../components/Banner';
 import BottomNavbar from '../../components/BottomNavBar';
@@ -37,7 +38,6 @@ import Sidebar from '../../components/SideBar';
 import Streak from '../../components/streak';
 import TeamRankingCard from '../../components/TeamRankingCard';
 
-
 const { width, height } = Dimensions.get('window');
 const wp = (p: number) => PixelRatio.roundToNearestPixel((width * p) / 100);
 const hp = (p: number) => PixelRatio.roundToNearestPixel((height * p) / 100);
@@ -47,293 +47,307 @@ export default function HomeScreen() {
   const { t } = useLanguage(); // Access the translation object
   const { isDark } = useTheme();
 
-const colors = isDark ? DarkTheme : LightTheme;
+  const colors = isDark ? DarkTheme : LightTheme;
   const [search, setSearch] = useState('');
-const sendingReminder = useRef(false);
-const sendingStartReminder = useRef(false);
+  const sendingReminder = useRef(false);
+  const sendingStartReminder = useRef(false);
   const [hasTeam, setHasTeam] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-const [streak, setStreak] = useState(0);
-const [teamPoints, setTeamPoints] = useState(0);
-const checkStreakReminder = async () => {
-  const uid = auth.currentUser?.uid;
+  const [streak, setStreak] = useState(0);
+  const [teamPoints, setTeamPoints] = useState(0);
 
-  if (!uid || sendingReminder.current) return;
+  const checkStreakReminder = async () => {
+    const uid = auth.currentUser?.uid;
 
-  sendingReminder.current = true;
+    if (!uid || sendingReminder.current) return;
 
-  try {
+    sendingReminder.current = true;
+
+    try {
+      const userRef = doc(db, "users", uid);
+      const snap = await getDoc(userRef);
+
+      if (!snap.exists()) return;
+
+      const data = snap.data();
+
+      if (!data.lastActivityDate || data.streak <= 0) return;
+
+      const diffInHours =
+        (Date.now() - data.lastActivityDate.toDate().getTime()) /
+        (1000 * 60 * 60);
+
+      if (diffInHours < 23 || diffInHours >= 24) return;
+
+      const today = new Date().toDateString();
+
+      const lastReminder =
+        data.lastStreakReminder?.toDate()?.toDateString();
+
+      if (lastReminder === today) return;
+
+      await addDoc(collection(db, "notifications"), {
+        userID: uid,
+        type: "streak",
+        title: "Don't lose your streak !",
+        subtitle: "Complete an activity within the next hour to keep your streak alive!",
+        route: "/activities",
+        read: false,
+        createdAt: serverTimestamp(),
+      });
+
+      await updateDoc(userRef, {
+        lastStreakReminder: serverTimestamp(),
+      });
+    } finally {
+      sendingReminder.current = false;
+    }
+  }
+
+  async function preloadHomeData() {
+    const uid = auth.currentUser?.uid;
+
+    if (!uid) return;
+
     const userRef = doc(db, "users", uid);
-    const snap = await getDoc(userRef);
+    const activitiesRef = collection(db, "activities");
+    const teamsRef = collection(db, "teams");
 
-    if (!snap.exists()) return;
+    const [userSnap, activitiesSnap, teamsSnap] = await Promise.all([
+      getDoc(userRef),
+      getDocs(activitiesRef),
+      getDocs(teamsRef),
+    ]);
 
-    const data = snap.data();
-
-    if (!data.lastActivityDate || data.streak <= 0) return;
-
-    const diffInHours =
-      (Date.now() - data.lastActivityDate.toDate().getTime()) /
-      (1000 * 60 * 60);
-
-    if (diffInHours < 23 || diffInHours >= 24) return;
-
-    const today = new Date().toDateString();
-
-    const lastReminder =
-      data.lastStreakReminder?.toDate()?.toDateString();
-
-    if (lastReminder === today) return;
-
-    await addDoc(collection(db, "notifications"), {
-      userID: uid,
-      type: "streak",
-      title: "Don't lose your streak !",
-      subtitle: "Complete an activity within the next hour to keep your streak alive!",
-      route: "/activities",
-      read: false,
-      createdAt: serverTimestamp(),
-    });
-
-    await updateDoc(userRef, {
-      lastStreakReminder: serverTimestamp(),
-    });
-  } finally {
-    sendingReminder.current = false;
+    console.log(
+      userSnap.exists(),
+      activitiesSnap.size,
+      teamsSnap.size
+    );
   }
-};
-async function preloadHomeData() {
-  const uid = auth.currentUser?.uid;
 
-  if (!uid) return;
+  useEffect(() => {
+    const uid = auth.currentUser?.uid;
 
-  const userRef = doc(db, "users", uid);
-  const activitiesRef = collection(db, "activities");
-  const teamsRef = collection(db, "teams");
+    if (!uid) {
+      setLoading(false);
+      return;
+    }
+    preloadHomeData();
 
-  const [userSnap, activitiesSnap, teamsSnap] = await Promise.all([
-    getDoc(userRef),
-    getDocs(activitiesRef),
-    getDocs(teamsRef),
-  ]);
+    let unsubscribeTeam: (() => void) | null = null;
 
-  console.log(
-    userSnap.exists(),
-    activitiesSnap.size,
-    teamsSnap.size
-  );
-}
-useEffect(() => {
-  const uid = auth.currentUser?.uid;
+    const unsubscribeUser = onSnapshot(
+      doc(db, 'users', uid),
+      async (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.data();
 
-  if (!uid) {
-    setLoading(false);
-    return;
-  }
-  preloadHomeData();
+          setHasTeam(!!data.teamID);
+          setUserPoints(data.points || 0);
 
-  let unsubscribeTeam: (() => void) | null = null;
+          let currentStreak = data.streak || 0;
 
-const unsubscribeUser = onSnapshot(
-  doc(db, 'users', uid),
-  async (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.data();
+          if (data.lastActivityDate) {
+            const lastActivity = data.lastActivityDate.toDate();
 
-setHasTeam(!!data.teamID);
-setUserPoints(data.points || 0);
+            const now = new Date();
 
-let currentStreak = data.streak || 0;
+            const diffInHours =
+              (now.getTime() - lastActivity.getTime()) /
+              (1000 * 60 * 60);
 
-if (data.lastActivityDate) {
+            if (
+              diffInHours >= 24 &&
+              currentStreak > 0 &&
+              data.streak !== 0
+            ) {
+              currentStreak = 0;
+              setStreak(0);
 
-  const lastActivity = data.lastActivityDate.toDate();
+              const userRef = doc(db, "users", uid);
 
-  const now = new Date();
+              await updateDoc(userRef, {
+                streak: 0,
+              });
 
-  const diffInHours =
-    (now.getTime() - lastActivity.getTime()) /
-    (1000 * 60 * 60);
-if (
-  diffInHours >= 24 &&
-  currentStreak > 0 &&
-  data.streak !== 0
-) {
-  currentStreak = 0;
-  setStreak(0);
+              const today = new Date().toDateString();
 
-  const userRef = doc(db, "users", uid);
+              const lastStartReminder =
+                data.lastStartReminder?.toDate()?.toDateString();
 
-  await updateDoc(userRef, {
-    streak: 0,
-  });
+              if (
+                lastStartReminder !== today &&
+                !sendingStartReminder.current
+              ) {
+                sendingStartReminder.current = true;
 
-const today = new Date().toDateString();
+                try {
+                  await addDoc(collection(db, "notifications"), {
+                    userID: uid,
+                    type: "streak",
+                    title: "Start your streak today!",
+                    subtitle: "Complete any activity to begin your streak! 🚀",
+                    route: "/activities",
+                    read: false,
+                    createdAt: serverTimestamp(),
+                  });
 
-const lastStartReminder =
-  data.lastStartReminder?.toDate()?.toDateString();
-
-if (
-  lastStartReminder !== today &&
-  !sendingStartReminder.current
-) {
-  sendingStartReminder.current = true;
-
-  try {
-    await addDoc(collection(db, "notifications"), {
-      userID: uid,
-      type: "streak",
-      title: "Start your streak today!",
-      subtitle: "Complete any activity to begin your streak! 🚀",
-      route: "/activities",
-      read: false,
-      createdAt: serverTimestamp(),
-    });
-
-    await updateDoc(userRef, {
-      lastStartReminder: serverTimestamp(),
-    });
-  } finally {
-    sendingStartReminder.current = false;
-  }
-}
-}
-}
-
-setStreak(currentStreak);
-
-        if (unsubscribeTeam) {
-          unsubscribeTeam();
-          unsubscribeTeam = null;
-        }
-
-        if (data.teamID) {
-          unsubscribeTeam = onSnapshot(
-            doc(db, 'teams', data.teamID),
-            (teamSnap) => {
-              if (teamSnap.exists()) {
-                setTeamPoints(
-                  teamSnap.data().totalPoints || 0
-                );
+                  await updateDoc(userRef, {
+                    lastStartReminder: serverTimestamp(),
+                  });
+                } finally {
+                  sendingStartReminder.current = false;
+                }
               }
             }
-          );
+          }
+
+          setStreak(currentStreak);
+
+          if (unsubscribeTeam) {
+            unsubscribeTeam();
+            unsubscribeTeam = null;
+          }
+
+          if (data.teamID) {
+            unsubscribeTeam = onSnapshot(
+              doc(db, 'teams', data.teamID),
+              (teamSnap) => {
+                if (teamSnap.exists()) {
+                  setTeamPoints(
+                    teamSnap.data().totalPoints || 0
+                  );
+                }
+              }
+            );
+          }
         }
+
+        setLoading(false);
+      },
+
+      (error) => {
+        console.log('User listener error:', error);
       }
+    );
 
-      setLoading(false);
-    },
-    (error) => {
-      console.log('User listener error:', error);
+    return () => {
+      unsubscribeUser();
+
+      if (unsubscribeTeam) {
+        unsubscribeTeam();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      checkStreakReminder();
     }
-  );
-
-  return () => {
-    unsubscribeUser();
-
-    if (unsubscribeTeam) {
-      unsubscribeTeam();
-    }
-  };
-}, []);
-useEffect(() => {
-  if (!loading) {
-    checkStreakReminder();
-  }
-}, [loading]);
+  }, [loading]);
 
   if (loading) return null;
 
   return (
-<View
-  style={[
-    styles.container,
-    {
-      backgroundColor: colors.background,
-    },
-  ]}
->
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: hp(20) }}
       >
         <ImageBackground
-  source={
-    isDark
-      ? require('../../assets/images/spacebg1.png')
-      : require('../../assets/images/spacebg1_light.png')
-  }
-  style={styles.topSection}
-  resizeMode="cover"
->
+          source={
+            isDark
+              ? require('../../assets/images/spacebg1.png')
+              : require('../../assets/images/spacebg1_light.png')
+          }
+          style={styles.topSection}
+          resizeMode="cover"
+        >
           <View style={styles.overlay}>
             <Header
               onMenuPress={() => setIsSidebarOpen(true)}
               avatarSource={getAvatarSource(auth.currentUser?.photoURL, auth.currentUser?.uid)}
             />
+
             <Hero />
           </View>
+          
           <LinearGradient
-colors={
-  isDark
-    ? [
-        'rgba(4,6,27,0)',
-        'rgba(4,6,27,0.35)',
-        'rgba(4,6,27,0.75)',
-        'rgba(4,6,27,0.96)',
-        '#04061B',
-      ]
-    : [
-        'rgba(255,255,255,0)',
-        'rgba(255,255,255,0.35)',
-        'rgba(250,248,255,0.8)',
-        'rgba(248,246,255,0.95)',
-        '#F8F6FF',
-      ]
-}            locations={[0, 0.35, 0.6, 0.82, 1]}
+            colors={
+              isDark
+                ? [
+                    'rgba(4,6,27,0)',
+                    'rgba(4,6,27,0.35)',
+                    'rgba(4,6,27,0.75)',
+                    'rgba(4,6,27,0.96)',
+                    '#04061B',
+                  ]
+                : [
+                    'rgba(255,255,255,0)',
+                    'rgba(255,255,255,0.35)',
+                    'rgba(250,248,255,0.8)',
+                    'rgba(248,246,255,0.95)',
+                    '#F8F6FF',
+                  ]
+            }
+            locations={[0, 0.35, 0.6, 0.82, 1]}
             style={styles.gradient}
           />
         </ImageBackground>
 
         <View style={styles.content}>
-        <SearchBar
-  search={search}
-  setSearch={setSearch}
-  placeholder={t.placeholderSearch || "Search..."}
-/>
+          <SearchBar
+            search={search}
+            setSearch={setSearch}
+            placeholder={t.placeholderSearch || "Search..."}
+          />
 
-{/* Only render when search has characters */}
-{search.length > 0 && <SearchResults search={search} />}
+          {/* Only render when search has characters */}
+          {search.length > 0 && <SearchResults search={search} />}
 
-<ActivitiesSection userPoints={userPoints} />
-<Streak
-  hasTeam={hasTeam}
-  streak={streak}
-  points={teamPoints}
-/>
-     <Banner />
+          <ActivitiesSection userPoints={userPoints} />
+
+          <Streak
+            hasTeam={hasTeam}
+            streak={streak}
+            points={teamPoints}
+          />
+
+          <Banner />
+          
           <TeamRankingCard />
-          {/* <TestBanner /> */}
+          
+          <TestBanner />
         </View>
       </ScrollView>
 
       {isSidebarOpen && (
         <View style={styles.sidebarOverlay}>
           <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsSidebarOpen(false)} />
-       <View
-  style={[
-    styles.sidebarWrapper,
-    {
-      backgroundColor: colors.background,
-      borderRightColor: colors.border,
-    },
-  ]}
->
+
+          <View
+            style={[
+              styles.sidebarWrapper,
+              {
+                backgroundColor: colors.background,
+                borderRightColor: colors.border,
+              },
+            ]}
+          >
             <Sidebar onClose={() => setIsSidebarOpen(false)} />
           </View>
         </View>
       )}
+      
       <BottomNavbar />
     </View>
   );
