@@ -1,268 +1,437 @@
-import { saveIteration } from "@/services/firebase/iterationService";
-import { useEffect, useState } from 'react';
+import { LinearGradient } from "expo-linear-gradient";
+import { router, useLocalSearchParams } from "expo-router";
+import { Accelerometer } from "expo-sensors";
+import { Timestamp } from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
 import {
-    ActivityIndicator,
     Alert,
+    Dimensions,
+    Image,
+    PixelRatio,
+    ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
     View,
-} from 'react-native';
+} from "react-native";
 
-interface AccelerometerData {
-  x: number;
-  y: number;
-  z: number;
-}
+import ExitButton from "@/components/activity/ExitButton";
+import ExperimentHero from "@/components/activity/ExperimentHero";
+import ExperimentStats from "@/components/activity/ExperimentStats";
+import ExperimentTipCard from "@/components/activity/ExperimentTipCard";
+import InfoModal from "@/components/activity/InfoModal";
+import MotionExperimentCard from "@/components/activity/MotionExperimentCard";
 
-interface Props {
-  sessionID: string;
-  stage: string;
-  iteration: number;
-  onNext: () => void;
-  isLastIteration: boolean;
-  accelerometerData: AccelerometerData;
-}
+import { activities } from "@/data/activities";
+import { createSession } from "@/services/firebase/sessionService";
 
-export default function RecordingExperimentCard({
-  sessionID,
-  stage,
-  iteration,
-  onNext,
-  isLastIteration,
-  accelerometerData,
-}: Props) {
-  const [isRecording, setIsRecording] = useState(false);
-  const [hasRecorded, setHasRecorded] = useState(false);
-  const [timer, setTimer] = useState(20);
-  const [samples, setSamples] = useState<number[]>([]);
-  const [averageAcceleration, setAverageAcceleration] = useState<number | null>(null);
-  const [peakAcceleration, setPeakAcceleration] = useState<number | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+const activity = activities.activity3;
 
-  // Collect samples when recording
-  useEffect(() => {
-    if (!isRecording) return;
+const { width, height } = Dimensions.get("window");
 
-    const magnitude = Math.max(
-      0,
-      Math.sqrt(
-        accelerometerData.x ** 2 +
-        accelerometerData.y ** 2 +
-        accelerometerData.z ** 2
-      ) - 9.81
-    );
+const wp = (percentage: number) =>
+  PixelRatio.roundToNearestPixel((width * percentage) / 100);
 
-    setSamples((prevSamples) => [...prevSamples, magnitude]);
-  }, [accelerometerData, isRecording]);
+const hp = (percentage: number) =>
+  PixelRatio.roundToNearestPixel((height * percentage) / 100);
 
-  // Timer logic
-  useEffect(() => {
-    if (!isRecording) return;
+const rf = (size: number) => {
+  const scale = width / 390;
 
-    const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          stopRecording();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isRecording]);
-
-  const startRecording = () => {
-    setSamples([]);
-    setAverageAcceleration(null);
-    setPeakAcceleration(null);
-    setTimer(20);
-    setIsRecording(true);
-  };
-
-  const stopRecording = () => {
-const stopRecording = () => {
-  setIsRecording(false);
-
-  setTimeout(() => {
-    if (samples.length === 0) return;
-
-    const avg =
-      samples.reduce((a, b) => a + b, 0) /
-      samples.length;
-
-    const peak = Math.max(...samples);
-
-    setAverageAcceleration(avg);
-    setPeakAcceleration(peak);
-    setHasRecorded(true);
-  }, 100);
+  return Math.round(
+    PixelRatio.roundToNearestPixel(size * scale)
+  );
 };
 
-    const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
-    const peak = Math.max(...samples);
+const stages = [
+  "SETUP",
+  "PAPER FAN (15 cm)",
+  "PAPER FAN (30 cm)",
+  "PAPER FAN (45 cm)",
+  "CARDBOARD FAN (30 cm)",
+];
 
-    setAverageAcceleration(avg);
-    setPeakAcceleration(peak);
-  };
+export default function Activity3Experiment() {
+  const { prediction } =
+    useLocalSearchParams<{
+      prediction?: string;
+    }>();
 
-  const handleSaveAndNext = async () => {
-    if (averageAcceleration === null || peakAcceleration === null) return;
+  const scrollRef = useRef<ScrollView>(null);
 
-    setIsSaving(true);
-    try {
-      await saveIteration(sessionID, {
-        iterationNo: iteration,
-        data: {
-          fanType: stage,
-          duration: 20,
-          averageAcceleration,
-          peakAcceleration,
-        },
+  const [currentStage, setCurrentStage] = useState(0);
+  const [sessionID, setSessionID] = useState("");
+  const [showInfo, setShowInfo] = useState(false);
+
+  const [hasStarted, setHasStarted] = useState(false);
+
+  const [timeLeft, setTimeLeft] = useState(20 * 60);
+
+  const [accelerometerData, setAccelerometerData] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
+
+  useEffect(() => {
+    if (prediction) {
+      console.log(
+        "Prediction:",
+        prediction
+      );
+    }
+  }, [prediction]);
+
+  // Accelerometer
+  useEffect(() => {
+    Accelerometer.setUpdateInterval(100);
+
+    const subscription =
+      Accelerometer.addListener((data) => {
+        setAccelerometerData({
+          x: data.x,
+          y: data.y,
+          z: data.z,
+        });
       });
 
-      setIsSaving(false);
-      onNext();
-    } catch (error) {
-      console.error('Error saving iteration:', error);
-      setIsSaving(false);
-      Alert.alert('Error', 'Failed to save acceleration data. Please try again.');
-    }
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  // Overall experiment timer
+  useEffect(() => {
+    if (!hasStarted) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) =>
+        prev > 0 ? prev - 1 : 0
+      );
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [hasStarted]);
+
+  const formatCountdown = (
+    seconds: number
+  ) => {
+    const mins = Math.floor(
+      seconds / 60
+    );
+
+    const secs = seconds % 60;
+
+    return `${String(mins).padStart(
+      2,
+      "0"
+    )}:${String(secs).padStart(
+      2,
+      "0"
+    )}`;
   };
 
-  const liveAcceleration = Math.max(
-    0,
-    Math.sqrt(
-      accelerometerData.x ** 2 +
-      accelerometerData.y ** 2 +
-      accelerometerData.z ** 2
-    ) - 9.81
-  ).toFixed(2);
+  const handleStartExperiment =
+    async () => {
+      try {
+        const newSessionID =
+          await createSession({
+            activityID: 3,
+            teamID: "team1",
+            experimentTime: 0,
+            totalIterations: 4,
+            pointsEarned: 0,
+            completedAt:
+              Timestamp.now(),
+            insights: {},
+          });
 
+        setSessionID(newSessionID);
+        setHasStarted(true);
+        setCurrentStage(1);
+
+        setTimeout(() => {
+          scrollRef.current?.scrollTo({
+            y: hp(35),
+            animated: true,
+          });
+        }, 300);
+      } catch (e) {
+        console.log(e);
+
+        Alert.alert(
+          "Error",
+          "Failed to create experiment session."
+        );
+      }
+    };
   return (
-    <View style={styles.card}>
-      {!isRecording && !hasRecorded && (
-        <TouchableOpacity style={styles.button} onPress={startRecording}>
-          <Text style={styles.buttonText}>Start Recording</Text>
+    <LinearGradient
+      colors={[
+        "#0B0820",
+        "#14103A",
+        "#1D1854",
+        "#26216D",
+        "#312C88",
+        "#3A35A3",
+      ]}
+      locations={[0, 0.5, 0.75, 0.88, 0.94, 1]}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+      style={styles.container}
+    >
+      <ScrollView
+        ref={scrollRef}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <TouchableOpacity
+          style={styles.infoButton}
+          onPress={() => setShowInfo(true)}
+        >
+          <Image
+            source={require("@/assets/images/info-icon.png")}
+            style={styles.infoIcon}
+          />
         </TouchableOpacity>
-      )}
 
-      {isRecording && (
-        <View style={styles.recordingContainer}>
-          <Text style={styles.timerText}>{timer}s</Text>
-<Text style={styles.recordingSubtext}>
-Move the phone by waving the fan for 20 seconds.
-</Text>
-          <Text style={styles.liveAccText}>{liveAcceleration} m/s²</Text>
-        </View>
-      )}
-
-      {hasRecorded && (
-        <View style={styles.resultsContainer}>
-          <View style={styles.resultItem}>
-            <Text style={styles.resultLabel}>Peak Acceleration</Text>
-            <Text style={styles.resultValue}>
-              {peakAcceleration ? `${peakAcceleration.toFixed(2)} m/s²` : '0.00 m/s²'}
-            </Text>
-          </View>
-
-          <View style={styles.resultItem}>
-            <Text style={styles.resultLabel}>Average Acceleration</Text>
-            <Text style={styles.resultValue}>
-              {averageAcceleration ? `${averageAcceleration.toFixed(2)} m/s²` : '0.00 m/s²'}
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            style={[styles.button, isSaving && { opacity: 0.7 }]}
-            onPress={handleSaveAndNext}
-            disabled={isSaving}
-          >
-            {isSaving ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <Text style={styles.buttonText}>
-                {isLastIteration ? 'Finish' : 'Save & Next'}
+        <ExperimentHero
+          title={activity.title}
+          image={require("@/assets/images/miffyfan.png")}
+          imageStyle={{
+            width: wp(39),
+            height: hp(20),
+            right: -wp(9),
+          }}
+          activityID={3}
+          description={
+            currentStage === 0 ? (
+              <Text style={styles.heroDescription}>
+                Prepare your{" "}
+                <Text style={styles.pinkText}>
+                  HAND FAN
+                </Text>{" "}
+                before starting the experiment.
               </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+            ) : (
+              <Text style={styles.heroDescription}>
+                Wave the{" "}
+                <Text style={styles.pinkText}>
+                  {stages[currentStage]}
+                </Text>{" "}
+                for 20 seconds while your phone measures the motion using the
+                accelerometer.
+              </Text>
+            )
+          }
+        />
+
+        <ExperimentStats
+          timeLeft={formatCountdown(timeLeft)}
+          iteration={stages[currentStage]}
+        />
+
+        {currentStage === 0 ? (
+          <View style={styles.setupContainer}>
+            <TouchableOpacity
+              style={styles.startButton}
+              onPress={handleStartExperiment}
+            >
+              <Text style={styles.startButtonText}>
+                START EXPERIMENT
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <MotionExperimentCard
+            key={currentStage}
+            sessionID={sessionID}
+            stage={stages[currentStage]}
+            iteration={currentStage}
+            accelerometerData={accelerometerData}
+            isLastIteration={
+              currentStage === stages.length - 1
+            }
+            onNext={() => {
+              if (currentStage === stages.length - 1) {
+                router.push({
+                  pathname:
+                    "/activities/activity3/results",
+                  params: {
+                    sessionID,
+                    prediction: prediction || "",
+                    activityID: 3,
+                  },
+                });
+              } else {
+                setCurrentStage((prev) => prev + 1);
+
+                setTimeout(() => {
+                  scrollRef.current?.scrollTo({
+                    y: hp(35),
+                    animated: true,
+                  });
+                }, 300);
+              }
+            }}
+          />
+        )}
+
+        {currentStage === 0 ? (
+          <ExperimentTipCard
+            tips={[
+              "Prepare your paper and cardboard fans before starting.",
+              "Make sure your phone is held securely.",
+              "Stand in an open area.",
+            ]}
+          />
+        ) : (
+          <ExperimentTipCard
+            tips={[
+              "Wave the fan naturally.",
+              "Keep the same speed for the full 20 seconds.",
+              "Do not shake the phone intentionally.",
+            ]}
+          />
+        )}
+
+        <ExitButton
+          onPress={() => router.back()}
+        />
+      </ScrollView>
+
+      <InfoModal
+        visible={showInfo}
+        title={
+          currentStage === 0
+            ? "HOW TO COMPLETE THIS ACTIVITY"
+            : "HOW TO PERFORM THE TEST"
+        }
+        instructions={
+          currentStage === 0
+            ? [
+                "Prepare the selected fan.",
+                "Hold your phone securely.",
+                "Press Start Experiment.",
+                "Complete every design.",
+              ]
+            : [
+                "Wave the selected fan.",
+                "Continue for 20 seconds.",
+                "Wait for the results.",
+                "Save and continue.",
+              ]
+        }
+        onClose={() => setShowInfo(false)}
+      />
+    </LinearGradient>
   );
 }
-
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#26216D',
-    borderRadius: 16,
-    padding: 20,
-    marginVertical: 16,
-    width: '90%',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 200,
+  container: {
+    flex: 1,
   },
-  button: {
-    backgroundColor: '#EC588C',
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
+
+  content: {
+    paddingTop: hp(4),
+    paddingBottom: hp(5),
   },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontFamily: 'PixelOperatorBold',
-    fontWeight: 'bold',
+
+  infoButton: {
+    position: "absolute",
+    top: hp(7),
+    right: wp(6),
+    zIndex: 999,
   },
-  recordingContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+
+  infoIcon: {
+    width: rf(34),
+    height: rf(34),
+    resizeMode: "contain",
   },
-  timerText: {
-    color: '#FFFFFF',
-    fontSize: 48,
-    fontFamily: 'PixelOperatorBold',
-    marginBottom: 10,
+
+  heroDescription: {
+    color: "#FFFFFF",
+    fontSize: rf(15),
+    fontFamily: "PixelOperator",
+    lineHeight: rf(22),
+    width: rf(252),
   },
-  recordingSubtext: {
-    color: '#A09CBF',
-    fontSize: 14,
-    fontFamily: 'PixelOperator',
+
+  pinkText: {
+    color: "#EC588C",
+    fontFamily: "PixelBold",
   },
-  liveAccText: {
-    color: '#EC588C',
-    fontSize: 20,
-    fontFamily: 'PixelOperatorBold',
-    marginTop: 8,
+
+  setupContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: hp(4),
+    marginBottom: hp(3),
   },
-  resultsContainer: {
-    width: '100%',
-    alignItems: 'center',
+
+  startButton: {
+    backgroundColor: "#EC588C",
+    paddingHorizontal: wp(10),
+    paddingVertical: hp(1.8),
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#EC588C",
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 6,
   },
-  resultItem: {
-    backgroundColor: '#14103A',
-    width: '100%',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    alignItems: 'center',
+
+  startButtonText: {
+    color: "#FFFFFF",
+    fontFamily: "PixelOperatorBold",
+    fontSize: rf(17),
+    letterSpacing: 1,
   },
-  resultLabel: {
-    color: '#A09CBF',
-    fontSize: 14,
-    fontFamily: 'PixelOperator',
-    marginBottom: 4,
+
+  sectionSpacing: {
+    marginTop: hp(2),
   },
-  resultValue: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontFamily: 'PixelOperatorBold',
+
+  divider: {
+    width: "90%",
+    height: 1,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    alignSelf: "center",
+    marginVertical: hp(2),
+  },
+
+  cardSpacing: {
+    marginTop: hp(2),
+    marginBottom: hp(2),
+  },
+
+  center: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  title: {
+    color: "#FFFFFF",
+    fontFamily: "PixelOperatorBold",
+    fontSize: rf(22),
+  },
+
+  subtitle: {
+    color: "#A09CBF",
+    fontFamily: "PixelOperator",
+    fontSize: rf(14),
+  },
+
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
+    alignSelf: "center",
+  },
+
+  spacer: {
+    height: hp(2),
   },
 });

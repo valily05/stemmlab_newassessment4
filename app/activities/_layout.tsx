@@ -101,6 +101,13 @@ export default function ActivitiesLayout() {
         }}
       />
 
+          <Stack.Screen
+        name="activity3/prediction"
+        options={{
+          headerShown: false,
+        }}
+      />
+
       <Stack.Screen
         name="activity3/feedback"
         options={{
